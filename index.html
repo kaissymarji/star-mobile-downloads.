@@ -1,12 +1,382 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b1523"><meta name="description" content="Star Mobile Service software downloads, documentation and tools."><title>Downloads | Star Mobile Service</title>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#09121e">
+
+<title>Star Mobile Service | Software Downloads</title>
+
+<meta name="description" content="Download XP400 Reader, EEPROM Studio, automotive EEPROM software and programming utilities from Star Mobile Service.">
+
 <style>
-:root{color-scheme:dark;--bg:#09121e;--panel:#101f31;--panel2:#16283c;--line:#30445a;--text:#edf7ff;--muted:#a9bfd0;--mint:#57e0c0;--blue:#91b7ff}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 75% -10%,#193454 0,transparent 45%),var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}a{color:inherit}header,main,footer{max-width:1020px;margin:auto;padding:24px}.top{display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid var(--line)}.brand{font-weight:800;letter-spacing:.07em;text-transform:uppercase;font-size:.88rem;color:var(--mint)}nav a{margin-left:18px;font-size:.92rem;color:var(--muted);text-decoration:none}nav a:hover{color:white}.hero{padding:74px 0 48px}.eyebrow{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mint);font-weight:700}h1{font-size:clamp(2.5rem,6vw,4.5rem);line-height:1.1;margin:13px 0 20px;letter-spacing:-.04em}h2{font-size:1.65rem;margin:16px 0}.lead{max-width:700px;font-size:1.15rem;color:var(--muted)}.pill{display:inline-block;border:1px solid #3b5d72;border-radius:100px;padding:6px 12px;font-size:.78rem;color:#b8d8eb}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;margin:24px 0 46px}.card{background:linear-gradient(150deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:25px}.card p,.note p{color:var(--muted)}.meta{color:var(--mint);font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.button{display:inline-block;margin-top:8px;padding:11px 18px;background:var(--mint);color:#06141d;text-decoration:none;border-radius:10px;font-weight:750}.button.secondary{background:transparent;color:var(--text);border:1px solid var(--line)}.button.disabled{background:#35465a;color:#b5c2cc;cursor:not-allowed}.note{padding:22px 25px;border:1px solid var(--line);border-radius:15px;background:#102033}footer{color:var(--muted);border-top:1px solid var(--line);font-size:.85rem}ul{color:var(--muted)}@media(max-width:600px){.top{align-items:flex-start;flex-direction:column}nav a{margin-left:0;margin-right:16px}.hero{padding-top:45px}}
-</style></head><body>
-<header class="top"><div class="brand">★ Star Mobile Service</div><nav><a href="#apps">Apps</a><a href="#files">Files</a><a href="#help">Help</a></nav></header>
-<main><section class="hero"><div class="eyebrow">Official downloads portal</div><h1>Tools made for the bench.</h1><p class="lead">Find Star Mobile Service applications, release notes, and technical documents in one place. Downloads will appear here once a public release is approved.</p><span class="pill">Android • Automotive electronics • Documentation</span></section>
-<section id="apps"><h2>Android apps</h2><div class="cards"><article class="card"><div class="meta">Android • Release pending</div><h2>XP400 Reader</h2><p>USB programmer connection and experimental EEPROM reading tools. Confirm supported hardware and release notes before installing.</p><span class="button disabled" aria-disabled="true">APK not published yet</span></article><article class="card"><div class="meta">Android • Release pending</div><h2>EEPROM Studio</h2><p>EEPROM and ECU file utilities. Certain advanced tools may require a subscription after release.</p><span class="button disabled" aria-disabled="true">APK not published yet</span></article></div></section>
-<section id="files"><h2>Files and guides</h2><div class="cards"><article class="card"><div class="meta">Documentation</div><h2>Release notes</h2><p>Compatibility, installation instructions, limitations and known issues for each published version.</p><a class="button secondary" href="README.md">Read publishing notes</a></article><article class="card"><div class="meta">Files • Coming soon</div><h2>Technical resources</h2><p>Public guides, diagrams and other non-sensitive material will be linked here as you add them.</p><span class="button disabled" aria-disabled="true">No files published yet</span></article></div></section>
-<section class="note" id="help"><h2>Important before installing</h2><p>Download only releases you trust. Verify Android compatibility and back up important data. Experimental chip operations should be tested on spare components first.</p><p>Subscriptions, if offered, are processed separately through the official app and its payment provider. This website does not collect passwords or card numbers.</p></section></main>
-<footer>© <span id="year">2026</span> Star Mobile Service · Independent automotive electronics tools.</footer>
-<script>document.getElementById('year').textContent=new Date().getFullYear()</script></body></html>
+:root {
+  --bg: #09121e;
+  --card: #15283b;
+  --border: #30445a;
+  --text: #edf7ff;
+  --muted: #a9bfd0;
+  --accent: #57e0c0;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border);
+  background: #0d1a29;
+}
+
+.container {
+  max-width: 1050px;
+  margin: auto;
+  padding: 24px;
+}
+
+.brand {
+  color: var(--accent);
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+nav { margin-top: 12px; }
+
+nav a {
+  color: var(--muted);
+  margin-right: 20px;
+  text-decoration: none;
+}
+
+nav a:hover { color: var(--accent); }
+
+.hero {
+  text-align: center;
+  padding: 75px 10px;
+}
+
+.hero h1 {
+  font-size: clamp(34px, 6vw, 58px);
+  line-height: 1.15;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.highlight { color: var(--accent); }
+
+.badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 30px;
+  color: var(--accent);
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+h2 { margin-top: 10px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin: 30px 0 55px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 25px;
+}
+
+.card p { color: var(--muted); }
+
+.version {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.button {
+  display: inline-block;
+  padding: 13px 22px;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #071721;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 14px;
+}
+
+.button:hover { background: #8bf5dc; }
+
+.button.secondary {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.button.disabled {
+  background: #35465a;
+  color: #b5c2cc;
+  cursor: not-allowed;
+}
+
+.info {
+  background: #102033;
+  padding: 25px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 35px;
+}
+
+.info p, .info li { color: var(--muted); }
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding: 30px;
+  font-size: 13px;
+}
+
+@media(max-width: 600px) {
+  .hero { padding: 45px 0; }
+  nav a { margin-right: 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <div class="brand">★ STAR MOBILE SERVICE</div>
+    <nav>
+      <a href="#apps">Apps</a>
+      <a href="#membership">Membership</a>
+      <a href="#resources">Files</a>
+      <a href="#help">Help</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <span class="badge">OFFICIAL SOFTWARE DOWNLOADS</span>
+
+  <h1>Tools Made for<br>
+    <span class="highlight">the Bench.</span>
+  </h1>
+
+  <p>
+    Automotive electronics, EEPROM programming,
+    ECU utilities and professional locksmith tools.
+  </p>
+
+  <a class="button" href="#apps">
+    Explore Downloads
+  </a>
+</section>
+
+<section id="apps">
+  <h2>Android Applications</h2>
+
+  <div class="grid">
+
+    <article class="card">
+      <div class="version">v0.3.1 Beta • Android 9+</div>
+
+      <h2>XP400 Reader</h2>
+
+      <p>
+        Connect compatible XP400 programmers to
+        Android devices using USB OTG.
+      </p>
+
+      <p>
+        Features include device identification,
+        experimental EEPROM reading, Google
+        account sign-in and Stripe membership.
+      </p>
+
+      <p>
+        <strong>Status:</strong> Public beta.
+        EEPROM reading remains experimental.
+      </p>
+
+      <a class="button"
+         href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/v0.3.1-beta/xp400.apk">
+        Download APK
+      </a>
+
+      <p>
+        <small>
+          APK hosted on GitHub Releases.
+        </small>
+      </p>
+    </article>
+
+    <article class="card">
+      <div class="version">COMING SOON</div>
+
+      <h2>EEPROM Studio</h2>
+
+      <p>
+        Advanced automotive EEPROM and ECU
+        file utilities.
+      </p>
+
+      <p>
+        Planned tools include memory dump comparison,
+        checksum utilities, file editing and
+        automotive electronics workflows.
+      </p>
+
+      <p>
+        Premium tools may require an active membership.
+      </p>
+
+      <span class="button disabled">
+        Release Pending
+      </span>
+    </article>
+
+  </div>
+</section>
+
+<section id="membership">
+
+  <h2>Software Membership</h2>
+
+  <div class="card">
+
+    <div class="version">STRIPE SUBSCRIPTION</div>
+
+    <h2>
+      <span class="highlight">$1 / Month</span>
+    </h2>
+
+    <p>
+      Access subscription-enabled software tools
+      through your Star Mobile Service account.
+    </p>
+
+    <p>
+      Membership renews monthly until canceled.
+      Subscription status is verified inside the app.
+    </p>
+
+    <p>
+      Sign in to the app to subscribe,
+      check your membership or manage billing.
+    </p>
+
+  </div>
+</section>
+
+<section id="resources">
+
+  <h2>Files & Resources</h2>
+
+  <div class="grid">
+
+    <article class="card">
+
+      <h2>GitHub Releases</h2>
+
+      <p>
+        Browse published software versions,
+        installation packages and release files.
+      </p>
+
+      <a class="button secondary"
+         href="https://github.com/kaissymarji/star-mobile-downloads./releases">
+        View All Releases
+      </a>
+
+    </article>
+
+    <article class="card">
+
+      <h2>Documentation</h2>
+
+      <p>
+        Read publishing notes, compatibility
+        information and download instructions.
+      </p>
+
+      <a class="button secondary"
+         href="https://github.com/kaissymarji/star-mobile-downloads./blob/main/README.md">
+        View Documentation
+      </a>
+
+    </article>
+
+  </div>
+
+</section>
+
+<section id="help" class="info">
+
+  <h2>Before Installing</h2>
+
+  <ul>
+    <li>
+      Download only official releases.
+    </li>
+    <li>
+      Check Android version and USB OTG compatibility.
+    </li>
+    <li>
+      Back up EEPROM and ECU data before modifying it.
+    </li>
+    <li>
+      Test experimental chip operations on spare components.
+    </li>
+    <li>
+      Some features may require internet access
+      and an active membership.
+    </li>
+  </ul>
+
+  <p>
+    Google authentication and Stripe payment
+    processing are handled separately from
+    this static download website.
+  </p>
+
+</section>
+
+</main>
+
+<footer>
+  © <span id="year">2026</span>
+  Star Mobile Service.
+  All rights reserved.
+</footer>
+
+<script>
+document.getElementById("year").textContent =
+  new Date().getFullYear();
+</script>
+
+</body>
+</html>
