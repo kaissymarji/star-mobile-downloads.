@@ -1,0 +1,85 @@
+name: Reproduce and fix XP400 fetch in native Cloudflare workerd
+
+on:
+  push:
+    branches: [xp400-workerd-redirect-repair-test]
+    paths: ['.github/workflows/xp400-workerd-redirect-test.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-runtime-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test fetch options in real workerd, not Node fetch mocks
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir=$(mktemp -d)
+          cd "$dir"
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund miniflare@4
+          npm ls miniflare workerd
+          cat > probe.mjs <<'JS'
+          import {Miniflare} from 'miniflare';
+          import assert from 'node:assert/strict';
+          const urls = [
+            'https://raw.githubusercontent.com/kaissymarji/star-mobile-downloads./main/update.json',
+            'https://kaissymarji.github.io/star-mobile-downloads./update.json'
+          ];
+          const script = `
+          export default {
+            async fetch(request) {
+              const mode = new URL(request.url).searchParams.get('mode');
+              const sources = ${JSON.stringify(urls)};
+              const results = await Promise.all(sources.map(async source => {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), 6000);
+                try {
+                  const response = await fetch(source, {
+                    method: 'GET',
+                    redirect: mode,
+                    signal: controller.signal,
+                    headers: {'Accept':'application/json','Cache-Control':'no-cache'}
+                  });
+                  if (response.status !== 200) return {source, mode, httpStatus:response.status};
+                  const manifest = await response.json();
+                  return {source, mode, httpStatus:200, versionCode:manifest.versionCode,
+                    packageName:manifest.packageName, signer:manifest.signingCertSha256};
+                } catch (error) {
+                  return {source, mode, exception:error.name, message:error.message};
+                } finally { clearTimeout(timer); }
+              }));
+              return Response.json({results});
+            }
+          };`;
+          const mf = new Miniflare({modules:true,script,compatibilityDate:'2026-10-17'});
+          try {
+            const bad = await (await mf.dispatchFetch('http://localhost/?mode=error')).json();
+            console.log('ORIGINAL redirect:error result',JSON.stringify(bad));
+            assert.equal(bad.results.length,2);
+            for (const result of bad.results) {
+              assert.equal(result.exception,'TypeError');
+              assert.match(result.message,/redirect/i);
+            }
+            const fixed = await (await mf.dispatchFetch('http://localhost/?mode=manual')).json();
+            console.log('CORRECTED redirect:manual result',JSON.stringify(fixed));
+            const successes = fixed.results.filter(r => r.httpStatus === 200);
+            assert.ok(successes.length >= 1,'Neither public manifest could be downloaded by workerd');
+            for (const result of successes) {
+              assert.ok(result.versionCode >= 102,'Received stale release metadata');
+              assert.equal(result.packageName,'com.starmobileservice.xp400studio');
+              assert.equal(result.signer,'e577cb4bb5462535f95a95152dc4e5d3ffd00c261ddeb3408ef4453ce80e4875');
+            }
+            console.log('PASS: native workerd rejects error mode and fetches the real signed update feed with manual mode.');
+          } finally { await mf.dispose(); }
+          JS
+          node probe.mjs
+      - name: No deployment or release
+        run: echo 'Runtime test only. No Worker changes, production source changes, or APK publication.'
