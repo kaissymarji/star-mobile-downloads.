@@ -1,12 +1,12 @@
 {
   "schema": 1,
   "packageName": "com.starmobileservice.xp400studio",
-  "versionCode": 104,
-  "versionName": "1.0.4",
+  "versionCode": 105,
+  "versionName": "1.0.5",
   "minSupportedVersionCode": 0,
-  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.4/EEPROM-Studio.apk",
-  "apkSha256": "e513de0461d60d4f6e9e74065c7ee4fca90b31fc11b0f8d9af30e38667d281fd",
-  "apkBytes": 1184514,
+  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.5/EEPROM-Studio.apk",
+  "apkSha256": "4b49a2861d6799ed096056d6411f68af264e7d711c19625018027ef41b078240",
+  "apkBytes": 1188666,
   "signingCertSha256": "e577cb4bb5462535f95a95152dc4e5d3ffd00c261ddeb3408ef4453ce80e4875",
-  "notes": "# EEPROM Studio 1.0.4 \u2014 CH341A suspicious-dump warning (Experimental Beta) This signed 1.0.4 update adds safety warnings for CH341A read-only EEPROM dumps, without changing XP400 hardware operations. - Warns when CH341A produces an all-FF dump, an all-00 dump, or an unusually long FF prefix. - Offers **Keep flagged dump** or **Discard and reseat ad"
+  "notes": "# EEPROM Studio 1.0.5 \u2014 USB programmer auto-detection fix (Experimental Beta) **Android USB attachment and reconnection reliability update** for supported XP400 and CH341A programmers. This APK is signed with the same production signing certificate as 1.0.4 and installs without uninstalling. - **Open on USB plug-in:** Android can offer EEPROM Studi"
 }
