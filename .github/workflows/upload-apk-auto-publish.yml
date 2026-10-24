@@ -1,0 +1,82 @@
+name: Auto-release signed EEPROM Studio APK when replaced
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apk/EEPROM-Studio.apk'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xp400-verified-manifest
+  cancel-in-progress: false
+
+jobs:
+  publish-and-refresh:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out current public downloads repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Set up Android signature tools
+        uses: android-actions/setup-android@v4
+      - name: Install Android SDK build tools
+        run: sdkmanager 'build-tools;36.0.0' 'platform-tools'
+      - name: Reject wrong APK, old version, or incorrect signing certificate
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/verify-uploaded-apk.py \
+            --apk apk/EEPROM-Studio.apk \
+            --build-tools "$ANDROID_HOME/build-tools/36.0.0" \
+            --previous update.json \
+            --output "$RUNNER_TEMP/upload-verification.json"
+      - name: Automatically publish the new version as a GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag=$(python3 -c 'import json,os;print(json.load(open(os.environ["RUNNER_TEMP"]+"/upload-verification.json"))["tag"])')
+          if gh release view "$tag" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $tag exists. Verifying it instead of replacing the binary."
+          else
+            gh release create "$tag" 'apk/EEPROM-Studio.apk#EEPROM-Studio.apk' \
+              -R "$GITHUB_REPOSITORY" --target main \
+              --title "EEPROM Studio $tag" \
+              --notes "Official EEPROM Studio signed APK update." \
+              --prerelease
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" > "$RUNNER_TEMP/release.json"
+      - name: Verify public Release asset matches the exact signed APK bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/verify-apk-release.py \
+            --release "$RUNNER_TEMP/release.json" \
+            --apk apk/EEPROM-Studio.apk \
+            --build-tools "$ANDROID_HOME/build-tools/36.0.0" \
+            --previous update.json \
+            --output update.json
+          python3 -m json.tool update.json >/dev/null
+      - name: Publish validated public update.json automatically
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add update.json
+          if git diff --cached --quiet; then
+            echo 'Manifest already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update verified EEPROM Studio APK feed [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo 'update.json refreshed. Cloudflare reads the same URL on every release.'

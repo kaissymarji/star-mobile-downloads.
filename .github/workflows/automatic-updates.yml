@@ -1,0 +1,73 @@
+name: Verify manual GitHub Release and refresh EEPROM Studio update feed
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing published tag, e.g. v1.0.2'
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: xp400-verified-manifest
+  cancel-in-progress: false
+
+jobs:
+  validate-release:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out public repository main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: android-actions/setup-android@v4
+      - name: Install Android APK verification tools
+        run: sdkmanager 'build-tools;36.0.0' 'platform-tools'
+      - name: Download the published release and its APK
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^v[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]] || { echo 'Invalid release tag'; exit 1; }
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$RELEASE_TAG" > "$RUNNER_TEMP/release.json"
+          mkdir -p "$RUNNER_TEMP/xp400"
+          name=$(python3 -c 'import json,os;d=json.load(open(os.environ["RUNNER_TEMP"]+"/release.json"));v=d["tag_name"][1:];n=[a["name"] for a in d["assets"] if a.get("name") in ("EEPROM-Studio.apk","EEPROM-Studio-"+v+".apk")];assert len(n)==1,"Exactly one APK required";print(n[0])')
+          gh release download "$RELEASE_TAG" -R "$GITHUB_REPOSITORY" \
+            --pattern "$name" --dir "$RUNNER_TEMP/xp400"
+          echo "XP400_RELEASE_APK=$RUNNER_TEMP/xp400/$name" >> "$GITHUB_ENV"
+      - name: Inspect Android signer and release asset hash before offering an update
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/verify-apk-release.py \
+            --release "$RUNNER_TEMP/release.json" \
+            --apk "$XP400_RELEASE_APK" \
+            --build-tools "$ANDROID_HOME/build-tools/36.0.0" \
+            --previous update.json \
+            --output "$RUNNER_TEMP/new-update.json"
+          if [ -f "$RUNNER_TEMP/new-update.json" ]; then
+            cp "$RUNNER_TEMP/new-update.json" update.json
+          fi
+      - name: Write the verified public update manifest only if changed
+        run: |
+          set -euo pipefail
+          git add update.json
+          if git diff --cached --quiet; then
+            echo 'No update needed. Older or identical release ignored.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Refresh validated EEPROM Studio APK feed [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main

@@ -1,0 +1,61 @@
+name: Test EEPROM Studio release automation (safe staging, no publication)
+
+on:
+  push:
+    branches: [automatic-apk-release-feed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v4
+      - name: Install build tools for real APK signature checks
+        run: sdkmanager 'build-tools;36.0.0' 'platform-tools'
+      - name: Unit test all allowlists and downgrade protection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -v -s .github/scripts -p 'test_*.py'
+      - name: Download existing PUBLIC 1.0.1 APK and verify its real signature
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh api 'repos/kaissymarji/star-mobile-downloads./releases/tags/v1.0.1' > "$RUNNER_TEMP/release.json"
+          mkdir -p "$RUNNER_TEMP/apk"
+          gh release download 'v1.0.1' -R 'kaissymarji/star-mobile-downloads.' \
+            --pattern 'EEPROM-Studio-1.0.1.apk' --dir "$RUNNER_TEMP/apk"
+          python3 .github/scripts/verify-apk-release.py \
+            --release "$RUNNER_TEMP/release.json" \
+            --apk "$RUNNER_TEMP/apk/EEPROM-Studio-1.0.1.apk" \
+            --build-tools "$ANDROID_HOME/build-tools/36.0.0" \
+            --previous "$RUNNER_TEMP/no-previous.json" \
+            --output "$RUNNER_TEMP/verified-manifest.json"
+          python3 - "$RUNNER_TEMP/verified-manifest.json" <<'PY'
+          import json,sys
+          generated=json.load(open(sys.argv[1]))
+          current=json.load(open('update.json'))
+          for key in ('schema','packageName','versionCode','versionName','apkReleaseUrl','apkSha256','apkBytes','signingCertSha256'):
+              assert generated[key]==current[key],f'Public manifest mismatch: {key}'
+          print('Verified the actual signed 1.0.1 APK against the public initial feed.')
+          PY
+      - name: Check workflow and ensure no private keys exist in the public repo
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .github/workflows/upload-apk-auto-publish.yml
+          test -f .github/workflows/automatic-updates.yml
+          test -f update.json
+          test ! -f apk/EEPROM-Studio.apk
+          echo 'Public updater staged and verified. No release published by tests.'
