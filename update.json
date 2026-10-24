@@ -1,12 +1,12 @@
 {
   "schema": 1,
   "packageName": "com.starmobileservice.xp400studio",
-  "versionCode": 102,
-  "versionName": "1.0.2",
+  "versionCode": 103,
+  "versionName": "1.0.3",
   "minSupportedVersionCode": 0,
-  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.2/EEPROM-Studio.apk",
-  "apkSha256": "fd347d6c9d0a4045e2a6c419da72c958fd8238ff1ba7e46319f3265b70f4488f",
-  "apkBytes": 1164034,
+  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.3/EEPROM-Studio.apk",
+  "apkSha256": "13a81127c565bff793c606a6965abbb79c2a0957b44be5ae19371196f5f146e6",
+  "apkBytes": 1180474,
   "signingCertSha256": "e577cb4bb5462535f95a95152dc4e5d3ffd00c261ddeb3408ef4453ce80e4875",
-  "notes": "Official EEPROM Studio signed APK update."
+  "notes": "# EEPROM Studio 1.0.3 \u2014 CH341A experimental beta **EXPERIMENTAL HARDWARE BETA \u2014 NOT VERIFIED ON PHYSICAL CH341A CHIPS.** This Android update adds CH341A USB programmer detection and a separate, capability-gated read-only driver while preserving XP400 support. The app remains signed with the existing production certificate so it can update 1.0.2 in "
 }
