@@ -24,7 +24,7 @@ jobs:
           dir=$(mktemp -d)
           cd "$dir"
           npm init -y >/dev/null
-          npm install --no-audit --no-fund miniflare@4
+          npm install --no-audit --no-fund miniflare@4.20260730.0
           npm ls miniflare workerd
           cat > probe.mjs <<'JS'
           import {Miniflare} from 'miniflare';
@@ -59,7 +59,7 @@ jobs:
               return Response.json({results});
             }
           };`;
-          const mf = new Miniflare({modules:true,script,compatibilityDate:'2026-10-17'});
+          const mf = new Miniflare({modules:true,script,compatibilityDate:'2026-07-30'});
           try {
             const bad = await (await mf.dispatchFetch('http://localhost/?mode=error')).json();
             console.log('ORIGINAL redirect:error result',JSON.stringify(bad));
