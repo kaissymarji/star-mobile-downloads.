@@ -1,0 +1,36 @@
+name: Diagnose EEPROM Studio update feed fallback (read-only)
+
+on:
+  push:
+    branches: [verify-cloudflare-live-102]
+    paths: ['.github/workflows/probe-updater-fallback.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Inspect GitHub raw manifest status and redirect behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://raw.githubusercontent.com/kaissymarji/star-mobile-downloads./main/update.json'
+          echo 'Public raw GitHub URL:'
+          curl --max-time 12 -sS -D /tmp/git-headers.txt -o /tmp/git-body.json -w 'status=%{http_code} redirect=%{redirect_url} size=%{size_download}\n' "$url" || true
+          grep -iE '^HTTP/|^location:|^content-type:|^cache-control:' /tmp/git-headers.txt || true
+          head -c 450 /tmp/git-body.json || true
+          echo ''
+      - name: Inspect LIVE Cloudflare response
+        shell: bash
+        run: |
+          set -euo pipefail
+          u='https://eeprom-membership.kaissymarji.workers.dev/v1/xp400/apk-update/manifest.json'
+          curl --max-time 12 -sS -o /tmp/cf-body.json -w 'Cloudflare status=%{http_code}\n' "$u" || true
+          head -c 550 /tmp/cf-body.json || true
+          echo ''
+      - name: No changes to public app or server
+        run: echo 'Read-only network diagnosis finished.'
