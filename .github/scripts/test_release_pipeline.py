@@ -39,7 +39,7 @@ class ReleaseTests(unittest.TestCase):
                 release or self.release,self.apk,self.root,
                 self.current if previous is None else previous)
     def upload(self, badge=None, cert=None, previous=None):
-        with patch.object(v,'run',side_effect=[badge or self.badging,cert or self.cert]):
+        with patch.object(u.v,'run',side_effect=[badge or self.badging,cert or self.cert]):
             return u.verify_upload(
                 self.apk,self.root,self.current if previous is None else previous)
     def test_correct_release_verifies(self):
@@ -50,12 +50,12 @@ class ReleaseTests(unittest.TestCase):
     def test_wrong_signer_rejected(self):
         with self.assertRaisesRegex(v.InvalidRelease,'certificate'):
             self.inspect(cert='Signer #1 certificate SHA-256 digest: '+'f'*64+'\n')
-        with self.assertRaisesRegex(v.InvalidRelease,'certificate'):
+        with self.assertRaisesRegex(u.v.InvalidRelease,'certificate'):
             self.upload(cert='Signer #1 certificate SHA-256 digest: '+'f'*64+'\n')
     def test_wrong_package_rejected(self):
         with self.assertRaisesRegex(v.InvalidRelease,'package'):
             self.inspect(badge="package: name='com.attacker.fake' versionCode='102' versionName='1.0.2'")
-        with self.assertRaisesRegex(v.InvalidRelease,'package'):
+        with self.assertRaisesRegex(u.v.InvalidRelease,'package'):
             self.upload(badge="package: name='com.attacker.fake' versionCode='102' versionName='1.0.2'")
     def test_incorrect_asset_digest_rejected(self):
         copy={**self.release,'assets':[{**self.release['assets'][0],'digest':'sha256:'+'0'*64}]}
@@ -77,7 +77,7 @@ class ReleaseTests(unittest.TestCase):
         self.assertIsNone(self.inspect(previous={**self.current,'versionCode':103}))
     def test_upload_requires_newer_version(self):
         self.assertEqual(self.upload()['tag'],'v1.0.2')
-        with self.assertRaisesRegex(v.InvalidRelease,'greater'):
+        with self.assertRaisesRegex(u.v.InvalidRelease,'greater'):
             self.upload(previous={**self.current,'versionCode':102})
     def test_alias_release_filename_accepted(self):
         new_name="EEPROM-Studio-1.0.2.apk"
@@ -90,7 +90,7 @@ class ReleaseTests(unittest.TestCase):
     def test_upload_accepts_only_fixed_name(self):
         self.apk.rename(self.root/'other.apk')
         self.apk=self.root/'other.apk'
-        with self.assertRaisesRegex(v.InvalidRelease,'canonical'):
+        with self.assertRaisesRegex(u.v.InvalidRelease,'canonical'):
             self.upload()
     def test_multiple_signers_rejected(self):
         with self.assertRaisesRegex(v.InvalidRelease,'exactly one'):
