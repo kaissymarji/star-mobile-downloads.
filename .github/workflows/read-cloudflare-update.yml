@@ -1,0 +1,36 @@
+name: Read-only Cloudflare public APK update feed check
+
+on:
+  push:
+    branches: [verify-cloudflare-live-102]
+    paths: ['.github/workflows/read-cloudflare-update.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read live public update API without modifying anything
+        run: |
+          set -euo pipefail
+          url='https://eeprom-membership.kaissymarji.workers.dev/v1/xp400/apk-update/manifest.json'
+          code=$(curl -sS --connect-timeout 10 --max-time 15 -o /tmp/feed.json -w '%{http_code}' "$url")
+          echo "Cloudflare APK feed HTTP status: $code"
+          echo "Cloudflare returned:"
+          cat /tmp/feed.json
+          echo
+          if [ "$code" != '200' ]; then
+            echo 'Cloudflare is not serving a successful update manifest.'
+            exit 0
+          fi
+          python3 - <<'PY'
+          import json
+          live=json.load(open('/tmp/feed.json'))
+          print('Cloudflare versionCode:',live.get('versionCode'))
+          print('Cloudflare versionName:',live.get('versionName'))
+          print('Cloudflare update target:',live.get('apkReleaseUrl'))
+          PY
