@@ -1,0 +1,44 @@
+name: Preflight CH341A 1.0.3 signed prerelease (never publish)
+
+on:
+  push:
+    branches: [xp400-ch341a-v1.0.3-release-candidate]
+    paths:
+      - 'apk/EEPROM-Studio.apk'
+      - 'apk/release-notes/v1.0.3.md'
+      - '.github/workflows/ch341a-103-public-preflight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-public-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: android-actions/setup-android@v4
+      - name: Install Android APK verification tools
+        run: sdkmanager 'build-tools;36.0.0' 'platform-tools'
+      - name: Check actual signed 1.0.3 APK before automated public release
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '13a81127c565bff793c606a6965abbb79c2a0957b44be5ae19371196f5f146e6  apk/EEPROM-Studio.apk' | sha256sum -c -
+          python3 .github/scripts/verify-uploaded-apk.py             --apk apk/EEPROM-Studio.apk             --build-tools "$ANDROID_HOME/build-tools/36.0.0"             --previous update.json             --output "$RUNNER_TEMP/verified-103.json"
+          python3 - <<'PY'
+          import json,os
+          v=json.load(open(os.environ['RUNNER_TEMP']+'/verified-103.json'))
+          assert v['tag']=='v1.0.3',v
+          assert v['versionCode']==103,v
+          assert v['sha256']=='13a81127c565bff793c606a6965abbb79c2a0957b44be5ae19371196f5f146e6',v
+          print('CH341A 1.0.3 signed release verified; key and upgrade identity match.')
+          PY
+          test -f apk/release-notes/v1.0.3.md
+          grep -Fq 'NOT VERIFIED ON PHYSICAL CH341A' apk/release-notes/v1.0.3.md
+          grep -Fq 'write, erase' apk/release-notes/v1.0.3.md
+      - name: Run public APK distribution rules
+        run: python3 -m unittest discover -v -s .github/scripts -p 'test_*.py'
+      - name: No release or update.json mutation in preflight
+        run: echo 'Private readiness check complete. No public release created.'
