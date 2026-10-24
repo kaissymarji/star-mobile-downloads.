@@ -1,0 +1,49 @@
+name: One-time import of exact production-signed EEPROM Studio 1.0.6
+
+on:
+  push:
+    branches: [xp400-import-signed-106-once]
+    paths: ['.github/workflows/import-signed-106-once.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  import-approved-apk:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SIGNED_ZIP_URL: 'https://sdmntprwestus3.oaiusercontent.com/files/00000000-d2e8-81fd-b5c3-6c537e762900/raw?se=2026-10-24T21%3A57%3A47Z&sp=r&sv=2026-02-06&sr=b&scid=38e5671d-b202-5aaa-af00-fe5a0169129a&skoid=fadb8e47-d3c7-4c79-a9c3-970d9af3b213&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-24T14%3A10%3A33Z&ske=2026-10-25T14%3A10%3A33Z&sks=b&skv=2026-02-06&sig=nmPFP5STN2/9n7swEbMItKrNKhQcMk%2B3aOFxjoDWtAY%3D'
+      EXPECTED_APK_SHA256: 'bf6389ba59ff050006af08c46a5860e73c34f924ed690b3ecbbe599fa60c6ae5'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Fetch one-time privately signed 1.0.6 APK archive before source link expires
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --location --retry 3 --max-time 75 \
+            -o "$RUNNER_TEMP/signed-106.zip" "$SIGNED_ZIP_URL"
+          unzip -t "$RUNNER_TEMP/signed-106.zip" >/dev/null
+          unzip -p "$RUNNER_TEMP/signed-106.zip" \
+            'EEPROM-Studio-1.0.6-CH341A-USB-RECOVERY.apk' \
+            > apk/EEPROM-Studio.apk
+          test "$(stat -c %s apk/EEPROM-Studio.apk)" -gt 1000000
+          echo "$EXPECTED_APK_SHA256  apk/EEPROM-Studio.apk" | sha256sum -c -
+          echo 'Verified exact private-signed v1.0.6 bytes.'
+      - name: Commit exact signed APK to release-watched path
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apk/release-notes/v1.0.6.md
+          git add apk/EEPROM-Studio.apk
+          git diff --cached --quiet && { echo 'APK was not changed'; exit 1; }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Upload verified signed EEPROM Studio 1.0.6 CH341A USB recovery APK'
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo 'Triggered existing signature/version-verified automatic-release workflow.'
