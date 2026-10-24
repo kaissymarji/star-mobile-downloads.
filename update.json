@@ -1,12 +1,12 @@
 {
   "schema": 1,
   "packageName": "com.starmobileservice.xp400studio",
-  "versionCode": 101,
-  "versionName": "1.0.1",
+  "versionCode": 102,
+  "versionName": "1.0.2",
   "minSupportedVersionCode": 0,
-  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.1/EEPROM-Studio-1.0.1.apk",
-  "apkSha256": "dad262903b0fa457dace16c1f43b35c1c8a9b6687b7d11e6c04fb7be460448bf",
-  "apkBytes": 1159938,
+  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.2/EEPROM-Studio.apk",
+  "apkSha256": "fd347d6c9d0a4045e2a6c419da72c958fd8238ff1ba7e46319f3265b70f4488f",
+  "apkBytes": 1164034,
   "signingCertSha256": "e577cb4bb5462535f95a95152dc4e5d3ffd00c261ddeb3408ef4453ce80e4875",
-  "notes": "EEPROM Studio 1.0.1: verified in-place update, signed with the permanent app certificate."
+  "notes": "Official EEPROM Studio signed APK update."
 }
