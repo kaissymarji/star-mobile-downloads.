@@ -1,12 +1,12 @@
 {
   "schema": 1,
   "packageName": "com.starmobileservice.xp400studio",
-  "versionCode": 106,
-  "versionName": "1.0.6",
+  "versionCode": 123,
+  "versionName": "1.0.23",
   "minSupportedVersionCode": 0,
-  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.6/EEPROM-Studio.apk",
-  "apkSha256": "bf6389ba59ff050006af08c46a5860e73c34f924ed690b3ecbbe599fa60c6ae5",
-  "apkBytes": 1192762,
+  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.23/EEPROM-Studio.apk",
+  "apkSha256": "e5d3b4353d6042ffb5ca776355cc3a397a4d0b590dc90f97ab039d4280c67ed4",
+  "apkBytes": 1250130,
   "signingCertSha256": "e577cb4bb5462535f95a95152dc4e5d3ffd00c261ddeb3408ef4453ce80e4875",
-  "notes": "# EEPROM Studio 1.0.6 \u2014 CH341A USB detection recovery (experimental beta) This signed update addresses CH341A USB reconnection and detection errors seen in version 1.0.5. It preserves the existing XP400 drivers and the CH341A SPI/I2C memory reader. - Scans the Android USB device list again after launch and while the app is in the foreground. - Repo"
+  "notes": "EEPROM Studio 1.0.23 adds **experimental CH341A EEPROM write support** for selected M95xx SPI and standard 24Cxx I2C chips. **IMPORTANT: CH341A physical writing has NOT been verified on real hardware.** Use expendable chips only. Some CH341A boards can output unsafe voltages; verify actual adapter voltage, WP/HOLD wiring and chip datasheet before w"
 }
