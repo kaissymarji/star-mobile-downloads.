@@ -13,6 +13,7 @@ jobs:
           ref: main
           persist-credentials: true
       - uses: android-actions/setup-android@v4
+      - run: sdkmanager 'build-tools;36.0.0'
       - name: Download published APK
         env:
           GH_TOKEN: ${{ github.token }}
@@ -32,14 +33,15 @@ jobs:
           import json,os,re,subprocess,hashlib,pathlib
           apk=pathlib.Path('release-apk/EEPROM-Studio.apk')
           old=json.loads(pathlib.Path('update.json').read_text())
-          aapt=subprocess.check_output(['aapt','dump','badging',str(apk)],text=True)
+          tools=pathlib.Path(os.environ['ANDROID_HOME'])/'build-tools'/'36.0.0'
+          aapt=subprocess.check_output([str(tools/'aapt'),'dump','badging',str(apk)],text=True)
           m=re.search(r"^package: name='([^']+)' versionCode='(\d+)' versionName='([^']+)'",aapt,re.M)
           if not m:raise SystemExit('Cannot read APK package/version')
           package,code,name=m.group(1),int(m.group(2)),m.group(3)
           if package!=old['packageName']:raise SystemExit('APK package differs from existing update channel')
           if code<=old['versionCode']:raise SystemExit('Version code must increase')
           if os.environ['TAG']!='v'+name:raise SystemExit('Release tag must be v'+name)
-          signer=subprocess.check_output(['apksigner','verify','--print-certs',str(apk)],text=True)
+          signer=subprocess.check_output([str(tools/'apksigner'),'verify','--print-certs',str(apk)],text=True)
           m=re.search(r"Signer #1 certificate SHA-256 digest: ([a-fA-F0-9]{64})",signer)
           if not m:raise SystemExit('Cannot verify APK signer')
           cert=m.group(1).lower()
