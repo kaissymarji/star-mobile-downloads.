@@ -1,12 +1,12 @@
 {
   "schema": 1,
   "packageName": "com.starmobileservice.xp400studio",
-  "versionCode": 124,
-  "versionName": "1.0.24",
+  "versionCode": 125,
+  "versionName": "1.0.25",
   "minSupportedVersionCode": 0,
-  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.24/EEPROM-Studio.apk",
-  "apkSha256": "b95feefe133a8bd9c383d071fd694a06d5289c9cdecb27a7767167c038a0683d",
+  "apkReleaseUrl": "https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.25/EEPROM-Studio.apk",
+  "apkSha256": "55c3b3c8ec8002488e416e84e1a058974fd8ca941c00f0c91207e9a330a8552c",
   "apkBytes": 1254226,
   "signingCertSha256": "e577cb4bb5462535f95a95152dc4e5d3ffd00c261ddeb3408ef4453ce80e4875",
-  "notes": "EEPROM Studio 1.0.24 fixes automatic update checking. Manual and scheduled checks now use a unique cache-busting URL and no-cache headers, and manual checks display the installed version plus the exact version returned by GitHub. No changes to XP400, CAS3, Stripe Save requirements, or CH341A write implementation. **CH341A EEPROM writing remains exp"
+  "notes": "EEPROM Studio 1.0.25 adds a **Download APKs \u00b7 All versions** button. Tap it to open the official GitHub Releases directory for current and previous EEPROM Studio versions. Existing automatic update detection remains enabled. XP400, CAS3, CH341A and Stripe Save behavior are unchanged. **CH341A EEPROM writing remains an experimental, physically unver"
 }
