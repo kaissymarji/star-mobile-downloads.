@@ -223,7 +223,7 @@ footer {
       </p>
 
       <a class="button"
-         href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/v0.3.1-beta/xp400.apk">
+         href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/v0.3.1-beta/Xp400.apk">
         Download APK
       </a>
 
@@ -235,28 +235,30 @@ footer {
     </article>
 
     <article class="card">
-      <div class="version">COMING SOON</div>
+      <div class="version" id="eeprom-version">v1.0.1 &bull; Android 9+</div>
 
       <h2>EEPROM Studio</h2>
 
       <p>
-        Advanced automotive EEPROM and ECU
-        file utilities.
+        Mobile XP400 EEPROM bench tools, including
+        experimental reading and writing for supported chips.
       </p>
 
       <p>
-        Planned tools include memory dump comparison,
-        checksum utilities, file editing and
-        automotive electronics workflows.
+        The latest permanently signed APK is available below.
+        Back up your data and test experimental MCU operations
+        on unsecured spare components first.
       </p>
 
       <p>
         Premium tools may require an active membership.
       </p>
 
-      <span class="button disabled">
-        Release Pending
-      </span>
+      <a id="eeprom-download" class="button"
+         href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/v1.0.1/EEPROM-Studio-1.0.1.apk">
+        Download Latest Signed APK
+      </a>
+      <p><small id="eeprom-release-note">Latest verified official GitHub Release.</small></p>
     </article>
 
   </div>
@@ -376,6 +378,34 @@ footer {
 <script>
 document.getElementById("year").textContent =
   new Date().getFullYear();
+
+// Once GitHub Actions verifies a newly uploaded APK, it updates this manifest.
+// The homepage uses the same verified version, without manual HTML edits.
+(async function updateEepromDownloadCard() {
+  try {
+    const response = await fetch('./update.json', {cache:'no-store'});
+    if (!response.ok) return;
+    const info = await response.json();
+    if (info.schema !== 1 ||
+        info.packageName !== 'com.starmobileservice.xp400studio' ||
+        info.signingCertSha256 !== 'e577cb4bb5462535f95a95152dc4e5d3ffd00c261ddeb3408ef4453ce80e4875' ||
+        !Number.isSafeInteger(info.versionCode) || info.versionCode < 101 ||
+        typeof info.versionName !== 'string' ||
+        !/^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(info.versionName) ||
+        typeof info.apkSha256 !== 'string' || !/^[0-9a-f]{64}$/.test(info.apkSha256) ||
+        typeof info.apkReleaseUrl !== 'string') return;
+    const base = 'https://github.com/kaissymarji/star-mobile-downloads./releases/download/v' + info.versionName + '/';
+    if (![base+'EEPROM-Studio.apk', base+'EEPROM-Studio-'+info.versionName+'.apk'].includes(info.apkReleaseUrl)) return;
+    const version = document.getElementById('eeprom-version');
+    const button = document.getElementById('eeprom-download');
+    if (version && button) {
+      version.textContent = 'v' + info.versionName + ' • Android 9+';
+      button.href = info.apkReleaseUrl;
+    }
+  } catch (_) {
+    // Use the last verified fallback link if offline or GitHub Pages is delayed.
+  }
+})();
 </script>
 
 </body>
