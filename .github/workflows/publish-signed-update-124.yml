@@ -1,0 +1,95 @@
+name: Publish verified EEPROM Studio 1.0.24 update-check fix from signed artifact
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apk/publish-request-v1.0.24.json'
+permissions:
+  contents: write
+concurrency:
+  group: xp400-verified-manifest
+  cancel-in-progress: false
+jobs:
+  signed-import:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: android-actions/setup-android@v4
+      - run: sdkmanager 'build-tools;36.0.0' 'platform-tools'
+      - name: Obtain exact signed private build artifact and reject any unexpected bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/release123"
+          python3 - <<'PY'
+          import json,urllib.parse,os
+          j=json.load(open('apk/publish-request-v1.0.24.json'))
+          u=urllib.parse.urlsplit(j['artifactZipUrl'])
+          assert u.scheme=='https' and u.hostname=='sdmntprwestus3.oaiusercontent.com'
+          assert u.path.endswith('/raw')
+          assert j['tag']=='v1.0.24'
+          assert j['apkSha256']=='b95feefe133a8bd9c383d071fd694a06d5289c9cdecb27a7767167c038a0683d'
+          with open(os.environ['RUNNER_TEMP']+'/release123/source-url','w') as f:f.write(j['artifactZipUrl'])
+          PY
+          curl -fsSL --retry 2 --connect-timeout 10 --max-time 80 -o "$RUNNER_TEMP/release123/asset.zip" "$(cat "$RUNNER_TEMP/release123/source-url")"
+          test $(stat -c %s "$RUNNER_TEMP/release123/asset.zip") -le 6000000
+          unzip -p "$RUNNER_TEMP/release123/asset.zip" EEPROM-Studio.apk > "$RUNNER_TEMP/release123/EEPROM-Studio.apk"
+          echo 'b95feefe133a8bd9c383d071fd694a06d5289c9cdecb27a7767167c038a0683d  '"$RUNNER_TEMP/release123/EEPROM-Studio.apk" | sha256sum -c -
+      - name: Verify package, permanent signing certificate, version and update channel
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/verify-uploaded-apk.py --apk "$RUNNER_TEMP/release123/EEPROM-Studio.apk" --build-tools "$ANDROID_HOME/build-tools/36.0.0" --previous update.json --output "$RUNNER_TEMP/release123/verified.json"
+          python3 - <<'PY'
+          import json,os
+          x=json.load(open(os.environ['RUNNER_TEMP']+'/release123/verified.json'))
+          assert x['versionCode']==124 and x['tag']=='v1.0.24'
+          assert x['sha256']=='b95feefe133a8bd9c383d071fd694a06d5289c9cdecb27a7767167c038a0683d'
+          PY
+      - name: Publish user-requested signed prerelease and explicit hardware warning
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/release123/notes.md" <<'EOF'
+          EEPROM Studio 1.0.24 fixes automatic update checking. Manual and scheduled checks now use a unique cache-busting URL and no-cache headers, and manual checks display the installed version plus the exact version returned by GitHub.
+          
+          No changes to XP400, CAS3, Stripe Save requirements, or CH341A write implementation.
+          
+          **CH341A EEPROM writing remains experimental and physically unverified.** Test only on expendable chips with verified voltage and safe wiring.
+          EOF
+          if gh release view v1.0.24 -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release download v1.0.24 -R "$GITHUB_REPOSITORY" --pattern EEPROM-Studio.apk --dir "$RUNNER_TEMP/release123/existing"
+            cmp "$RUNNER_TEMP/release123/existing/EEPROM-Studio.apk" "$RUNNER_TEMP/release123/EEPROM-Studio.apk"
+          else
+            gh release create v1.0.24 "$RUNNER_TEMP/release123/EEPROM-Studio.apk#EEPROM-Studio.apk" -R "$GITHUB_REPOSITORY" --target main --title 'EEPROM Studio 1.0.24 — Updater Cache Fix' --notes-file "$RUNNER_TEMP/release123/notes.md" --prerelease
+          fi
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/v1.0.24" > "$RUNNER_TEMP/release123/release.json"
+      - name: Verify exact published asset digest and update older app feed
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/verify-apk-release.py --release "$RUNNER_TEMP/release123/release.json" --apk "$RUNNER_TEMP/release123/EEPROM-Studio.apk" --build-tools "$ANDROID_HOME/build-tools/36.0.0" --previous update.json --output update.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('update.json'))
+          assert d['versionCode']==124 and d['versionName']=='1.0.24'
+          assert d['apkSha256']=='b95feefe133a8bd9c383d071fd694a06d5289c9cdecb27a7767167c038a0683d'
+          PY
+      - name: Commit verified update.json so EEPROM Studio 1.0.22 detects new version
+        run: |
+          set -euo pipefail
+          git add update.json
+          if git diff --cached --quiet; then
+            echo 'Manifest already current'
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Publish verified EEPROM Studio 1.0.24 experimental update [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
