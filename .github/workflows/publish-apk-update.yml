@@ -1,0 +1,65 @@
+name: Publish APK update manifest
+on:
+  release:
+    types: [published]
+permissions:
+  contents: write
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: android-actions/setup-android@v4
+      - name: Download published APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          mkdir -p release-apk
+          gh release download "$TAG" --pattern 'EEPROM-Studio.apk' --dir release-apk
+          test -s release-apk/EEPROM-Studio.apk
+      - name: Validate signer, package, version and create update.json
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          NOTES: ${{ github.event.release.body }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os,re,subprocess,hashlib,pathlib
+          apk=pathlib.Path('release-apk/EEPROM-Studio.apk')
+          old=json.loads(pathlib.Path('update.json').read_text())
+          aapt=subprocess.check_output(['aapt','dump','badging',str(apk)],text=True)
+          m=re.search(r"^package: name='([^']+)' versionCode='(\d+)' versionName='([^']+)'",aapt,re.M)
+          if not m:raise SystemExit('Cannot read APK package/version')
+          package,code,name=m.group(1),int(m.group(2)),m.group(3)
+          if package!=old['packageName']:raise SystemExit('APK package differs from existing update channel')
+          if code<=old['versionCode']:raise SystemExit('Version code must increase')
+          if os.environ['TAG']!='v'+name:raise SystemExit('Release tag must be v'+name)
+          signer=subprocess.check_output(['apksigner','verify','--print-certs',str(apk)],text=True)
+          m=re.search(r"Signer #1 certificate SHA-256 digest: ([a-fA-F0-9]{64})",signer)
+          if not m:raise SystemExit('Cannot verify APK signer')
+          cert=m.group(1).lower()
+          if cert!=old['signingCertSha256'].lower():raise SystemExit('APK signing identity changed: in-place updates impossible')
+          data={
+            'schema':1,'packageName':package,'versionCode':code,'versionName':name,
+            'minSupportedVersionCode':old.get('minSupportedVersionCode',0),
+            'apkReleaseUrl':f"https://github.com/kaissymarji/star-mobile-downloads./releases/download/{os.environ['TAG']}/EEPROM-Studio.apk",
+            'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),
+            'apkBytes':apk.stat().st_size,'signingCertSha256':cert,
+            'notes':os.environ.get('NOTES','').strip()[:500]
+          }
+          pathlib.Path('update.json').write_text(json.dumps(data,indent=2)+'\n')
+          print('Validated signed APK and update manifest for',name)
+          PY
+      - name: Commit update feed
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add update.json
+          git commit -m "Publish verified EEPROM Studio update ${{ github.event.release.tag_name }}"
+          git push origin HEAD:main
