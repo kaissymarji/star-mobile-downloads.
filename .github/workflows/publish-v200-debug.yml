@@ -1,0 +1,47 @@
+name: Publish V200 Diagnostic 1.1.11 test APK as a counted release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-v200-debug.yml'
+      - 'apk/v200_diag_1.1.11_debug.apk'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out public download repository
+        uses: actions/checkout@v4
+      - name: Verify exact uploaded V200 test build
+        run: |
+          set -euo pipefail
+          test -s apk/v200_diag_1.1.11_debug.apk
+          echo 'cf79f02fbc2505abd3615a72c2eaf0efe51f80347f3521e01d7fd16811f7fda5  apk/v200_diag_1.1.11_debug.apk' | sha256sum -c -
+      - name: Publish to GitHub Releases for download counters
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG='v200-diag-1.1.11'
+          APK='apk/v200_diag_1.1.11_debug.apk'
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release already exists; preserving existing download counts."
+            gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep -Fxq 'v200_diag_1.1.11_debug.apk' || {
+              echo "::error::Release exists without APK. Upload or edit it in the GitHub Releases UI."
+              exit 1
+            }
+          else
+            gh release create "$TAG" "$APK#v200_diag_1.1.11_debug.apk" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target main \
+              --title 'V200 Diagnostic v1.1.11 (Android test build)' \
+              --notes 'V200 Diagnostic for Android. Experimental debug APK, 304519 bytes, SHA-256 cf79f02fbc2505abd3615a72c2eaf0efe51f80347f3521e01d7fd16811f7fda5. Vehicle compatibility, ECU routines, topology and Bluetooth are under development and are not all physically validated. Download this GitHub Release asset to be included in the official GitHub download counter.' \
+              --prerelease
+          fi
