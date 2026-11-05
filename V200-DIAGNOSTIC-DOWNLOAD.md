@@ -14,7 +14,7 @@ This Android diagnostic workbench is under development for use with the Autel Ma
 
 [**Pay $5 securely with Stripe**](https://buy.stripe.com/9B600j4NB6e4aQZ9k76g801)
 
-Download the app first, then complete payment. Keep your Stripe receipt. The developer will provide the activation PIN only after verifying a completed payment. Automatic PIN delivery from Stripe has not yet been configured; this public download page does not contain the code.
+Download the app first, then complete payment. Keep your Stripe receipt. Send your Stripe receipt privately to the developer through the channel where you obtained this app link. The developer will provide the PIN only after checking payment in Stripe. Automatic delivery has not yet been configured; this public download page does not contain the code.
 
 ### Install
 
