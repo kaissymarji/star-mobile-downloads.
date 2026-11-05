@@ -1,5 +1,16 @@
 # Star Mobile Service Downloads — GitHub Pages starter
 
+## V200 Diagnostic 1.1.11 (Android debug test APK)
+
+**[Download V200 Diagnostic v1.1.11 APK](https://raw.githubusercontent.com/kaissymarji/star-mobile-downloads./main/apk/v200_diag_1.1.11_debug.apk)**
+
+This is an experimental/debug build for development and testing with the Autel MaxiVCI V200. Not every feature or vehicle has been verified. This is a downloadable APK, not application source code.
+
+SHA-256: `cf79f02fbc2505abd3615a72c2eaf0efe51f80347f3521e01d7fd16811f7fda5`
+
+[Dedicated GitHub download page](V200-DIAGNOSTIC-DOWNLOAD.md)
+
+
 This repository is for **public distribution only**. Keep source code, secret keys, customer files, unverified chip algorithms, and private test dumps in private repositories.
 
 ## Publish the page
