@@ -10,6 +10,12 @@ SHA-256: `cf79f02fbc2505abd3615a72c2eaf0efe51f80347f3521e01d7fd16811f7fda5`
 
 This Android diagnostic workbench is under development for use with the Autel MaxiVCI V200 interface. Vehicle support, Bluetooth features, ECU routines, topology, and active tests vary and have not all been physically verified. Use it for testing, not safety-critical work.
 
+### Activate V200 Diagnostic — $5
+
+[**Pay $5 securely with Stripe**](https://buy.stripe.com/9B600j4NB6e4aQZ9k76g801)
+
+Download the app first, then complete payment. Keep your Stripe receipt. The developer will provide the activation PIN only after verifying a completed payment. Automatic PIN delivery from Stripe has not yet been configured; this public download page does not contain the code.
+
 ### Install
 
 On your Android phone, tap the Download link, then open the APK and approve installation from the source you trust if Android requests it. This is signed as a **debug build**, so it may not install over an existing release-signed version.
