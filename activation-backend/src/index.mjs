@@ -4,6 +4,8 @@
  * Stripe webhook signing secrets, Stripe API credentials or license HMAC keys.
  * A checkout redirect or claimed payment screenshot NEVER grants entitlements.
  */
+import {deviceHash,validDeviceId,safeTrialDecision} from './trial.mjs';
+import {guestTrialRoute} from './guest-trial.mjs';
 const enc=new TextEncoder();
 const jsonHeaders={'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'};
 const PAYMENT_CENTS=500, CURRENCY='usd';
@@ -198,10 +200,32 @@ export async function handle(request,env,fetcher=fetch){
     return new Response(null,{status:204,headers:{'Access-Control-Allow-Origin':origin,'Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type','Access-Control-Max-Age':'600','Vary':'Origin'}});
   }
   try{
-    if(url.pathname==='/health'&&request.method==='GET')return reply({ok:true,service:'v200-tech',configured:!!(env.SUPABASE_URL&&env.STRIPE_WEBHOOK_SECRET)},200,origin);
+    if(url.pathname==='/health'&&request.method==='GET')return reply({ok:true,service:'v200-tech',configured:!!(env.SUPABASE_URL&&env.STRIPE_WEBHOOK_SECRET),guestTrialApi:true,guestTrialVersion:'1'},200,origin);
     if(url.pathname==='/api/stripe/webhook'&&request.method==='POST')return reply(await stripeWebhook(request,env,fetcher),200,'');
     // Browser requests from unknown Origin are rejected; curl/mobile clients still require JWT.
     if(request.headers.has('Origin')&&!origin)throw httpError(403,'Origin not permitted');
+    // V200 guest Auto Scan is checked server-side; the first successful scan
+    // starts a reserved trial, while subsequent Auto Scans require paid status.
+    // Only service-role RPCs can read or change trial state.
+    if(['/api/trial/authorize','/api/trial/start','/api/trial/end'].includes(url.pathname)&&request.method==='POST'){
+      const user=await authenticate(request,env,fetcher);
+      const input=await parseJson(request,1024);
+      if(!validDeviceId(input.deviceId))throw httpError(400,'Invalid device ID');
+      required(env,['ACTIVATION_HMAC_KEY']);
+      const hash=await deviceHash(env.ACTIVATION_HMAC_KEY,input.deviceId);
+      if(await findPaid(env,userId(user),fetcher))return reply({permitted:true,mode:'paid',active:true},200,origin);
+      const rpc=url.pathname==='/api/trial/authorize'?'v200_trial_authorize':
+        url.pathname==='/api/trial/start'?'v200_trial_start':'v200_trial_finish';
+      const raw=await adminRest(env,'POST','rpc/'+rpc,{p_hash:hash,p_owner:user.id},{},fetcher);
+      const decision=safeTrialDecision(raw);
+      if(url.pathname==='/api/trial/authorize')return reply({permitted:decision.permitted===true,mode:decision.permitted?'trial':'none',state:decision.state},200,origin);
+      if(url.pathname==='/api/trial/start')return reply({started:decision.started===true,state:decision.state},200,origin);
+      return reply({finished:decision.finished===true,state:decision.state},200,origin);
+    }
+    if(url.pathname.startsWith('/api/trial/guest/')){
+      return guestTrialRoute(request,env,{authenticate,adminRest,reply,parseJson,fetcher,findPaid,required,httpError,
+        deviceHash,validDeviceId,safeTrialDecision,origin});
+    }
     if(url.pathname==='/api/checkout/start'&&request.method==='POST'){
       required(env,['STRIPE_PAYMENT_LINK_ID','STRIPE_PAYMENT_LINK_URL']);
       const user=await authenticate(request,env,fetcher);userId(user);
