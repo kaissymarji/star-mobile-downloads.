@@ -3,6 +3,11 @@ name: Deploy V200 payment verification and unique activation codes
 on:
   workflow_dispatch:
     inputs:
+      bootstrap_only:
+        description: 'First deploy: create Worker URL only, with payment and PIN issuance disabled'
+        required: true
+        type: boolean
+        default: true
       worker_url:
         description: 'Verified workers.dev URL (optional; use after first deployment to update website config)'
         required: false
@@ -12,8 +17,30 @@ permissions:
   contents: write
 
 jobs:
+  bootstrap:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/main' && inputs.bootstrap_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy locked-down Worker bootstrap (no activation or payment logic)
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: activation-backend
+          wranglerVersion: '4'
+          command: deploy --config wrangler.bootstrap.toml
+      - name: Next steps
+        run: |
+          echo 'Bootstrap deployed. Read the actual HTTPS workers.dev URL in the deploy output.'
+          echo 'At that URL, /health must return bootstrap=true and configured=false.'
+          echo 'Do NOT connect the website for payment or charge customers yet.'
+          echo 'Create the Stripe webhook using the real deployed URL plus /api/stripe/webhook.'
+          echo 'Then store STRIPE_WEBHOOK_SECRET and rerun with bootstrap_only UNCHECKED.'
+
   deploy:
-    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/main'
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/main' && inputs.bootstrap_only == false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
