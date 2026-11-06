@@ -223,7 +223,7 @@ export async function handle(request,env,fetcher=fetch){
       return reply({finished:decision.finished===true,state:decision.state},200,origin);
     }
     if(url.pathname.startsWith('/api/trial/guest/')){
-      return guestTrialRoute(request,env,{authenticate,adminRest,reply,parseJson,fetcher,findPaid,required,httpError,
+      return await guestTrialRoute(request,env,{authenticate,adminRest,reply,parseJson,fetcher,findPaid,required,httpError,
         deviceHash,validDeviceId,safeTrialDecision,origin});
     }
     if(url.pathname==='/api/checkout/start'&&request.method==='POST'){
