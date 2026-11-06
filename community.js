@@ -8,7 +8,9 @@
   const $ = id => document.getElementById(id);
   const safe = text => String(text ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const isUuid = value => /^[a-f0-9]{8}-[a-f0-9-]{27,}$/i.test(String(value || ''));
-  const configured = /^https:\/\/[a-z0-9.-]+\.supabase\.co\/?$/i.test(cfg.supabaseUrl || '') && /^(sb_publishable_|eyJ)/.test(cfg.supabasePublishableKey || '') && /^https:\/\//.test(cfg.activationWorkerUrl || '') && !!window.supabase?.createClient;
+  // The technician community depends on Supabase, not on the optional payment Worker.
+  const configured = /^https:\/\/[a-z0-9.-]+\.supabase\.co\/?$/i.test(cfg.supabaseUrl || '') && /^(sb_publishable_|eyJ)/.test(cfg.supabasePublishableKey || '') && !!window.supabase?.createClient;
+  const workerConfigured = /^https:\/\//.test(cfg.activationWorkerUrl || '');
   const allowedTypes = new Map([['png','image/png'],['jpg','image/jpeg'],['jpeg','image/jpeg'],['webp','image/webp'],['pdf','application/pdf'],['txt','text/plain'],['log','text/plain'],['csv','text/csv'],['json','application/json']]);
   const categories = ['General','BMW / MINI','Mercedes-Benz','VW / Audi','Ford / Lincoln','Toyota / Lexus','Nissan / Infiniti','EEPROM / ECU','OBD / Diagnostics'];
   const client = configured ? window.supabase.createClient(cfg.supabaseUrl.replace(/\/$/,''),cfg.supabasePublishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}) : null;
@@ -32,11 +34,15 @@
     history.replaceState(null,'','#'+(name==='discussions'?'community':name));
     if(name==='discussions')loadPosts().catch(e=>fail(e,'Discussions'));
     if(name==='chat')loadChat().catch(e=>fail(e,'Chat'));
-    if(name==='account')refreshEntitlement().catch(e=>fail(e,'Activation status'));
+    if(name==='account' && me){
+      if(workerConfigured)refreshEntitlement().catch(e=>fail(e,'Activation status'));
+      else $('activationStatus').textContent='Paid activation is not configured yet. Technician login and chat remain available.';
+    }
     if(name==='admin')loadAdmin().catch(e=>fail(e,'Admin'));
   }
   async function callWorker(route,options={}){
-    if(!client)throw Error('Online services have not been configured.');
+    if(!client)throw Error('Supabase is not connected. Check the public project URL and publishable key.');
+    if(!workerConfigured)throw Error('Paid activation is not yet connected. Technician login and chat work without Cloudflare.');
     const {data:{session}}=await client.auth.getSession();
     if(!session?.access_token)throw Error('Sign in to your technician account first.');
     const url=cfg.activationWorkerUrl.replace(/\/$/,'')+route;
@@ -89,13 +95,13 @@
       if(heartbeatTimer){clearInterval(heartbeatTimer);heartbeatTimer=null;}
       $('presence').classList.remove('live');$('presence').lastElementChild.textContent='Offline';
       $('communityOnline').textContent='—';$('adminTab').hidden=true;
-      $('activationStatus').textContent='Sign in to check your payment.';
+      $('activationStatus').textContent=workerConfigured?'Sign in to check your payment.':'Paid activation is not configured yet; chat and accounts remain available.';
     }
     if(selectedTab==='admin'&&!me)showTab('account');
     else if(selectedTab==='discussions')await loadPosts();
     else if(selectedTab==='chat')await loadChat();
   }
-  async function heartbeat(){if(!me)return;try{await callWorker('/api/activity',{method:'POST',body:{source:'community'}});}catch(e){console.warn('Activity metrics unavailable',e);}}
+  async function heartbeat(){if(!me||!workerConfigured)return;try{await callWorker('/api/activity',{method:'POST',body:{source:'community'}});}catch(e){console.warn('Activity metrics unavailable',e);}}
   async function joinRealtime(){
     if(!me)return;
     if(chatChannel){await client.removeChannel(chatChannel);chatChannel=null;}
@@ -331,6 +337,11 @@
     const hash=location.hash.replace('#','');selectedTab=hash==='account'?'account':hash==='chat'?'chat':hash==='admin'?'admin':'discussions';
     if(!configured){show('unconfigured',true);show('authArea',false);$('postList').textContent='Online services are not configured. The scanner continues working offline.';showTab('discussions');return;}
     $('unconfigured').hidden=true;
+    if(!workerConfigured){
+      show('payButton',false);show('refreshLicense',false);show('showLicense',false);
+      const claim=$('claimForm');if(claim)claim.hidden=true;
+      $('activationStatus').textContent='Paid activation is not configured yet. Technician login and chat remain available.';
+    }
     try{await loadCategories();}catch(e){fail(e,'Categories');}
     client.auth.onAuthStateChange((event,session)=>{
       if(event==='PASSWORD_RECOVERY'){show('recoveryForm',true);showTab('account');}
