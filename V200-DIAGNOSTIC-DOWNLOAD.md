@@ -12,7 +12,7 @@ This Android diagnostic workbench is under development for use with the Autel Ma
 
 ### Activate V200 Diagnostic — $5
 
-[**Pay $5 securely with Stripe**](https://buy.stripe.com/9B600j4NB6e4aQZ9k76g801)
+[**Open Technician Account / Activation**](community.html#account)
 
 Download the app first, then complete payment. Keep your Stripe receipt. Send your Stripe receipt privately to the developer through the channel where you obtained this app link. The developer will provide the PIN only after checking payment in Stripe. Automatic delivery has not yet been configured; this public download page does not contain the code.
 
