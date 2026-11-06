@@ -8,8 +8,13 @@ on:
         required: true
         type: boolean
         default: true
+      connect_public_site:
+        description: 'Enable customer payment checkout on public website ONLY after successful payment and PIN tests'
+        required: true
+        type: boolean
+        default: false
       worker_url:
-        description: 'Verified workers.dev URL (optional; use after first deployment to update website config)'
+        description: 'Verified workers.dev URL (optional; used to connect public website after tests)'
         required: false
         type: string
 
@@ -108,6 +113,7 @@ jobs:
           ACTIVATION_HMAC_KEY: ${{ secrets.ACTIVATION_HMAC_KEY }}
           ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
       - name: Validate deployed URL and configure public website
+        if: inputs.connect_public_site == true
         env:
           WORKER_URL: ${{ inputs.worker_url || steps.deploy.outputs.deployment-url }}
         shell: bash
