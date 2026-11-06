@@ -1,0 +1,129 @@
+name: Deploy V200 payment verification and unique activation codes
+
+on:
+  workflow_dispatch:
+    inputs:
+      worker_url:
+        description: 'Verified workers.dev URL (optional; use after first deployment to update website config)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate required GitHub Actions secrets without printing them
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          STRIPE_PAYMENT_LINK_URL: ${{ secrets.STRIPE_PAYMENT_LINK_URL }}
+          STRIPE_PAYMENT_LINK_ID: ${{ secrets.STRIPE_PAYMENT_LINK_ID }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          ACTIVATION_HMAC_KEY: ${{ secrets.ACTIVATION_HMAC_KEY }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for key in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID SUPABASE_URL SUPABASE_PUBLISHABLE_KEY SUPABASE_SECRET_KEY STRIPE_PAYMENT_LINK_URL STRIPE_PAYMENT_LINK_ID STRIPE_WEBHOOK_SECRET STRIPE_SECRET_KEY ACTIVATION_HMAC_KEY ALLOWED_ORIGINS; do
+            if [ -z "${!key:-}" ]; then
+              echo "Missing configured repository secret: $key"
+              exit 1
+            fi
+          done
+          [[ "$SUPABASE_URL" == https://*.supabase.co ]] || { echo 'Invalid Supabase URL'; exit 1; }
+          [[ "$STRIPE_PAYMENT_LINK_URL" == https://buy.stripe.com/* ]] || { echo 'Invalid Stripe Payment Link URL'; exit 1; }
+          [[ "$STRIPE_PAYMENT_LINK_ID" == plink_* ]] || { echo 'Missing Stripe internal plink_ ID'; exit 1; }
+          [ "${#ACTIVATION_HMAC_KEY}" -ge 32 ] || { echo 'Activation signing key must have at least 32 characters'; exit 1; }
+          echo 'Required repository secret names have values; values were not printed.'
+      - name: Run backend tests
+        working-directory: activation-backend
+        run: npm test
+      - name: Deploy Worker and securely upload runtime secrets
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: activation-backend
+          wranglerVersion: '4'
+          command: deploy
+          secrets: |
+            SUPABASE_URL
+            SUPABASE_PUBLISHABLE_KEY
+            SUPABASE_SECRET_KEY
+            STRIPE_PAYMENT_LINK_URL
+            STRIPE_PAYMENT_LINK_ID
+            STRIPE_WEBHOOK_SECRET
+            STRIPE_SECRET_KEY
+            ACTIVATION_HMAC_KEY
+            ALLOWED_ORIGINS
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+          STRIPE_PAYMENT_LINK_URL: ${{ secrets.STRIPE_PAYMENT_LINK_URL }}
+          STRIPE_PAYMENT_LINK_ID: ${{ secrets.STRIPE_PAYMENT_LINK_ID }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          ACTIVATION_HMAC_KEY: ${{ secrets.ACTIVATION_HMAC_KEY }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+      - name: Validate deployed URL and configure public website
+        env:
+          WORKER_URL: ${{ inputs.worker_url || steps.deploy.outputs.deployment-url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$WORKER_URL" ]; then
+            echo 'Deployment finished. Add the resulting workers.dev URL on the next manual run to update the community website.'
+            exit 0
+          fi
+          export WORKER_URL
+          python3 - <<'PYSET'
+          from pathlib import Path
+          import os, urllib.parse
+          raw=os.environ['WORKER_URL'].rstrip('/')
+          u=urllib.parse.urlsplit(raw)
+          if u.scheme!='https' or not u.hostname or u.username or u.password or u.query or u.fragment or u.path not in ('','/'):
+              raise SystemExit('Invalid Worker URL. Supply the public https://...workers.dev origin only.')
+          if not (u.hostname.endswith('.workers.dev') or u.hostname=='api.carkeyecu.com'):
+              raise SystemExit('Worker URL must use a workers.dev subdomain or verified api.carkeyecu.com.')
+          p=Path('community-config.js')
+          content=p.read_text(encoding='utf-8')
+          import re
+          pattern=r'(activationWorkerUrl:\s*)["\'][^"\']*["\']'
+          updated,count=re.subn(pattern,lambda m:m.group(1)+'"'+raw+'"',content,count=1)
+          if count != 1: raise SystemExit('Activation configuration entry not found; website unchanged.')
+          p.write_text(updated,encoding='utf-8')
+          Path('/tmp/v200_worker_url').write_text(raw,encoding='utf-8')
+          PYSET
+          echo "Checking Worker health (not a payment test)..."
+          curl -fSL --retry 2 --max-time 25 "$(cat /tmp/v200_worker_url)/health" >/tmp/v200_worker_health.json
+          python3 - <<'PYHEALTH'
+          import json
+          r=json.load(open('/tmp/v200_worker_health.json'))
+          if not r.get('ok') or not r.get('configured'): raise SystemExit('Worker health did not confirm required configuration. Website change canceled.')
+          print('Worker responded to /health. Full Stripe/webhook validation still required.')
+          PYHEALTH
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add community-config.js
+          if git diff --cached --quiet; then
+            echo 'Public website already uses this Worker URL.'
+          else
+            git commit -m 'Connect V200 website to deployed payment verification Worker [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
