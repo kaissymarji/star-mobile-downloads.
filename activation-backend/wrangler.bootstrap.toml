@@ -1,0 +1,5 @@
+name = "v200-tech-activation"
+main = "bootstrap.mjs"
+compatibility_date = "2026-10-20"
+workers_dev = true
+# Safe first deployment; deliberately does not handle payments or issue activation codes.
