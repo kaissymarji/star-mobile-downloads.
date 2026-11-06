@@ -79,6 +79,9 @@
   async function applyAuth(session){
     me=session?.user||null;
     show('authArea',!me);show('signedIn',!!me);
+    // Never present paid checkout to signed-out visitors, including on auth transitions.
+    $('payButton').disabled=!me;
+    if(!me)show('licenseOutput',false);
     $('newTopic').disabled=!me;
     $('chatBody').disabled=!me;$('chatForm').querySelector('button').disabled=!me;
     if(me){
@@ -278,6 +281,9 @@
     $('licenseOutput').hidden=false;
   }
   async function checkout(){
+    if(!me){showTab('account');throw Error('Sign in before paying $5 to link activation to your account.');}
+    const {data:{user},error}=await client.auth.getUser();
+    if(error||!user||user.id!==me.id)throw Error('Please sign in again before checking out.');
     const result=await callWorker('/api/checkout/start',{method:'POST',body:{}});
     if(!/^https:\/\/buy\.stripe\.com\//.test(result.checkoutUrl||''))throw Error('Unexpected checkout address; canceled.');
     // WebView launches the external browser; the website navigates to Stripe.
