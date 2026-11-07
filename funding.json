@@ -1,0 +1,43 @@
+{
+  "goal": 5000,
+  "raised": null,
+  "updatedAt": null,
+  "categories": [
+    {
+      "icon": "▣",
+      "name": "Donor ECUs, modules and keys",
+      "amount": 1450,
+      "detail": "Used DME/ECU units, BCMs, clusters, immobilizer modules, keys and connector pigtails."
+    },
+    {
+      "icon": "⌁",
+      "name": "Bench wiring and equipment",
+      "amount": 850,
+      "detail": "Harnesses, breakouts, regulated power, safe wiring, adapters and replacement parts."
+    },
+    {
+      "icon": "◈",
+      "name": "V200 and protocol research",
+      "amount": 750,
+      "detail": "Bluetooth / USB capture, diagnostic transport and compatible hardware testing."
+    },
+    {
+      "icon": "↗",
+      "name": "Vehicle-level testing",
+      "amount": 800,
+      "detail": "Real-car verification, travel, supplies and access to additional vehicle platforms."
+    },
+    {
+      "icon": "{ }",
+      "name": "Debugging and release QA",
+      "amount": 650,
+      "detail": "App development, regression testing, troubleshooting and reliable update builds."
+    },
+    {
+      "icon": "✦",
+      "name": "Documentation and spares",
+      "amount": 500,
+      "detail": "Bench notes, test reports, community support, backup modules and consumables."
+    }
+  ]
+}
