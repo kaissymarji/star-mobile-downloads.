@@ -12,7 +12,12 @@
 :root{color-scheme:dark;--bg:#071321;--panel:#102136;--border:#2d4259;--text:#eff8ff;--muted:#a2b8ce;--green:#56e8c4}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;min-width:0;background:radial-gradient(ellipse at 80% -5%,#153956 0,transparent 50%),var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;min-width:0;background:#04111d;color:var(--text);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;position:relative;isolation:isolate}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.65;background:
+radial-gradient(ellipse at 15% 20%,#0b65544a,transparent 45%),
+radial-gradient(ellipse at 82% 82%,#17658a3b,transparent 55%),
+linear-gradient(115deg,#031018,#071d2d 57%,#03121f)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.27;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1100 750' fill='none' stroke='%2344e9ce' stroke-width='2'%3E%3Cg opacity='.72'%3E%3Cpath d='M0 130H145L207 195H345V292H515L584 360H730V430H1100M0 450H100L185 365H300V430H420V530H575L685 640H1100M1100 115H900L830 185H715V250H610M1100 625H955L850 540H760V480H650M0 680H170L255 595H365V535H460'/%3E%3C/g%3E%3Cg fill='%2359ffe0' stroke='none'%3E%3Ccircle cx='145' cy='130' r='5'/%3E%3Ccircle cx='345' cy='292' r='5'/%3E%3Ccircle cx='515' cy='292' r='5'/%3E%3Ccircle cx='730' cy='430' r='5'/%3E%3Ccircle cx='300' cy='430' r='5'/%3E%3Ccircle cx='575' cy='530' r='5'/%3E%3Ccircle cx='900' cy='115' r='5'/%3E%3Ccircle cx='715' cy='250' r='5'/%3E%3Ccircle cx='955' cy='625' r='5'/%3E%3Ccircle cx='460' cy='535' r='5'/%3E%3C/g%3E%3C/svg%3E");background-size:cover;background-position:center}
 a{color:inherit}
 button,input{font:inherit}
 button{cursor:pointer}
@@ -169,56 +174,96 @@ th:nth-child(4){width:22%}
 const REPO="kaissymarji/star-mobile-downloads.";
 const API="https://api.github.com/repos/"+REPO+"/releases?per_page=100&page=";
 const $=id=>document.getElementById(id);
-/* Original, soft multi-note startup chime with a nostalgic early-2000s desktop feel, synthesized using Web Audio.
+/* Original, soft five-minute ambient welcome soundtrack with a nostalgic early-2000s desktop feel, synthesized using Web Audio.
    Autoplay is attempted only when enabled; browsers may require a first user gesture.
    No audio file, tracking request, or external service is involved. */
-let introSoundEnabled=true, introSoundPlayed=false, introAudioContext=null;
+let introSoundEnabled=true, introAudioContext=null, musicStarted=false;
+let musicTimer=null,musicOutput=null,musicStart=0,nextChord=0;
 try{introSoundEnabled=localStorage.getItem("star-mobile-startup-sound")!=="off";}catch(_){}
 function updateSoundToggle(){
   const button=$("soundToggle");
   button.textContent=introSoundEnabled?"🔊":"🔇";
   button.setAttribute("aria-pressed",String(introSoundEnabled));
-  button.setAttribute("aria-label",introSoundEnabled?"Turn off startup sound":"Turn on startup sound");
-  button.title=introSoundEnabled?"Startup sound on":"Startup sound off";
+  button.setAttribute("aria-label",introSoundEnabled?"Mute welcome music":"Enable welcome music");
+  button.title=introSoundEnabled?"Welcome music on":"Welcome music off";
+}
+function stopWelcomeMusic(){
+  if(musicTimer!==null){clearInterval(musicTimer);musicTimer=null;}
+  if(musicOutput&&introAudioContext){
+    const now=introAudioContext.currentTime;
+    musicOutput.gain.cancelScheduledValues(now);
+    musicOutput.gain.setValueAtTime(Math.max(musicOutput.gain.value,0.0001),now);
+    musicOutput.gain.linearRampToValueAtTime(0,now+0.08);
+    const previous=musicOutput;
+    setTimeout(()=>{try{previous.disconnect();}catch(_){}},170);
+    musicOutput=null;
+  }
+  musicStarted=false;
 }
 function playIntroSound(){
-  if(!introSoundEnabled||introSoundPlayed)return;
+  if(!introSoundEnabled||musicStarted)return;
   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
   if(!AudioContextClass)return;
   try{
     const context=introAudioContext||(introAudioContext=new AudioContextClass());
     const begin=()=>{
-      if(context.state!=="running"||introSoundPlayed||!introSoundEnabled)return;
-      introSoundPlayed=true;
+      if(context.state!=="running"||musicStarted||!introSoundEnabled)return;
+      musicStarted=true;
       document.removeEventListener("pointerdown",handleIntroPointer,true);
       document.removeEventListener("keydown",handleIntroKey,true);
-      const t=context.currentTime+0.025;
+      // Original five-minute ambient welcome composition, not Microsoft audio.
+      // Small, quiet synthesized notes; scheduled in batches to avoid long audio files.
       const master=context.createGain();
-      master.gain.setValueAtTime(0.55,t);
+      master.gain.value=0.32;
       master.connect(context.destination);
-      // Three gentle, original rising chords — not a recording or melody from Windows.
-      const chords=[
-        {delay:0,notes:[392,493.88,587.33],level:0.012},
-        {delay:0.38,notes:[440,554.37,659.25],level:0.014},
-        {delay:0.78,notes:[523.25,659.25,783.99],level:0.019}
+      musicOutput=master;
+      musicStart=context.currentTime+0.035;
+      nextChord=0;
+      const progression=[
+        [261.63,329.63,392.00,523.25],
+        [220.00,329.63,440.00,523.25],
+        [174.61,261.63,349.23,440.00],
+        [196.00,293.66,392.00,493.88],
+        [261.63,349.23,440.00,587.33],
+        [220.00,261.63,329.63,493.88],
+        [174.61,261.63,392.00,523.25],
+        [196.00,293.66,392.00,587.33]
       ];
-      for(const chord of chords){
-        const start=t+chord.delay;
-        const end=start+(chord.delay>0.7?1.06:0.66);
-        for(const hz of chord.notes){
-          const oscillator=context.createOscillator(),gain=context.createGain();
-          oscillator.type="sine";
-          oscillator.frequency.setValueAtTime(hz,start);
-          oscillator.frequency.linearRampToValueAtTime(hz*1.003,start+0.18);
-          gain.gain.setValueAtTime(0.0001,start);
-          gain.gain.linearRampToValueAtTime(chord.level,start+0.1);
-          gain.gain.setValueAtTime(chord.level,end-0.5);
-          gain.gain.exponentialRampToValueAtTime(0.0001,end);
-          oscillator.connect(gain);gain.connect(master);
-          oscillator.start(start);oscillator.stop(end+0.02);
-          oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
+      function note(hz,at,seconds,level){
+        const osc=context.createOscillator(),envelope=context.createGain();
+        osc.type="sine";
+        osc.frequency.setValueAtTime(hz,at);
+        osc.frequency.linearRampToValueAtTime(hz*1.0015,at+Math.min(seconds,0.45));
+        envelope.gain.setValueAtTime(0.0001,at);
+        envelope.gain.linearRampToValueAtTime(level,at+0.12);
+        envelope.gain.setValueAtTime(level,Math.max(at+0.12,at+seconds-0.8));
+        envelope.gain.exponentialRampToValueAtTime(0.0001,at+seconds);
+        osc.connect(envelope);envelope.connect(master);
+        osc.start(at);osc.stop(at+seconds+0.025);
+        osc.onended=()=>{osc.disconnect();envelope.disconnect();};
+      }
+      function schedule(){
+        const horizon=Math.min(musicStart+300,context.currentTime+9);
+        while(musicStart+nextChord*4.8<horizon&&nextChord*4.8<300){
+          const offset=nextChord*4.8,t=musicStart+offset;
+          const chord=progression[nextChord%progression.length];
+          const duration=Math.min(6.1,300-offset);
+          if(duration>0.2){
+            for(let i=0;i<chord.length;i++)note(chord[i],t+Math.min(i*0.09,duration/3),Math.max(0.15,duration-i*0.09),i===0?0.027:0.016);
+            for(let i=0;i<3;i++){
+              const at=t+0.6+i*1.2;
+              if(at<musicStart+300)note(chord[(i+nextChord)%4]*2,at,Math.min(1.2,musicStart+300-at),0.007);
+            }
+          }
+          nextChord++;
+        }
+        if(context.currentTime>=musicStart+300){
+          clearInterval(musicTimer);musicTimer=null;
+          musicStarted=false;
         }
       }
+      schedule();
+      musicTimer=setInterval(schedule,1900);
     };
     if(context.state==="running")begin();
     else context.resume().then(begin).catch(()=>{});
@@ -236,8 +281,9 @@ function handleIntroKey(event){
 $("soundToggle").addEventListener("click",()=>{
   introSoundEnabled=!introSoundEnabled;
   try{localStorage.setItem("star-mobile-startup-sound",introSoundEnabled?"on":"off");}catch(_){}
+  if(!introSoundEnabled)stopWelcomeMusic();
   updateSoundToggle();
-  if(introSoundEnabled&&!introSoundPlayed)playIntroSound();
+  if(introSoundEnabled)playIntroSound();
 });
 updateSoundToggle();
 document.addEventListener("pointerdown",handleIntroPointer,{capture:true,passive:true});
