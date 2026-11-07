@@ -115,7 +115,7 @@
     <section class="section" aria-labelledby="phaseTitle"><div class="sectionhead"><div class="eyebrow">How funding helps</div><h2 id="phaseTitle">What each funding stage can unlock.</h2><p class="desc">These are proposed spending priorities, not release-date promises or automatic features unlocked by a donation total.</p></div>
       <div class="milestones"><div class="milestone"><b>$750</b><div><h3>Strengthen the bench</h3><p>Additional harnesses, connectors, a safer repeatable power and signal setup, and spare parts.</p></div></div><div class="milestone"><b>$2,000</b><div><h3>Expand ECU coverage</h3><p>More donor ECUs, body modules and families to test against the V200 and software tools.</p></div></div><div class="milestone"><b>$3,500</b><div><h3>Confirm more real-car functions</h3><p>Vehicle-level checks of module identification, DTCs, data screens and supported diagnostics.</p></div></div><div class="milestone"><b>$5,000</b><div><h3>More stable public releases</h3><p>Broader regression checks, stronger error handling, technical notes and public build updates.</p></div></div></div>
     </section>
-    <section class="section" aria-labelledby="faqTitle"><div class="sectionhead"><div class="eyebrow">Straight answers</div><h2 id="faqTitle">A few important things.</h2></div><div class="faq"><article><h3>Does donating activate an app?</h3><p>No. Donations support development only. App activation and any subscription are handled separately.</p></article><article><h3>Is the donation counter live?</h3><p>No. A verified running total can be entered by the developer in the public funding file. The page cannot access private PayPal transactions.</p></article><article><h3>Are advanced ECU functions already finished?</h3><p>No. Compatibility differs by module and version. Advanced and immobilizer actions must be verified on suitable test hardware before release.</p></article></div></section>
+    <section class="section" aria-labelledby="faqTitle"><div class="sectionhead"><div class="eyebrow">Straight answers</div><h2 id="faqTitle">A few important things.</h2></div><div class="faq"><article><h3>Does donating activate an app?</h3><p>No. Donations support development only. App activation and any subscription are handled separately.</p></article><article><h3>Is the donation counter live?</h3><p>The progress bar checks for updates every 15 seconds. Verified PayPal donations can be added automatically after the secure PayPal webhook service is connected; until then the recorded total is updated by the owner.</p></article><article><h3>Are advanced ECU functions already finished?</h3><p>No. Compatibility differs by module and version. Advanced and immobilizer actions must be verified on suitable test hardware before release.</p></article></div></section>
     <section class="section" aria-label="Donation call to action"><div class="cta"><div><div class="eyebrow" style="margin-bottom:8px">Help build the next release</div><h2>Support real testing, not placeholders.</h2><p>Every contribution helps cover hardware and time spent making these tools more useful. You can also share the project with other technicians.</p></div><a class="btn" href="https://www.paypal.com/ncp/payment/PLB-DSQXGYUD97NK" target="_blank" rel="noopener noreferrer">Donate with PayPal ↗</a></div></section>
   </div>
 </main>
@@ -157,7 +157,7 @@
     if (data.updatedAt && !Number.isNaN(Date.parse(data.updatedAt))) {
       stamp = ' Last manual update: ' + new Date(data.updatedAt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',timeZone:'UTC'}) + '.';
     }
-    byId('fundingNote').textContent = 'Donation totals are entered manually after verification; this website does not access PayPal transactions.' + stamp;
+    byId('fundingNote').textContent = 'Checks for updates automatically every 15 seconds. PayPal payment verification has not yet been connected; the total is updated by the owner.' + stamp;
     const categories = Array.isArray(data.categories) && data.categories.length ? data.categories : defaults.categories;
     if (!categories.every(c=>typeof c.name==='string' && typeof c.detail==='string' && Number.isFinite(Number(c.amount)) && Number(c.amount)>=0)) return;
     const container=byId('budgetCards');container.replaceChildren();
@@ -182,9 +182,45 @@
     byId('budgetTotal').textContent=usd(sum);
     if(Math.abs(sum-goal)>0.01){byId('budgetTotal').textContent=usd(sum)+' (budget differs from target '+usd(goal)+')';}
   }
+  // Set to your deployed secure Worker API URL after configuring PayPal webhooks.
+  // Never put PayPal API credentials in this public HTML.
+  const LIVE_FUNDING_API = '';
+  const REFRESH_MS = 15000;
+  let loading = false;
   byId('year').textContent=String(new Date().getFullYear());
   render(defaults);
-  fetch('funding.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Funding file not available');return r.json()}).then(data=>render({...defaults,...data})).catch(()=>{});
+  async function loadFunding() {
+    if (loading) return;
+    loading = true;
+    try {
+      const res = await fetch('funding.json?v=' + Date.now(), {cache:'no-store'});
+      if (!res.ok) throw new Error('Could not load current funding');
+      const manual = {...defaults, ...await res.json()};
+      if (LIVE_FUNDING_API) {
+        try {
+          const response = await fetch(LIVE_FUNDING_API, {cache:'no-store'});
+          if (!response.ok) throw new Error('Live payment data unavailable');
+          const verified = await response.json();
+          if (verified.source !== 'paypal-verified' || !Number.isFinite(Number(verified.raised))) throw new Error('Invalid verified total');
+          render({...manual, goal:verified.goal, raised:verified.raised, updatedAt:verified.updatedAt});
+          byId('fundingNote').textContent = 'Auto-updated from verified PayPal payments. This counter checks every 15 seconds. Starting balance includes $105 previously reported by the developer.';
+        } catch {
+          render(manual);
+          byId('fundingNote').textContent = 'Live PayPal verification is temporarily unavailable. Showing the last recorded total; no unverified payments are added.';
+        }
+      } else {
+        render(manual);
+      }
+    } catch {
+      // Do not invent donations when the reporting source cannot be reached.
+      byId('fundingNote').textContent = 'Could not check for updated funding. Showing the last available total.';
+    } finally {
+      loading = false;
+    }
+  }
+  loadFunding();
+  setInterval(() => { if (!document.hidden) loadFunding(); }, REFRESH_MS);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) loadFunding(); });
 })();
 </script>
 </body>
