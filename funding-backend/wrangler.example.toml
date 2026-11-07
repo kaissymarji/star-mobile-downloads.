@@ -1,0 +1,16 @@
+name = "star-mobile-funding"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+[vars]
+GOAL_DOLLARS = "5000"
+STARTING_RAISED_CENTS = "10500"
+PAYPAL_LINK_ID = "PLB-DSQXGYUD97NK"
+PAYPAL_DONATION_CUSTOM_ID = "STAR_MOBILE_FUNDRAISER"
+# Optional: also require that the payment's payee matches your PayPal merchant ID.
+# PAYPAL_MERCHANT_ID = "YOUR_MERCHANT_ID"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "star-mobile-donations"
+database_id = "REPLACE_WITH_YOUR_ACTUAL_D1_DATABASE_ID"
