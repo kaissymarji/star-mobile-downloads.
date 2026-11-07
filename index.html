@@ -271,6 +271,18 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .vin-scan-alt{flex:1 1 31%;font-size:10px;padding:6px}
 }
 
+
+/* Compact owner-only publishing shortcut in the footer. GitHub authorizes all changes. */
+.bottom-links .owner-dropdown{position:relative;font-size:11px}
+.bottom-links .owner-dropdown summary{list-style:none;cursor:pointer;color:#a8c6d8;text-decoration:underline;text-underline-offset:3px}
+.bottom-links .owner-dropdown summary::-webkit-details-marker{display:none}
+.bottom-links .owner-dropdown summary:hover,.bottom-links .owner-dropdown[open] summary{color:#38f5ea}
+.bottom-links .owner-dropdown summary:focus-visible{outline:2px solid #38f5ea;outline-offset:4px}
+.bottom-links .owner-actions{display:flex;position:absolute;bottom:calc(100% + 10px);right:0;z-index:50;min-width:210px;flex-direction:column;gap:8px;padding:12px;background:#071f31;border:1px solid #39cbd4;border-radius:10px;box-shadow:0 13px 37px #000b;text-align:left}
+.bottom-links .owner-actions a{display:block;font-size:12px;padding:7px 8px;color:#dcfaff;background:#0d3645;border-radius:6px;text-decoration:none;white-space:nowrap}
+.bottom-links .owner-actions a:hover{background:#146071;color:#fff}
+.bottom-links .owner-actions small{color:#8eabba;font-size:10px;line-height:1.4}
+
 </style>
 </head>
 <body>
@@ -356,7 +368,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 </section>
 <div class="features-strip" aria-label="Automotive software specialties">
 <span>⌁ Diagnostics</span><span>▣ ECU Programming</span><span>⚿ Immobilizer</span><span>⌘ Coding</span><span>⚙ Service Functions</span></div>
-<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button></nav>
+<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
 <p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Topology is an illustration, not a live vehicle connection.</p>
 </main>
 <dialog id="vinScanDialog" class="vin-scan-dialog" aria-labelledby="vinScanTitle">
