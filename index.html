@@ -2,183 +2,256 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#071321">
-<meta name="description" content="Star Mobile Service official APK download dashboard. V200 Diagnostic, EEPROM Studio and BMW Standard Tools. Live versions, upload dates and download counts.">
-<meta property="og:title" content="Star Mobile Service — Download Apps">
-<meta property="og:description" content="All our Android app downloads in one compact desktop-style dashboard.">
-<title>Star Mobile Service | Download Apps</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#030e19">
+<meta name="description" content="Star Mobile Service — ECU Command Center. Official V200 Diagnostic, EEPROM Studio and BMW Standard Tools APK downloads, upload dates and live GitHub counts.">
+<meta property="og:title" content="Star Mobile Service | ECU Command Center 2.0">
+<meta property="og:description" content="Official automotive software downloads — J2534, ECU flashing, coding and immobilizer tools.">
+<title>Star Mobile Service | ECU Command Center</title>
 <style>
-:root{color-scheme:dark;--bg:#071321;--panel:#102136;--border:#2d4259;--text:#eff8ff;--muted:#a2b8ce;--green:#56e8c4}
+:root{color-scheme:dark;--bg:#020c17;--pane:#081f30;--pane2:#0c2439;--line:#246078;--line-soft:#183d56;--cyan:#25e6eb;--mint:#49ffd0;--white:#f5fbff;--muted:#a0b8c9;--green:#58f5a8}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;min-width:0;background:#04111d;color:var(--text);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;position:relative;isolation:isolate}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.65;background:
-radial-gradient(ellipse at 15% 20%,#0b65544a,transparent 45%),
-radial-gradient(ellipse at 82% 82%,#17658a3b,transparent 55%),
-linear-gradient(115deg,#031018,#071d2d 57%,#03121f)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.27;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1100 750' fill='none' stroke='%2344e9ce' stroke-width='2'%3E%3Cg opacity='.72'%3E%3Cpath d='M0 130H145L207 195H345V292H515L584 360H730V430H1100M0 450H100L185 365H300V430H420V530H575L685 640H1100M1100 115H900L830 185H715V250H610M1100 625H955L850 540H760V480H650M0 680H170L255 595H365V535H460'/%3E%3C/g%3E%3Cg fill='%2359ffe0' stroke='none'%3E%3Ccircle cx='145' cy='130' r='5'/%3E%3Ccircle cx='345' cy='292' r='5'/%3E%3Ccircle cx='515' cy='292' r='5'/%3E%3Ccircle cx='730' cy='430' r='5'/%3E%3Ccircle cx='300' cy='430' r='5'/%3E%3Ccircle cx='575' cy='530' r='5'/%3E%3Ccircle cx='900' cy='115' r='5'/%3E%3Ccircle cx='715' cy='250' r='5'/%3E%3Ccircle cx='955' cy='625' r='5'/%3E%3Ccircle cx='460' cy='535' r='5'/%3E%3C/g%3E%3C/svg%3E");background-size:cover;background-position:center}
-a{color:inherit}
-button,input{font:inherit}
-button{cursor:pointer}
-.shell{width:100%;max-width:1200px;margin:0 auto;padding:0 18px}
-.mast{background:#091626ed;border-bottom:1px solid var(--border)}
-.top{min-height:62px;display:flex;gap:15px;align-items:center;justify-content:space-between}
-.brand{display:flex;gap:10px;align-items:center;text-decoration:none;font-weight:850;letter-spacing:.035em;white-space:nowrap}
-.brandmark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--green),#5c9dff);font-size:24px;color:#061829}
-.brand small{display:block;color:#91aac2;font-size:9px;letter-spacing:.16em}
-.top nav{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
-.top nav a{font-size:12px;font-weight:750;text-decoration:none;border:1px solid #324b62;border-radius:9px;padding:8px 10px;background:#11243a;white-space:nowrap}
-.top nav .donate{border-color:#3a9f8e;color:#75f4d3}
-.sound-toggle{display:grid;place-items:center;flex:0 0 auto;width:34px;height:34px;min-height:34px;padding:0;border:1px solid #3e667d;border-radius:9px;background:#11283a;color:#d5fff3;font-size:17px;line-height:1}
-.sound-toggle:hover,.sound-toggle:focus-visible{border-color:var(--green);outline-offset:2px}
-.sound-toggle[aria-pressed="false"]{color:#91a5b9;border-color:#30475c;background:#102032}
-main{padding-top:18px!important}
-.heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-.eyebrow{font-size:10px;font-weight:850;letter-spacing:.15em;color:var(--green);text-transform:uppercase}
-h1{font-size:clamp(22px,3vw,32px);line-height:1.15;letter-spacing:-.045em;margin:4px 0}
-
-.clock{border:1px solid #35546b;border-radius:11px;background:#102438;padding:7px 11px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.clock b{display:block;color:#7cf5d7;font-size:11px;font-weight:850}
-.clock time{font-size:12px;font-weight:800}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:12px}
-.stat{background:#102238;border:1px solid var(--border);border-radius:10px;padding:9px 13px}
-.stat strong{display:block;font-size:23px;letter-spacing:-.04em;line-height:1.15;color:#e9fff9;font-variant-numeric:tabular-nums}
-.stat span{display:block;margin-top:2px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:750}
-.toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}
-.search{flex:1;min-width:160px;height:37px;background:#102237;border:1px solid #36526b;border-radius:9px;padding:8px 11px;color:var(--text);outline:none}
-.search:focus{border-color:var(--green)}
-.filters{display:flex;gap:5px}
-.filter,.utility{border:1px solid #3a5168;border-radius:8px;background:#15283e;color:#cfdfef;font-size:11px;font-weight:800;min-height:36px;padding:7px 11px;white-space:nowrap}
-.filter[aria-pressed=true]{background:var(--green);border-color:var(--green);color:#062325}
-.utility:hover,.filter:hover{border-color:var(--green)}
-.utility:disabled{opacity:.5}
-.tablebox{border:1px solid #355069;border-radius:14px;overflow:hidden;background:linear-gradient(140deg,#14263d,#0d1a2c)}
-table{width:100%;border-spacing:0;border-collapse:collapse;table-layout:fixed}
-th{background:#122b3d;color:#a3c6d5;text-align:left;text-transform:uppercase;font-size:10px;letter-spacing:.075em;padding:10px 13px}
-td{padding:10px 13px;border-top:1px solid #2a4057;vertical-align:middle}
-tbody tr:first-child td{border-top:1px solid #31516a}
-tbody tr:hover{background:#18304966}
-th:nth-child(1){width:38%}
-th:nth-child(2){width:27%}
-th:nth-child(3){width:13%}
-th:nth-child(4){width:22%}
-.app-title{font-weight:850;font-size:14px;line-height:1.15}
-.info-line{margin-top:3px;font-size:11px;color:#a8bfd3;overflow-wrap:anywhere}
-.version{color:#65f0cd;font-weight:800}
-.filename{display:inline}
-.time{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
-.time small{display:block;color:#99b5cd;font-size:10px;font-weight:650}
-.count{color:#7cf2d3;font-size:16px;font-weight:850;font-variant-numeric:tabular-nums}
-.download-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:34px;padding:6px 11px;background:var(--green);border-radius:8px;color:#04252b;text-decoration:none;font-size:12px;font-weight:900}
-.download-btn:hover{background:#b2ffeb}
-
-.empty{padding:30px 13px;text-align:center;color:var(--muted)}
-.tablefooter{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:9px 0 0}
-.tablefooter p{margin:0;font-size:11px;color:#92a9bf}
-.tablefooter button{background:#1a334c;border:1px solid #496b81;border-radius:8px;color:#e4f7ff;padding:8px 12px;font-size:11px;font-weight:850}
-.tablefooter button[hidden]{display:none}
-.quicklinks{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;margin:15px 0;padding:13px;border-top:1px solid #273e53;color:#adbed1;font-size:11px}
-.quicklinks a{color:#a8d2e4}
-.warning{color:#829bb1;font-size:10px;text-align:center;margin:0 0 18px}
-@media(max-width:720px){
- .shell{padding-left:9px;padding-right:9px}
- .top{min-height:52px;gap:5px}
- .brand{gap:6px;font-size:11px;letter-spacing:0}
- .brandmark{width:29px;height:29px;font-size:18px}
- .brand small{font-size:8px;letter-spacing:.06em}
- .top nav{gap:4px}
- .top nav a{font-size:9px;padding:6px 7px}
- main{padding-top:11px!important}
- .heading{gap:6px;margin-bottom:8px}
- h1{font-size:22px;margin:2px 0}
-
- .eyebrow{font-size:9px}
- .clock{padding:5px 7px}
- .clock b{font-size:9px}
- .clock time{font-size:10px}
- .stats{gap:5px;margin-bottom:8px}
- .stat{padding:7px}
- .stat strong{font-size:18px}
- .stat span{font-size:9px;letter-spacing:0}
- .toolbar{gap:6px;margin-bottom:7px}
- .search{min-width:0;flex-basis:100%;height:33px;font-size:12px}
- .filters{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
- .filter{min-height:31px;padding:5px 2px;font-size:10px}
- .utility{min-height:31px;padding:5px 8px;font-size:10px}
- th{font-size:9px;letter-spacing:0;padding:8px 5px}
- td{padding:8px 5px}
- th:nth-child(1){width:33%}
- th:nth-child(2){width:28%}
- th:nth-child(3){width:13%}
- th:nth-child(4){width:26%}
- .app-title{font-size:12px;overflow-wrap:anywhere}
- .info-line{font-size:10px;line-height:1.25}
- .filename{display:none}
- .time{font-size:10px;line-height:1.35}
- .time small{font-size:9px}
- .count{font-size:13px}
- .download-btn{font-size:10px;width:100%;min-height:32px;padding:5px}
-
- .tablefooter{margin-top:7px}
- .tablefooter p,.tablefooter button{font-size:10px}
- .quicklinks{margin-top:10px}
- .warning{font-size:9px}
+html{scroll-behavior:smooth;scroll-padding-top:75px}
+body{margin:0;background:radial-gradient(ellipse at 88% 8%,#0d4560 0%,transparent 45%),linear-gradient(#020c16,#04101d 63%,#020914);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.42;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background-image:linear-gradient(90deg,#20e5f00a 1px,transparent 1px),linear-gradient(#20e5f00a 1px,transparent 1px);background-size:42px 42px}
+a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:pointer}
+.wrap{width:min(100%,1250px);margin:auto;padding:0 20px}
+.topline{border-bottom:1px solid #194256;background:#030d19f2;position:sticky;top:0;z-index:30;box-shadow:0 6px 23px #0008;backdrop-filter:blur(15px)}
+.header{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:73px}
+.identity{display:flex;align-items:center;gap:12px;min-width:0}
+.brandicon{width:49px;height:49px;display:grid;place-items:center;border:1px solid #4dfbfe;border-radius:12px;background:linear-gradient(140deg,#051522,#092a40);box-shadow:inset 0 0 18px #21dceb30,0 0 18px #27d5ff23;flex:none}
+.brandicon svg{width:40px;height:40px}
+.brandname{font-weight:950;font-size:clamp(15px,2.4vw,24px);letter-spacing:.03em;line-height:1.05}
+.brandsub{font-size:10px;letter-spacing:.25em;font-weight:800;color:#c0d1df;margin-top:6px}
+.brandsub em{font-style:normal;color:var(--cyan)}
+.head-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.navbtn{padding:8px 12px;border-radius:10px;border:1px solid #2897a1;color:#e8faff;background:#062332;font-size:12px;font-weight:800;white-space:nowrap}
+.navbtn:hover,.navbtn:focus-visible{border-color:var(--cyan);box-shadow:0 0 13px #1edade36}
+.navbtn.donate{border-color:#3ec981;color:#afffe1}
+.navbtn.sound{font-size:15px;min-width:40px;height:37px;padding:6px}
+main{padding-bottom:24px}
+.hero{position:relative;height:280px;overflow:hidden;border:1px solid #18516b;border-top:0;background:linear-gradient(110deg,#020b15 3%,#09243a 57%,#071321 100%);isolation:isolate}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,#020c17 4%,#031524df 34%,#06152217 76%),repeating-linear-gradient(0deg,#27ffff0b 0,#27ffff0b 1px,transparent 1px,transparent 28px)}
+.hero:after{content:"";position:absolute;inset:auto 0 0;height:5px;background:linear-gradient(90deg,transparent,#13f8ff,#247cdb,transparent);box-shadow:0 0 22px #18ddff87}
+.hero-art{position:absolute;right:-5px;top:0;height:100%;width:70%;opacity:.94;z-index:-1}
+.hero-copy{position:absolute;top:36px;left:30px;z-index:4;max-width:68%}
+.hero-kicker{color:#96ffff;font-weight:900;font-size:10px;letter-spacing:.26em;margin:0 0 12px}
+.hero h1{margin:0;max-width:600px;font-style:italic;font-size:clamp(32px,5vw,62px);line-height:.92;letter-spacing:-.048em;font-weight:1000;text-shadow:0 4px 18px #000e}
+.hero h1 span{display:block;color:#3ef0fa;filter:drop-shadow(0 0 13px #1eecff41)}
+.hero-caption{margin:17px 0 0;color:#deefff;font-size:12px;letter-spacing:.12em;font-weight:750}
+.hero-link{margin-top:17px;display:inline-flex;align-items:center;gap:7px;border:1px solid #2de4e9;color:#d7ffff;border-radius:9px;background:#042c3fb3;padding:8px 13px;font-weight:800;font-size:11px}
+.hero-link:hover{background:#085369}
+.hero-signal{position:absolute;bottom:16px;right:21px;font-size:10px;letter-spacing:.16em;color:#74f9fc;z-index:4}
+.techstrip{display:flex;justify-content:space-between;align-items:center;gap:8px;background:linear-gradient(90deg,#04251d,#06182a 48%,#07212a);border:1px solid #1c777c;border-radius:13px;padding:10px 16px;min-height:48px;box-shadow:inset 0 0 20px #13e7ff0a;margin:10px 0}
+.ready{display:flex;align-items:center;gap:8px;white-space:nowrap;color:#70ffaa;font-size:16px;font-weight:900}
+.protocols{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:center;font-size:11px}
+.protocols label{color:#b2cbd9;margin-right:4px}
+.protocols b{border:1px solid #278ba0;background:#0b3544;color:#3befff;padding:4px 11px;border-radius:6px;line-height:1;font-size:12px}
+.techstamp{font-size:11px;font-weight:750;color:#d6f9fa;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.levels{display:inline-flex;gap:3px;align-items:end;height:20px}
+.levels i{display:block;width:4px;background:#42f7ba;box-shadow:0 0 8px #4cffa85f;border-radius:2px}
+.levels i:nth-child(1){height:7px}.levels i:nth-child(2){height:11px}.levels i:nth-child(3){height:15px}.levels i:nth-child(4){height:20px}
+.mini-note{font-size:10px;color:#83aec4}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:10px}
+.kpi,.panel{border:1px solid #286178;background:linear-gradient(130deg,#06232c,#071b2d 62%,#0c2232);border-radius:13px;box-shadow:inset 0 0 20px #03b8de0a,0 5px 23px #0004}
+.kpi{min-height:95px;padding:14px;position:relative;overflow:hidden}
+.kpi:after{content:"";position:absolute;inset:auto -20px -42px 30%;height:100px;background:radial-gradient(ellipse,#10e9ff13,transparent 70%)}
+.kpi .k-label{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800}
+.kpi .k-icon{font-size:20px;color:#31dfe9}
+.kpi strong{display:block;color:#28eff9;font-size:clamp(23px,3.8vw,37px);line-height:1.25;letter-spacing:-.04em;font-weight:950;font-variant-numeric:tabular-nums}
+.kpi small{font-size:10px;color:#99b7c8}
+.kpi svg.spark{position:absolute;right:14px;bottom:18px;width:25%;height:34px;opacity:.85}
+.monitors{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.panel-heading{border-bottom:1px solid #21516b;display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 14px;font-size:12px;font-weight:900}
+.panel-heading span:first-child{color:#e1faff}
+.demo-chip{font-size:9px;color:#aaf0ec;border:1px solid #2b8088;border-radius:6px;padding:3px 6px;white-space:nowrap}
+.monitor-body{padding:12px;display:grid;grid-template-columns:1.4fr .8fr;align-items:center;gap:11px}
+.wavefield{background:repeating-linear-gradient(0deg,transparent 0,transparent 22px,#17c3ea22 23px),repeating-linear-gradient(90deg,transparent 0,transparent 22px,#17c3ea22 23px),#031522;border:1px solid #15516b;border-radius:7px;overflow:hidden;height:120px}
+.wavefield svg{width:100%;height:100%}
+#trace{stroke:#1ffaff;stroke-width:2.5;fill:none;stroke-linejoin:round;filter:drop-shadow(0 0 4px #1affef)}
+.monitor-spec{font:10px/2 ui-monospace,SFMono-Regular,Consolas,monospace;color:#afd4df}
+.monitor-spec div{display:flex;justify-content:space-between;gap:8px}
+.monitor-spec strong{color:#e5fbff;white-space:nowrap}
+.topology-body{height:144px;display:flex;align-items:center;justify-content:center;padding:10px}
+.topology-svg{width:100%;max-width:500px;height:100%;overflow:visible}
+.topology-svg path{stroke:#25d9e8;stroke-width:1.5;fill:none;filter:drop-shadow(0 0 3px #2bf2f5)}
+.topology-svg .module{fill:#092635;stroke:#38aec3;stroke-width:1.6}
+.topology-svg .hub{fill:#06566b;stroke:#29eafa;stroke-width:2.4;filter:drop-shadow(0 0 7px #25eaff)}
+.topology-svg text{fill:#d7ffff;font-size:13px;font-weight:800;text-anchor:middle;dominant-baseline:middle}
+.topology-svg .dot{fill:#4df5a6}
+.terminal{margin-top:10px;position:relative;overflow:hidden;background:linear-gradient(100deg,#061d2d 0,#092038 60%,#031b24);min-height:186px}
+.terminal:before{content:"";position:absolute;inset:0 0 0 65%;background:repeating-radial-gradient(circle at 65% 65%,#1fffff16 0,#1fffff10 2px,transparent 3px,transparent 22px);pointer-events:none}
+.terminal-inner{display:grid;grid-template-columns:1fr 170px;gap:18px;padding:13px}
+.terminal pre{background:#020e19c9;border:1px solid #17495c;margin:0;padding:14px;border-radius:8px;min-height:132px;color:#8affb8;white-space:pre-wrap;font:11px/1.48 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+.terminal-buttons{display:flex;flex-direction:column;gap:6px;position:relative;z-index:2}
+.terminal-buttons button{background:#0c2938;border:1px solid #316a7d;border-radius:7px;color:#e9ffff;min-height:31px;font-size:11px;font-weight:800}
+.terminal-buttons button:first-child{border-color:#35ebec;color:#63faff;box-shadow:0 0 10px #26ddff3f}
+.terminal-buttons button:hover{background:#11506a}
+.searchrow{display:flex;align-items:center;gap:10px;background:#0c2032;border:1px solid #517589;border-radius:13px;padding:0 13px;margin-top:12px;height:43px}
+.searchrow svg{width:18px;height:18px;stroke:#b4cfe2}
+.searchrow input{outline:none;border:0;background:transparent;width:100%;color:#fff;font-size:13px}
+.searchrow input::placeholder{color:#9cb5c8}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:10px 0 13px}
+.filter{background:#0b2031;border:1px solid #587589;border-radius:11px;color:#deecf5;padding:9px 7px;font-size:13px;font-weight:850;min-height:40px}
+.filter[aria-pressed="true"]{background:linear-gradient(120deg,#2affed,#30d7e7);color:#001922;border-color:#59faff}
+.filter:hover{border-color:#20f8f9}
+.catalog{display:grid;gap:8px}
+.appcard{background:linear-gradient(110deg,#092233,#0c2031);border:1px solid #2b5770;border-radius:12px;display:grid;grid-template-columns:58px minmax(0,1fr) 158px;gap:13px;align-items:center;padding:12px 13px 12px 20px;min-height:85px;position:relative;overflow:hidden}
+.appcard:before{content:"";position:absolute;left:0;top:11px;bottom:11px;width:5px;background:var(--accent,#1af6f6);border-radius:0 5px 5px 0;box-shadow:0 0 12px var(--accent,#1af6f6)}
+.app-icon{width:54px;height:54px;border:1px solid var(--accent,#18edf1);border-radius:11px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:#041724;color:#dcffff}
+.app-icon svg{width:30px;height:30px;stroke:var(--accent,#18edf1);fill:none;stroke-width:1.8}
+.app-icon b{font-size:10px;line-height:1}
+.app-name{font-size:16px;line-height:1.15;font-weight:950}
+.app-desc{font-size:11px;color:#bed5e2;margin-top:3px;line-height:1.3}
+.app-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;color:#a7c7d7;font-size:10px}
+.app-meta strong{color:#e8fff9;font-weight:800}
+.app-actions{display:flex;align-items:stretch;flex-direction:column;gap:5px}
+.download-btn{display:flex;justify-content:center;align-items:center;gap:6px;background:linear-gradient(120deg,#23eff1,#32dce0);color:#001c25;border-radius:9px;padding:8px 9px;min-height:36px;font-size:13px;font-weight:900}
+.download-btn:hover{background:#b2ffff}
+.dl-count{display:flex;align-items:center;justify-content:center;gap:6px;color:#b1cadb;font-size:11px;font-variant-numeric:tabular-nums}
+.empty{padding:24px;border:1px dashed #396276;border-radius:11px;text-align:center;color:#adc6d6}
+.catalog-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:#a4c1d2}
+.catalog-foot button{border:1px solid #4d778d;color:#e0fbff;background:#0c293d;border-radius:9px;padding:7px 12px;font-size:11px;font-weight:850}
+.catalog-foot button[hidden]{display:none}
+.bottom-nav{display:grid;grid-template-columns:repeat(4,1fr);margin-top:18px;background:linear-gradient(170deg,#061929,#071321);border:1px solid #24485c;border-radius:14px;overflow:hidden}
+.bottom-nav a,.bottom-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;min-height:63px;border:0;background:transparent;color:#b5c9da;font-size:11px;font-weight:750}
+.bottom-nav svg{stroke:currentColor;width:22px;height:22px;fill:none;stroke-width:1.8}
+.bottom-nav a.active,.bottom-nav a:hover,.bottom-nav button:hover{color:#2ffff0}
+.bottom-nav a.active:after{content:"";width:38px;height:2px;background:#3cfaff;box-shadow:0 0 8px #3cfaff}
+.footertext{font-size:10px;text-align:center;color:#7d9aac;margin:12px 0 4px}
+dialog{background:#061e30;color:#eaffff;border:1px solid #42bacc;border-radius:14px;max-width:460px;width:calc(100% - 30px);padding:21px;box-shadow:0 30px 100px #000e}
+dialog::backdrop{background:#000b}
+dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;line-height:1.7}
+.close-guide{background:#26e7e9;border:0;padding:9px 14px;border-radius:8px;color:#001b25;font-weight:850}
+@media(max-width:780px){
+.wrap{padding:0 11px}.header{min-height:65px}.brandicon{width:42px;height:42px}.brandicon svg{width:34px;height:34px}.brandsub{font-size:9px;letter-spacing:.16em}
+.hero{height:215px}.hero-art{width:78%}.hero-copy{left:18px;top:30px;max-width:78%}.hero h1{font-size:clamp(29px,6vw,46px)}.hero-caption{font-size:10px}
+.hero-kicker{font-size:9px}.hero-link{padding:7px 10px;font-size:10px}
+.techstrip{padding:9px 12px}.ready{font-size:12px}.protocols b{padding:4px 8px;font-size:11px}
+.kpi{min-height:80px;padding:10px}.kpi .k-label{font-size:10px}.kpi strong{font-size:24px}
+.monitor-body{grid-template-columns:1.4fr .8fr;padding:8px;gap:7px}
+.wavefield{height:95px}.topology-body{height:119px}
+.terminal-inner{grid-template-columns:1fr 135px;gap:8px}.terminal-buttons button{font-size:10px}
 }
-@media(max-width:370px){
- .brand small{display:none}
- .top nav a{padding:5px}
- .clock{width:100%;text-align:left}
- .clock b,.clock time{display:inline;font-size:10px}
- .heading h1{font-size:20px}
- th:nth-child(1){width:34%}
- th:nth-child(2){width:28%}
- th:nth-child(3){width:12%}
- th:nth-child(4){width:26%}
- td{padding:7px 4px}
+@media(max-width:510px){
+.wrap{padding:0 8px}.header{gap:4px;min-height:61px}.identity{gap:6px}.brandicon{width:37px;height:37px;border-radius:9px}.brandicon svg{width:29px;height:29px}
+.brandname{font-size:12px}.brandsub{font-size:6.5px;letter-spacing:.11em;margin-top:4px}
+.head-actions{gap:4px}.navbtn{font-size:10px;padding:7px 6px}.navbtn.sound{min-width:29px;height:30px;font-size:13px;padding:3px}
+.hero{height:182px}.hero-art{width:91%;right:-55px;opacity:.9}.hero-copy{top:24px;left:13px;max-width:86%}.hero-kicker{font-size:7px;margin-bottom:9px}.hero h1{font-size:clamp(25px,6.8vw,34px)}.hero-caption{font-size:8px;letter-spacing:.07em;margin-top:10px}.hero-link{margin-top:10px;font-size:9px}
+.hero-signal{font-size:8px;bottom:10px}
+.techstrip{padding:8px 7px;gap:4px}.ready{font-size:10px;gap:4px}.protocols{gap:4px}.protocols label{display:none}.protocols b{padding:3px 4px;font-size:9px}
+.techstamp{font-size:8px}.levels{height:13px;gap:2px}.levels i{width:3px}.levels i:nth-child(4){height:13px}.levels i:nth-child(3){height:10px}.levels i:nth-child(2){height:7px}.levels i:nth-child(1){height:5px}
+.kpis{gap:6px}.kpi{min-height:66px;padding:8px}.kpi .k-label{gap:4px;font-size:8px}.kpi .k-icon{font-size:12px}.kpi strong{font-size:18px}.kpi small{font-size:8px}.kpi svg.spark{display:none}
+.monitors{gap:6px}.panel-heading{padding:8px 7px;font-size:8px}.demo-chip{font-size:7px;padding:2px 4px}
+.monitor-body{padding:6px;grid-template-columns:1fr;gap:4px}.monitor-spec{display:none}
+.wavefield{height:88px}.topology-body{height:109px;padding:5px}.topology-svg text{font-size:15px}
+.terminal-inner{padding:8px;grid-template-columns:minmax(0,1fr) 94px;gap:6px}.terminal pre{font-size:9px;min-height:124px;padding:9px}
+.terminal-buttons button{min-height:29px;font-size:8px;padding:3px}
+.searchrow{margin-top:9px;height:37px}.searchrow input{font-size:11px}
+.filters{gap:6px;margin:8px 0}.filter{min-height:33px;padding:6px 2px;font-size:10px}
+.appcard{grid-template-columns:39px minmax(0,1fr) 96px;gap:7px;min-height:79px;padding:9px 7px 9px 12px}.app-icon{width:38px;height:40px;border-radius:8px}.app-icon svg{height:24px;width:24px}.app-icon b{font-size:7px}
+.app-name{font-size:12px}.app-desc{font-size:9px}.app-meta{font-size:8px;gap:3px;margin-top:5px}.app-meta span{display:block}
+.app-actions{gap:4px}.download-btn{font-size:10px;min-height:31px;padding:7px 4px}.dl-count{font-size:8px;gap:3px}
+.catalog-foot{font-size:9px}.catalog-foot button{font-size:9px;padding:6px 8px}
+.bottom-nav{margin-top:12px}.bottom-nav a,.bottom-nav button{min-height:55px;font-size:10px}
 }
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<header class="mast"><div class="shell top">
-<a class="brand" href="./" aria-label="Star Mobile Service app downloads"><span class="brandmark" aria-hidden="true">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB / DOWNLOADS</small></span></a>
-<nav aria-label="Main links"><a href="community.html#account">Activation</a><a class="donate" href="donate.html">Donate</a><button id="soundToggle" class="sound-toggle" type="button" aria-label="Play ECU rap" aria-pressed="false" title="Play Bench Mode — ECU rap">🎤</button></nav>
+<header class="topline" id="home"><div class="wrap header">
+<a class="identity" href="#home" aria-label="Star Mobile Service home"><span class="brandicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3L29 19L44 21L32 30L35 46L24 37L10 43L15 28L4 19L20 18Z" fill="none" stroke="#4efff1" stroke-width="2.7"/><path d="M13 31L34 13" stroke="#b9faff" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><span class="brandname">STAR MOBILE SERVICE</span><span class="brandsub">SOFTWARE <em>LAB</em> / COMMAND CENTER</span></span></a>
+<nav class="head-actions"><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><button id="soundToggle" class="navbtn sound" type="button" aria-label="Play ECU rap" aria-pressed="false" title="Play Bench Mode — ECU rap">🎤</button></nav>
 </div></header>
-<main class="shell">
-<div class="heading">
-<div><div class="eyebrow">Official App Downloads</div><h1>Download Apps</h1></div>
-<div class="clock" aria-label="Current Pacific date and time"><b id="todayDate">Pacific date</b><time id="nowTime">Pacific time</time></div>
+<main class="wrap">
+<section class="hero" aria-label="ECU Command Center 2.0">
+<svg class="hero-art" viewBox="0 0 780 280" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Stylized sports car, diagnostic tablet and J2534 programming interface illustration">
+<defs>
+<linearGradient id="carpaint" x1=".1" x2=".9" y1="0" y2="1"><stop stop-color="#1a5f7c"/><stop offset=".3" stop-color="#071826"/><stop offset=".7" stop-color="#05101a"/><stop offset="1" stop-color="#2d728e"/></linearGradient>
+<linearGradient id="glow" x1="0" x2="1"><stop stop-color="#15e6ff" stop-opacity="0"/><stop offset=".5" stop-color="#2cffff"/><stop offset="1" stop-color="#14a9ff" stop-opacity="0"/></linearGradient>
+<linearGradient id="screen" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#103a51"/><stop offset="1" stop-color="#020911"/></linearGradient>
+<filter id="blur"><feGaussianBlur stdDeviation="8"/></filter>
+</defs>
+<path d="M40 200L750 200M150 243H780M90 45H780" stroke="#1ce4ff" stroke-opacity=".18"/>
+<path d="M20 70L280 70L342 23L780 23M175 272L320 215H780" stroke="#12bcd0" stroke-width="2" opacity=".25"/>
+<ellipse cx="490" cy="209" rx="254" ry="20" fill="#00d4ff" opacity=".28" filter="url(#blur)"/>
+<!-- Premium car front, perspective vector artwork -->
+<path d="M212 140C253 106 292 92 369 87L558 78C626 81 687 109 726 153L745 199L726 227L231 228L195 205Z" fill="url(#carpaint)" stroke="#347893" stroke-width="3"/>
+<path d="M306 91C358 61 496 52 588 77L647 119L268 126Z" fill="#04111c" stroke="#295b75" stroke-width="3"/>
+<path d="M320 91C378 76 505 70 561 78" stroke="#9adafc" stroke-opacity=".45" stroke-width="2"/>
+<path d="M229 151L312 139L339 160L307 175L225 170Z" fill="#b8faff" stroke="#24efff" stroke-width="4"/>
+<path d="M612 139L702 155L699 174L631 174L601 159Z" fill="#aefaff" stroke="#29edff" stroke-width="4"/>
+<path d="M238 156L310 148M625 147L696 163" stroke="#fff" stroke-width="4"/>
+<path d="M326 156Q468 138 601 153L580 208H344Z" fill="#06151f" stroke="#2a728f" stroke-width="4"/>
+<path d="M346 168H580M340 183H582M354 195H576" stroke="#26c6ed" stroke-opacity=".4" stroke-width="2"/>
+<path d="M449 151L469 181L490 151M450 151H489M450 151L470 177L490 151" stroke="#cefaff" stroke-width="3" fill="none"/>
+<path d="M250 210L334 214M601 214L706 206" stroke="#2bd1e8" stroke-width="5"/>
+<!-- J2534 pass-through device -->
+<path d="M215 227L330 208L377 227L365 253L261 271L215 253Z" fill="#030b13" stroke="#49a8c4" stroke-width="3"/>
+<path d="M261 271L365 253L374 235L264 249Z" fill="#0b2a3b"/>
+<path d="M252 242L330 224L349 236L276 253Z" fill="#173d54"/>
+<text x="285" y="244" fill="#d3ffff" font-family="system-ui" font-weight="bold" font-size="17" transform="rotate(-10 285 244)">J2534</text>
+<path d="M214 244C170 236 173 268 138 263" stroke="#132d3e" stroke-width="10" fill="none"/>
+<path d="M214 244C170 236 173 268 138 263" stroke="#5dcfe7" stroke-width="2" fill="none"/>
+<!-- Rugged engineering diagnostic tablet -->
+<g transform="translate(570 103) rotate(2)">
+<rect x="-8" y="-12" width="204" height="146" rx="13" fill="#020a11" stroke="#557b93" stroke-width="8"/>
+<rect x="1" y="-2" width="186" height="126" rx="4" fill="url(#screen)" stroke="#11d6ec" stroke-opacity=".65"/>
+<rect x="7" y="6" width="173" height="14" fill="#072b42"/>
+<text x="14" y="17" font-size="10" fill="#62faff" font-weight="bold">ECU / J2534 WORKBENCH</text>
+<path d="M38 60L60 47L104 46L123 64L142 73L155 88H44Z" stroke="#20daee" stroke-width="2" fill="none"/>
+<circle cx="60" cy="87" r="10" stroke="#20f8f9" stroke-width="2" fill="#061724"/><circle cx="132" cy="87" r="10" stroke="#20f8f9" stroke-width="2" fill="#061724"/>
+<path d="M14 37H27M14 49H27M14 61H27M14 73H27M14 85H27M14 97H27" stroke="#2ef0ea" stroke-width="3"/>
+<rect x="6" y="-9" width="14" height="11" fill="#202d3c"/><rect x="165" y="-9" width="14" height="11" fill="#202d3c"/>
+<rect x="6" y="119" width="14" height="11" fill="#202d3c"/><rect x="165" y="119" width="14" height="11" fill="#202d3c"/>
+</g>
+<path d="M270 257H770" stroke="url(#glow)" stroke-width="4"/>
+</svg>
+<div class="hero-copy"><p class="hero-kicker">AUTOMOTIVE SOFTWARE / ENGINEERING LAB</p><h1>ECU COMMAND <span>CENTER 2.0</span></h1><p class="hero-caption">J2534 • ECU FLASHING • IMMOBILIZER • CODING</p><a class="hero-link" href="#software">↓ EXPLORE DOWNLOADS</a></div>
+<span class="hero-signal">STAR MOBILE / BUILD LAB</span>
+</section>
+<div class="techstrip"><div class="ready">● SYSTEM READY</div><div class="protocols"><label>PROTOCOLS</label><b>CAN</b><b>K-LINE</b><b>UDS</b></div><div class="techstamp"><span class="levels"><i></i><i></i><i></i><i></i></span><span>J2534 LAB <span class="mini-note">/ DEMO</span></span></div></div>
+<section class="kpis" aria-label="Live GitHub statistics">
+<div class="kpi"><div class="k-label"><span class="k-icon">⇩</span>Total Downloads</div><strong id="totalDownloads">—</strong><small>Published APK assets</small><svg class="spark" viewBox="0 0 90 36" aria-hidden="true"><polyline points="0,30 13,24 23,27 37,15 49,20 64,7 76,12 88,2" fill="none" stroke="#1df7f9" stroke-width="2"/></svg></div>
+<div class="kpi"><div class="k-label"><span class="k-icon">▣</span>APK Versions</div><strong id="buildCount">—</strong><small>GitHub release assets</small></div>
+<div class="kpi"><div class="k-label"><span class="k-icon">▱</span>V200 Downloads</div><strong id="v200Downloads">—</strong><small>Recorded on GitHub</small><svg class="spark" viewBox="0 0 90 36" aria-hidden="true"><path d="M0 31V25H7V31M12 31V18H19V31M24 31V20H31V31M36 31V10H43V31M48 31V14H55V31M60 31V6H67V31M72 31V1H79V31" stroke="#24faff" stroke-width="7"/></svg></div>
+</section>
+<div class="monitors" id="monitor">
+<section class="panel" aria-label="Simulated CAN waveform"><div class="panel-heading"><span>⌁ CAN-BUS MONITOR</span><span class="demo-chip">SIMULATED SIGNAL</span></div><div class="monitor-body"><div class="wavefield"><svg viewBox="0 0 330 90" preserveAspectRatio="none" aria-hidden="true"><path id="trace" d="M0 60H30V25H65V64H95V30H125V60H158V24H190V65H225V33H260V58H295V27H330"/></svg></div><div class="monitor-spec"><div><span>CAN (HS)</span><strong>500 kbps*</strong></div><div><span>CAN (LS)</span><strong>125 kbps*</strong></div><div><span>FRAMES</span><strong>DEMO</strong></div><div><span>ERRORS</span><strong>—</strong></div><small>* Illustration only</small></div></div></section>
+<section class="panel" aria-label="Illustrative ECU topology"><div class="panel-heading"><span>♧ ECU NETWORK (TOPOLOGY)</span><span class="demo-chip">DEMO MAP</span></div><div class="topology-body"><svg class="topology-svg" viewBox="0 0 420 145" role="img" aria-label="Demonstration schematic connecting ECU to PCM, TCM, ABS, BCM, immobilizer and instrument cluster">
+<path d="M170 72H140L116 22H89M170 72H133L113 72H89M170 72H140L116 122H89M250 72H286L309 22H332M250 72H302H332M250 72H286L309 122H332"/>
+<rect class="hub" x="170" y="47" width="80" height="50" rx="8"/><text x="210" y="72">ECU</text>
+<rect class="module" x="17" y="7" width="72" height="30" rx="8"/><rect class="module" x="17" y="57" width="72" height="30" rx="8"/><rect class="module" x="17" y="107" width="72" height="30" rx="8"/>
+<rect class="module" x="332" y="7" width="74" height="30" rx="8"/><rect class="module" x="332" y="57" width="74" height="30" rx="8"/><rect class="module" x="332" y="107" width="74" height="30" rx="8"/>
+<text x="53" y="22">PCM</text><text x="53" y="72">TCM</text><text x="53" y="122">ABS</text>
+<text x="368" y="22">BCM</text><text x="368" y="72">IMMO</text><text x="368" y="122">IC</text>
+</svg></div></section>
 </div>
-<div class="stats" aria-label="GitHub release download totals">
-<div class="stat"><strong id="totalDownloads">—</strong><span>Total downloads</span></div>
-<div class="stat"><strong id="buildCount">—</strong><span>APK versions</span></div>
-<div class="stat"><strong id="v200Downloads">—</strong><span>V200 downloads</span></div>
-</div>
-<div class="toolbar">
-<input class="search" id="search" type="search" placeholder="Search apps and versions…" aria-label="Search APKs">
-<div class="filters" role="group" aria-label="App filters"><button type="button" class="filter" data-filter="all" aria-pressed="true">All</button><button type="button" class="filter" data-filter="v200" aria-pressed="false">V200</button><button type="button" class="filter" data-filter="eeprom" aria-pressed="false">EEPROM</button><button type="button" class="filter" data-filter="bmw" aria-pressed="false">BMW</button></div>
-<button type="button" class="utility" id="refresh">↻ Refresh</button>
-</div>
-<div class="tablebox">
-<table aria-label="Apps and APK download links"><thead><tr><th scope="col">App / Version</th><th scope="col">Uploaded (Pacific)</th><th scope="col">Downloads</th><th scope="col">Get APK</th></tr></thead>
-<tbody id="downloadRows"><tr><td colspan="4" class="empty">Loading downloads from GitHub…</td></tr></tbody>
-</table>
-</div>
-<div class="tablefooter"><p id="statusText" role="status">Checking live GitHub Releases…</p><button id="showAll" type="button" aria-expanded="false" hidden>↓ Show all versions</button></div>
-<div class="quicklinks"><a href="community.html#account">Technician activation ↗</a><a href="donate.html">Support development ↗</a></div>
-<p class="warning">Experimental APKs. Compatibility and supported functions vary by release. GitHub download counts exclude raw-file downloads.</p>
+<section class="panel terminal" id="tools" aria-label="Interactive demonstration terminal"><div class="panel-heading"><span>▤ TERMINAL / COMMAND</span><span class="demo-chip">CATALOG DEMO — NO VEHICLE CONNECTION</span></div><div class="terminal-inner"><pre id="termOutput" aria-live="polite">STAR&gt; SYSTEM READY
+MODE: DOWNLOAD CATALOG / DEMO
+INFO: No ECU is connected.
+STAR&gt; Select IDENTIFY or READ INFO</pre><div class="terminal-buttons"><button type="button" data-cmd="identify">› IDENTIFY</button><button type="button" data-cmd="read">ⓘ READ INFO</button><button type="button" data-cmd="help">▤ HELP</button><button type="button" data-cmd="clear">▤ CLEAR</button></div></div></section>
+<section id="software" aria-label="Official software releases">
+<div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, tools, or versions..." aria-label="Search download catalog"/></div>
+<div class="filters" role="group" aria-label="Software filters"><button class="filter" data-filter="all" aria-pressed="true" type="button">▦ All</button><button class="filter" data-filter="v200" aria-pressed="false" type="button">⌁ V200</button><button class="filter" data-filter="eeprom" aria-pressed="false" type="button">▣ EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false" type="button">◉ BMW</button></div>
+<div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
+<div class="catalog-foot"><span id="statusText" role="status">Checking live GitHub Releases…</span><button id="showAll" aria-expanded="false" type="button" hidden>↓ Show previous versions</button><button id="refresh" type="button">↻ Refresh</button></div>
+</section>
+<nav class="bottom-nav" aria-label="Command center navigation">
+<a href="#home" class="active"><svg viewBox="0 0 24 24"><path d="M3 11 12 3 21 11V22H14V15H10V22H3Z"/></svg>Home</a>
+<a href="#software"><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 17l9 5 9-5"/></svg>Software</a>
+<button id="guideButton" type="button"><svg viewBox="0 0 24 24"><path d="M12 6C9 3 5 4 2 4v16c4-1 8-1 10 2m0-16c3-3 7-2 10-2v16c-4-1-8-1-10 2V6Z"/></svg>Docs</button>
+<a href="#tools"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m10 2-1 3-3 1-3-1-2 4 3 2v3l-3 2 2 4 3-1 3 1 1 3h4l1-3 3-1 3 1 2-4-3-2v-3l3-2-2-4-3 1-3-1-1-3Z"/></svg>Tools</a>
+</nav>
+<p class="footertext">Star Mobile Service · Independent automotive software development · CAN/ECU visuals above are demonstrations, not live vehicle diagnostics. APK features vary by release.</p>
 </main>
+<dialog id="guide"><h2>ECU Command Center Guide</h2><p>This page shows the latest published APKs, real GitHub download counts, and upload times in Pacific Time. Search or filter to find V200 Diagnostic, EEPROM Studio, or BMW Standard Tools. Tap Download to get the corresponding release asset.</p><p>The waveform, topology, and terminal are website demonstrations only. They do not connect to your vehicle or execute diagnostic commands.</p><p>Tap 🎤 in the header to start or stop the original Bench Mode ECU rap. Sound is off by default.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
 <script>
 (function(){
 "use strict";
 const REPO="kaissymarji/star-mobile-downloads.";
 const API="https://api.github.com/repos/"+REPO+"/releases?per_page=100&page=";
 const $=id=>document.getElementById(id);
-/* Original, soft five-minute ambient welcome soundtrack with a nostalgic early-2000s desktop feel, synthesized using Web Audio.
-   Autoplay is attempted only when enabled; browsers may require a first user gesture.
-   No audio file, tracking request, or external service is involved. */
-// Gentle original five-minute setup ambience. Not the Microsoft recording or melody.
-// Quiet by default: visitors choose when to hear it by pressing the speaker button.
 // BENCH MODE: an original hip-hop beat and browser-voiced ECU rap.
 // Playback requires a click; the website keeps music off by default.
 const RAP_BPM=92,RAP_DURATION=300;
@@ -381,64 +454,102 @@ document.getElementById("soundToggle").addEventListener("click",()=>{
   else playIntroSound();
 });
 updateSoundToggle();
+
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
-const pacificClock=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"});
-const uploadedDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",year:"numeric"});
-const uploadedClock=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
+const pacificTime=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 let apps=[],filter="all",allVersions=false,loaded=false;
-const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt=n=>Number(n||0).toLocaleString("en-US");
-function clock(){const now=new Date();$("todayDate").textContent=pacificDay.format(now);$("nowTime").textContent=pacificClock.format(now);}
-function family(n){n=n.toLowerCase();return n.includes("v200")||n.includes("stardiagnostic")?"v200":n.includes("eeprom")||n.includes("xp400")?"eeprom":n.includes("bmw")?"bmw":"other";}
-function title(a){const n=a.asset.name,f=a.family;return f==="v200"?"V200 Diagnostic":f==="eeprom"?(n.toLowerCase().includes("xp400")?"XP400 Reader":"EEPROM Studio"):f==="bmw"?"BMW Standard Tools":n.replace(/\.apk$/i,"").replace(/[_-]+/g," ");}
-function ver(a){const match=a.asset.name.match(/(\d+(?:\.\d+){1,4})/);return match?"v"+match[1]:(a.release.tag_name||"Version");}
-function stamp(a){return a.asset.created_at||a.release.published_at||a.release.created_at||"";}
-function latestKeys(){const keys=new Set(),names=new Set();for(const a of apps){if(!names.has(a.title)){names.add(a.title);keys.add(a.asset.id||a.url);}}return keys;}
+const safe=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const format=n=>Number(n||0).toLocaleString("en-US");
+function family(n){const v=n.toLowerCase();return v.includes("v200")||v.includes("stardiagnostic")?"v200":v.includes("eeprom")||v.includes("xp400")?"eeprom":v.includes("bmw")?"bmw":"other";}
+function title(a){return a.family==="v200"?"V200 Diagnostic":a.family==="eeprom"?"EEPROM Studio":a.family==="bmw"?"BMW Standard Tools":a.asset.name.replace(/\.apk$/i,"").replace(/[_-]/g," ");}
+function version(a){const match=a.asset.name.match(/(\d+(?:\.\d+){1,4})/);return match?"v"+match[1]:(a.release.tag_name||"Version");}
+function uploaded(a){return a.asset.created_at||a.release.published_at||a.release.created_at||"";}
+function latestIds(){const names=new Set(),keys=new Set();for(const a of apps){if(!names.has(a.title)){names.add(a.title);keys.add(a.asset.id||a.url);}}return keys;}
+const icons={
+v200:'<svg viewBox="0 0 32 32"><path d="M3 23V18L8 12H24L29 18V23H26L24 26H21V23H11V26H8L6 23Z"/><path d="M10 12L13 8H20L23 12M8 19H12M20 19H24"/></svg><b>V200</b>',
+eeprom:'<svg viewBox="0 0 32 32"><rect x="7" y="7" width="18" height="18" rx="2"/><path d="M11 3V7M17 3V7M23 3V7M11 25V29M17 25V29M23 25V29M3 11H7M3 17H7M3 23H7M25 11H29M25 17H29M25 23H29"/></svg><b>EEPROM</b>',
+bmw:'<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13"/><circle cx="16" cy="16" r="9"/><path d="M16 7V25M7 16H25"/></svg><b>BMW</b>',
+other:'<svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" rx="4"/><path d="M11 17H21M16 12V22"/></svg><b>APP</b>'
+};
 function render(){
-const q=$("search").value.trim().toLowerCase(),newest=latestKeys();
-const chosen=apps.filter(a=>(filter==="all"||a.family===filter)&&(a.title+" "+a.asset.name+" "+a.release.tag_name+" "+a.release.name).toLowerCase().includes(q));
-const rows=chosen.filter(a=>allVersions||q||newest.has(a.asset.id||a.url));
-const hiddenCount=chosen.length-rows.length;
-$("showAll").hidden=!!q||(!allVersions&&hiddenCount===0);
-$("showAll").textContent=allVersions?"↑ Show latest only":"↓ Show "+hiddenCount+" previous versions";
-$("showAll").setAttribute("aria-expanded",String(allVersions));
-if(!rows.length){$("downloadRows").innerHTML='<tr><td colspan="4" class="empty">'+(loaded?"No APKs match this search.":"Download list temporarily unavailable. Please refresh the page.")+'</td></tr>';return;}
-$("downloadRows").innerHTML=rows.map(a=>{
-const val=stamp(a),valid=val&&!Number.isNaN(Date.parse(val)),date=valid?new Date(val):null;
-const dateLabel=valid?uploadedDay.format(date):"Date unavailable",timeLabel=valid?uploadedClock.format(date):"";
-const latest=newest.has(a.asset.id||a.url);
-return '<tr><td><div class="app-title">'+esc(a.title)+'</div><div class="info-line"><span class="version">'+esc(ver(a))+'</span> · '+(latest?"Latest":"Older")+' <span class="filename">· '+esc(a.asset.name)+'</span></div></td><td><div class="time"><time'+(valid?' datetime="'+esc(val)+'"':'')+'>'+esc(dateLabel)+'<small>'+esc(timeLabel)+'</small></time></div></td><td class="count">'+fmt(a.count)+'</td><td><a class="download-btn" href="'+esc(a.url)+'">↓ APK</a></td></tr>';
-}).join("");
+ const query=$("search").value.toLowerCase().trim(),keys=latestIds();
+ const selected=apps.filter(a=>(filter==="all"||a.family===filter)&&(a.title+" "+a.asset.name+" "+a.release.tag_name+" "+a.release.name).toLowerCase().includes(query));
+ const shown=selected.filter(a=>query||allVersions||keys.has(a.asset.id||a.url));
+ const hiddenCount=selected.length-shown.length;
+ const toggle=$("showAll");
+ toggle.hidden=!!query||(!allVersions&&hiddenCount===0);
+ toggle.textContent=allVersions?"↑ Show latest only":"↓ Show "+hiddenCount+" previous versions";
+ toggle.setAttribute("aria-expanded",String(allVersions));
+ if(!shown.length){$("catalog").innerHTML='<div class="empty">'+(loaded?"No APKs match your search.":"Unable to load GitHub releases; try Refresh.")+'</div>';return;}
+ $("catalog").innerHTML=shown.map(a=>{
+  const latest=keys.has(a.asset.id||a.url),date=uploaded(a),valid=date&&!Number.isNaN(Date.parse(date));
+  const dateLabel=valid?pacificTime.format(new Date(date)):"Date unavailable";
+  const subtitle=a.family==="v200"?"Android diagnostic development and V200 adapter testing":a.family==="eeprom"?"EEPROM and programmer utilities":a.family==="bmw"?"BMW coding and diagnostic tools":"Automotive Android utility";
+  const accent=a.family==="bmw"?"#62a8ff":a.family==="eeprom"?"#63fc95":"#22e6f4";
+  return '<article class="appcard" style="--accent:'+accent+'"><div class="app-icon">'+(icons[a.family]||icons.other)+'</div><div class="app-content"><div class="app-name">'+safe(a.title)+'</div><div class="app-desc">'+safe(subtitle)+'</div><div class="app-meta"><span>◷ Uploaded: <strong>'+(valid?'<time datetime="'+safe(date)+'">'+safe(dateLabel)+'</time>':safe(dateLabel))+'</strong></span><span>◇ <strong>'+safe(version(a))+'</strong> · '+(latest?'Latest':'Archive')+'</span></div></div><div class="app-actions"><a class="download-btn" href="'+safe(a.url)+'">⇩ Download</a><div class="dl-count">⇩ '+format(a.count)+' downloads</div></div></article>';
+ }).join("");
 }
 async function reload(){
-$("refresh").disabled=true;$("statusText").textContent="Checking releases…";
-try{
-let releases=[];
-for(let p=1;p<=5;p++){
-const response=await fetch(API+p,{headers:{"Accept":"application/vnd.github+json"},cache:"no-store"});
-if(!response.ok)throw Error("GitHub API "+response.status);
-const page=await response.json();
-if(!Array.isArray(page))throw Error("Invalid GitHub response");
-releases=releases.concat(page);
-if(page.length<100)break;
+ $("refresh").disabled=true;$("statusText").textContent="Checking GitHub Releases…";
+ try{
+   let releases=[];
+   for(let p=1;p<=5;p++){
+     const response=await fetch(API+p,{headers:{"Accept":"application/vnd.github+json"},cache:"no-store"});
+     if(!response.ok)throw Error("GitHub HTTP "+response.status);
+     const page=await response.json();if(!Array.isArray(page))throw Error("Invalid release feed");
+     releases=releases.concat(page);
+     if(page.length<100)break;
+   }
+   apps=releases.filter(r=>!r.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded").map(asset=>({asset,release:r,family:family(asset.name),count:Number(asset.download_count||0),url:asset.browser_download_url})));
+   apps.forEach(a=>a.title=title(a));
+   apps.sort((a,b)=>(Date.parse(uploaded(b))||0)-(Date.parse(uploaded(a))||0));
+   loaded=true;
+   $("totalDownloads").textContent=format(apps.reduce((n,a)=>n+a.count,0));
+   $("buildCount").textContent=format(apps.length);
+   $("v200Downloads").textContent=format(apps.filter(a=>a.family==="v200").reduce((n,a)=>n+a.count,0));
+   $("statusText").textContent="Live GitHub counts · Pacific upload times";
+ }catch(err){
+   $("statusText").textContent=loaded?"Could not refresh — showing previously loaded releases.":"GitHub is temporarily unavailable. Please refresh.";
+ }finally{$("refresh").disabled=false;render();}
 }
-apps=releases.filter(r=>!r.draft).flatMap(release=>(release.assets||[]).filter(asset=>/\.apk$/i.test(asset.name)&&asset.state==="uploaded").map(asset=>({asset:asset,release:release,url:asset.browser_download_url,count:Number(asset.download_count||0),family:family(asset.name)})));
-apps.forEach(a=>a.title=title(a));
-apps.sort((a,b)=>(Date.parse(stamp(b))||0)-(Date.parse(stamp(a))||0));
-loaded=true;
-$("totalDownloads").textContent=fmt(apps.reduce((n,a)=>n+a.count,0));
-$("buildCount").textContent=fmt(apps.length);
-$("v200Downloads").textContent=fmt(apps.filter(a=>a.family==="v200").reduce((n,a)=>n+a.count,0));
-$("statusText").textContent="Live GitHub counts · Upload dates in Pacific Time";
-}catch(err){
-$("statusText").textContent=loaded?"Live refresh failed — showing previously loaded releases.":"GitHub is temporarily unavailable. Open All GitHub releases below.";
-}finally{$("refresh").disabled=false;render();}
+const guide=$("guide");
+$("guideButton").addEventListener("click",()=>{if(guide.showModal)guide.showModal();else guide.setAttribute("open","");});
+$("closeGuide").addEventListener("click",()=>guide.close?guide.close():guide.removeAttribute("open"));
+guide.addEventListener("click",event=>{if(event.target===guide&&guide.close)guide.close();});
+const terminal=$("termOutput");
+function setTerminal(value){terminal.textContent=value;}
+document.querySelectorAll("[data-cmd]").forEach(button=>button.addEventListener("click",()=>{
+const cmd=button.dataset.cmd;
+if(cmd==="clear"){setTerminal("STAR> READY\nDEMO MODE — NO VEHICLE CONNECTED\nSTAR> _");return;}
+if(cmd==="help"){setTerminal("STAR> HELP\nIDENTIFY   — inspect published app families\nREAD INFO  — inspect current release data\nCLEAR      — clear this demo terminal\n\nNo vehicle commands are sent.");return;}
+if(cmd==="identify"){
+ const families=[...new Set(apps.map(a=>a.title))];
+ setTerminal("STAR> IDENTIFY\nMODE: OFFLINE WEBSITE DEMO\nFOUND APPS: "+families.length+"\n"+(families.length?families.map(n=>"• "+n).join("\n"):"Release data not loaded")+"\nSTAR> _");return;
 }
+if(cmd==="read"){
+const v=apps.find(a=>a.family==="v200");
+setTerminal("STAR> READ INFO\nSOURCE: GITHUB RELEASES\n"+(v?"LATEST V200: "+version(v)+"\nDOWNLOADS: "+format(v.count)+"\nUPLOAD: "+pacificTime.format(new Date(uploaded(v))):"Release data not loaded")+"\n\nNo ECU or vehicle connected.\nSTAR> _");
+}
+}));
+$("refresh").addEventListener("click",reload);
 $("search").addEventListener("input",render);
 $("showAll").addEventListener("click",()=>{allVersions=!allVersions;render();});
-$("refresh").addEventListener("click",reload);
-document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render();}));
-clock();setInterval(clock,1000);reload();
+document.querySelectorAll(".filter").forEach(button=>button.addEventListener("click",()=>{filter=button.dataset.filter;document.querySelectorAll(".filter").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));render();}));
+(function animateTrace(){
+ const trace=$("trace"),points=24;
+ if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ let time=0;
+ function frame(){
+  if(document.visibilityState!=="hidden"){
+    const coords=[];
+    for(let i=0;i<=points;i++){const x=i*330/points;const signal=((Math.floor(i/3+time/24)%4)===0?29:(Math.floor(i/3+time/24)%4)===2?64:51);coords.push((i?"L":"M")+x.toFixed(1)+" "+(signal+Math.sin(i*2.8+time/10)*3).toFixed(1));}
+    trace.setAttribute("d",coords.join(" "));
+  }
+  time++;setTimeout(frame,100);
+ }
+ frame();
+})();
+reload();
 })();
 </script>
 </body>
