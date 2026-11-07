@@ -236,6 +236,40 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .bottom-links{gap:10px}
 }
 
+
+/* Camera VIN scanner: real barcode scanning with optional on-device OCR. */
+.vin-form{flex-wrap:wrap}
+.vin-form input{flex:1 1 180px}
+.vin-scan-launch{background:#0b4053!important;color:#cbfffb!important;border:1px solid #34d9da!important}
+.vin-scan-launch:hover{background:#13647a!important}
+.vin-scan-notice{font-size:10px;color:#81e5d8;margin:6px 0 0}
+.vin-scan-notice[hidden]{display:none}
+.vin-scan-dialog{max-width:640px;width:calc(100% - 22px);padding:18px;border:1px solid #36cbd2;background:#061825;color:#eaffff;border-radius:15px;box-shadow:0 22px 80px #000d;max-height:94dvh;overflow-y:auto}
+.vin-scan-dialog::backdrop{background:#01050bdd}
+.vin-scan-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.vin-scan-head h2{margin:0;font-size:21px}
+.vin-scan-close{background:#143145;color:#fff;border:1px solid #51798c;border-radius:8px;padding:7px 11px;font-size:18px;min-height:38px}
+.vin-scan-instructions{font-size:12px;color:#bbd5e5;margin:10px 0}
+.vin-scanner-view{position:relative;width:100%;min-height:175px;aspect-ratio:16/9;border:1px solid #2e7289;border-radius:11px;overflow:hidden;background:linear-gradient(120deg,#06192a,#0a3446);display:grid;place-items:center}
+.vin-scanner-view video{display:block;width:100%;height:100%;object-fit:cover}
+.vin-scan-fallback{width:100%;height:100%;min-height:180px}
+.vin-scan-fallback[hidden]{display:none}
+.vin-scan-reticle{pointer-events:none;position:absolute;inset:27% 7%;border:2px dashed #38ffe5;opacity:.8;border-radius:10px;box-shadow:0 0 16px #09ffff47}
+.vin-scan-feedback{margin:10px 0;min-height:20px;color:#8bece3;font-size:12px;overflow-wrap:anywhere}
+.vin-scan-actions{display:flex;gap:8px;flex-wrap:wrap}
+.vin-scan-alt{padding:9px 11px;border:1px solid #3599ab;border-radius:8px;color:#deffff;background:#103648;font-size:11px;font-weight:800;min-height:38px}
+.vin-scan-alt:hover{background:#165369}
+.vin-scan-alt:disabled{opacity:.5;cursor:wait}
+.vin-scan-privacy{font-size:10px;color:#9ab9c9;margin:10px 0 0}
+@media(max-width:510px){
+.vin-form input{flex:1 1 100%;width:100%;font-size:12px}
+.vin-form button{flex:1 1 auto;min-height:36px}
+.vin-scan-dialog{padding:12px}
+.vin-scan-head h2{font-size:17px}
+.vin-scan-actions{gap:6px}
+.vin-scan-alt{flex:1 1 31%;font-size:10px;padding:6px}
+}
+
 </style>
 </head>
 <body>
@@ -299,8 +333,8 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <div class="monitors" id="monitor">
 <section class="panel vin-panel" id="vinLookup" aria-label="Online VIN decoder"><div class="panel-heading"><span>⌗ VIN DECODER</span><a href="https://vpic.nhtsa.dot.gov/decoder/" target="_blank" rel="noopener noreferrer" class="vin-source">NHTSA vPIC ↗</a></div>
 <div class="vin-body"><p class="vin-intro">Decode year, make, model, engine and vehicle information using official NHTSA data.</p>
-<form id="vinForm" class="vin-form"><label for="vinInput" class="sr-only">17-character vehicle identification number</label><input id="vinInput" maxlength="17" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter 17-character VIN" required aria-describedby="vinStatus"/><button id="decodeVIN" type="submit">⌕ Decode VIN</button></form>
-<div id="vinStatus" class="vin-status" role="status">Enter a VIN to retrieve vehicle details.</div>
+<form id="vinForm" class="vin-form"><label for="vinInput" class="sr-only">17-character vehicle identification number</label><input id="vinInput" maxlength="17" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter 17-character VIN" required aria-describedby="vinStatus"/><button id="scanVIN" type="button" class="vin-scan-launch" aria-label="Scan VIN with camera">📷 Scan VIN</button><button id="decodeVIN" type="submit">⌕ Decode VIN</button></form>
+<div id="vinStatus" class="vin-status" role="status">Enter or scan a VIN to retrieve vehicle details.</div><p id="vinScanNotice" class="vin-scan-notice" hidden>VIN scanned from camera or photo. Check it against the vehicle before relying on the results.</p>
 <div id="vinResult" class="vin-results" hidden></div>
 <p class="vin-privacy">VIN is sent to the NHTSA decoding service only when you tap Decode.</p></div></section>
 <section class="panel" aria-label="Illustrative ECU topology"><div class="panel-heading"><span>♧ ECU NETWORK (TOPOLOGY)</span><span class="demo-chip">EXAMPLE</span></div><div class="topology-body"><svg class="topology-svg" viewBox="0 0 420 145" role="img" aria-label="Demonstration schematic connecting ECU to PCM, TCM, ABS, BCM, immobilizer and instrument cluster">
@@ -324,6 +358,17 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button></nav>
 <p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Topology is an illustration, not a live vehicle connection.</p>
 </main>
+<dialog id="vinScanDialog" class="vin-scan-dialog" aria-labelledby="vinScanTitle">
+<div class="vin-scan-head"><h2 id="vinScanTitle">📷 VIN Scanner</h2><button id="vinScanClose" type="button" class="vin-scan-close" aria-label="Close scanner">✕</button></div>
+<p class="vin-scan-instructions">Point the camera at the VIN barcode on the door label, or at the printed 17-character VIN. Hold it steady and avoid glare.</p>
+<div class="vin-scanner-view"><video id="vinScanVideo" autoplay playsinline muted></video><div id="vinScanFallback" class="vin-scan-fallback" hidden></div><div class="vin-scan-reticle" aria-hidden="true"></div></div>
+<div id="vinScanFeedback" class="vin-scan-feedback" role="status" aria-live="polite">Ready to scan…</div>
+<div class="vin-scan-actions"><button id="vinReadText" type="button" class="vin-scan-alt">Read printed VIN</button><button id="vinTakePhoto" type="button" class="vin-scan-alt">📸 Camera photo</button><button id="vinPickPhoto" type="button" class="vin-scan-alt">Upload photo</button></div>
+<p class="vin-scan-privacy">Camera scanning and photo recognition run on your device. Only the recognized VIN is sent to NHTSA when decoding; third-party scanner/OCR code loads only when used.</p>
+<input type="file" accept="image/*" capture="environment" id="vinCameraPhoto" hidden>
+<input type="file" accept="image/*" id="vinUploadPhoto" hidden>
+<div id="vinScanFileReader" hidden></div>
+</dialog>
 <dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><p>The ECU network graphic is illustrative only; this website is not connected to any vehicle. Use the 🎤 control to start or stop the optional ECU rap.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
 <script>
 (function(){
@@ -651,6 +696,252 @@ vinForm.addEventListener("submit",async event=>{
    if(ticket===vinRequest)decodeButton.disabled=false;
  }
 });
+
+// VIN scanner: camera barcode capture + optional on-device printed VIN OCR.
+// Barcode scanning is local. Only a recognized VIN is sent to NHTSA by the existing decoder.
+const scanDialog=$("vinScanDialog"),scanButton=$("scanVIN"),scanVideo=$("vinScanVideo");
+const scanFallback=$("vinScanFallback"),scanFeedback=$("vinScanFeedback");
+const scanTextButton=$("vinReadText"),scanCloseButton=$("vinScanClose");
+let scannerStream=null,scannerLib=null,scannerAnimation=0,scannerActive=false,scannerBusy=false,scannerSession=0,scannerNative=null,scannerMode="";
+let scannerLastFrame=0,scannerOCRWorker=null,scannerOcrPromise=null;
+const validVIN=/^[A-HJ-NPR-Z0-9]{17}$/;
+const VIN_MATCH=/[A-HJ-NPR-Z0-9]{17}/g;
+const VIN_TRANSLIT="0123456789.ABCDEFGH..JKLMN.P.R..STUVWXYZ";
+function vinCheckDigit(vin){
+ const values={A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,J:1,K:2,L:3,M:4,N:5,P:7,R:9,S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9};
+ const weights=[8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
+ let sum=0;
+ for(let i=0;i<17;i++){const c=vin[i],digit=/^\d$/.test(c)?Number(c):values[c];if(digit===undefined)return false;sum+=digit*weights[i];}
+ const check=sum%11;return vin[8]===(check===10?"X":String(check));
+}
+function extractScannedVIN(raw){
+ const upper=String(raw||"").toUpperCase().replace(/[\u200B-\u200D]/g,"");
+ const direct=upper.match(/(?:\bVIN\b[\s:#=-]*)?([A-HJ-NPR-Z0-9]{17})(?![A-Z0-9])/);
+ if(direct&&validVIN.test(direct[1]))return direct[1];
+ const candidates=[];
+ const groups=upper.match(/[A-Z0-9\s:_./-]{17,}/g)||[];
+ for(const group of groups){
+   const clean=group.replace(/[^A-Z0-9]/g,"");
+   const matches=clean.match(VIN_MATCH)||[];
+   for(const c of matches)if(validVIN.test(c)&&!candidates.includes(c))candidates.push(c);
+ }
+ return candidates.find(vinCheckDigit)||candidates[0]||null;
+}
+function scanStatus(message){scanFeedback.textContent=message;}
+function fillScannedVIN(vin,origin){
+ if(!validVIN.test(vin)||!scannerActive)return false;
+ scannerActive=false;
+ vinInput.value=vin;
+ $("vinScanNotice").hidden=false;
+ scanStatus("VIN recognized ("+origin+"). Decoding vehicle information…");
+ stopScanner(true);
+ if(vinForm.requestSubmit)vinForm.requestSubmit();
+ else vinForm.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true}));
+ return true;
+}
+async function stopScanner(shouldClose=true){
+ scannerActive=false;
+ ++scannerSession;
+ if(scannerAnimation){cancelAnimationFrame(scannerAnimation);scannerAnimation=0;}
+ if(scannerLib){
+   const lib=scannerLib;scannerLib=null;
+   try{if(lib.isScanning)await lib.stop();}catch(_){}
+   try{lib.clear();}catch(_){}
+ }
+ if(scannerStream){
+   scannerStream.getTracks().forEach(track=>track.stop());
+   scannerStream=null;
+ }
+ scanVideo.pause();
+ scanVideo.srcObject=null;
+ scannerBusy=false;scannerNative=null;scannerMode="";
+ if(shouldClose&&scanDialog.open)scanDialog.close();
+}
+function loadScannerScript(url,globalName){
+ if(window[globalName])return Promise.resolve();
+ return new Promise((resolve,reject)=>{
+   const script=document.createElement("script");
+   script.src=url;script.async=true;
+   const timeout=setTimeout(()=>{script.remove();reject(Error("Scanner library timed out."));},16000);
+   script.onload=()=>{clearTimeout(timeout);window[globalName]?resolve():reject(Error("Scanner library unavailable."));};
+   script.onerror=()=>{clearTimeout(timeout);reject(Error("Cannot load scanner library."));};
+   document.head.appendChild(script);
+ });
+}
+async function nativeCameraScanner(token){
+ const formats=await window.BarcodeDetector.getSupportedFormats();
+ const compatible=formats.filter(f=>["code_39","code_93","code_128","pdf417","qr_code","data_matrix"].includes(f));
+ if(!compatible.length)throw Error("VIN barcode formats are unsupported.");
+ scannerNative=new window.BarcodeDetector({formats:compatible});
+ scannerStream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}}});
+ if(!scannerActive||token!==scannerSession){scannerStream.getTracks().forEach(track=>track.stop());scannerStream=null;return;}
+ scannerMode="native";
+ scanFallback.hidden=true;scanVideo.hidden=false;
+ scanVideo.srcObject=scannerStream;
+ await scanVideo.play();
+ scanStatus("Camera ready. Aim at the VIN barcode, or tap Read printed VIN.");
+ async function frame(now){
+   if(!scannerActive||token!==scannerSession)return;
+   if(now-scannerLastFrame>250&&scanVideo.readyState>=2&&!scannerBusy){
+     scannerLastFrame=now;scannerBusy=true;
+     try{
+       const found=await scannerNative.detect(scanVideo);
+       for(const item of found){
+         const vin=extractScannedVIN(item.rawValue);
+         if(vin&&fillScannedVIN(vin,"barcode"))return;
+       }
+     }catch(_){}
+     scannerBusy=false;
+   }
+   if(scannerActive&&token===scannerSession)scannerAnimation=requestAnimationFrame(frame);
+ }
+ scannerAnimation=requestAnimationFrame(frame);
+}
+async function startLibraryScanner(token){
+ scanStatus("Starting camera barcode scanner…");
+ await loadScannerScript("https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js","Html5Qrcode");
+ if(!scannerActive||token!==scannerSession)return;
+ scanVideo.hidden=true;scanFallback.hidden=false;
+ const formats=window.Html5QrcodeSupportedFormats;
+ const supported=[formats.CODE_39,formats.CODE_93,formats.CODE_128,formats.PDF_417,formats.QR_CODE,formats.DATA_MATRIX];
+ scannerLib=new window.Html5Qrcode("vinScanFallback",{formatsToSupport:supported,useBarCodeDetectorIfSupported:true},false);
+ scannerMode="library";
+ await scannerLib.start({facingMode:"environment"},{fps:10,aspectRatio:1.777},decoded=>{
+   if(!scannerActive||token!==scannerSession)return;
+   const vin=extractScannedVIN(decoded);
+   if(vin)fillScannedVIN(vin,"barcode");
+ },()=>{});
+ if(token===scannerSession&&scannerActive)scanStatus("Aim at the VIN barcode. For printed VIN text, use Read printed VIN.");
+}
+async function startScanner(){
+ if(scannerActive)return;
+ if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
+   scanStatus("Live camera access is unavailable here. Use Camera photo or Upload photo.");
+   scanDialog.showModal();
+   return;
+ }
+ scannerActive=true;
+ const token=++scannerSession;
+ scanFallback.hidden=true;scanVideo.hidden=false;
+ scanDialog.showModal();
+ scanStatus("Requesting camera permission…");
+ try{
+   if("BarcodeDetector" in window&&typeof window.BarcodeDetector.getSupportedFormats==="function"){
+     try{await nativeCameraScanner(token);return;}catch(error){
+       if(scannerStream){scannerStream.getTracks().forEach(track=>track.stop());scannerStream=null;}
+       scanVideo.srcObject=null;
+       if(!scannerActive||token!==scannerSession)return;
+     }
+   }
+   await startLibraryScanner(token);
+ }catch(error){
+   if(scannerActive&&token===scannerSession)scanStatus("Camera scan unavailable. Use Camera photo / Upload photo to recognize a VIN, or type it manually.");
+ }
+}
+async function getOcrWorker(){
+ if(scannerOCRWorker)return scannerOCRWorker;
+ if(scannerOcrPromise)return scannerOcrPromise;
+ scannerOcrPromise=(async()=>{
+   await loadScannerScript("https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js","Tesseract");
+   const worker=await window.Tesseract.createWorker("eng",1,{});
+   await worker.setParameters({tessedit_char_whitelist:"ABCDEFGHJKLMNPRSTUVWXYZ0123456789",tessedit_pageseg_mode:7});
+   scannerOCRWorker=worker;return worker;
+ })();
+ try{return await scannerOcrPromise;}finally{scannerOcrPromise=null;}
+}
+function prepareOCRCanvas(source,width,height){
+ const max=1700,scale=Math.min(2.1,max/Math.max(width,height));
+ const canvas=document.createElement("canvas");
+ canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);
+ const ctx=canvas.getContext("2d",{willReadFrequently:true});
+ ctx.drawImage(source,0,0,canvas.width,canvas.height);
+ const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+ const pixels=img.data;
+ for(let i=0;i<pixels.length;i+=4){
+   const gray=.299*pixels[i]+.587*pixels[i+1]+.114*pixels[i+2];
+   const value=Math.max(0,Math.min(255,(gray-128)*1.6+128));
+   pixels[i]=pixels[i+1]=pixels[i+2]=value;
+ }
+ ctx.putImageData(img,0,0);
+ return canvas;
+}
+async function photoBarcodeScan(file){
+ if("BarcodeDetector" in window){
+   try{
+     const supported=await window.BarcodeDetector.getSupportedFormats();
+     const formats=supported.filter(f=>["code_39","code_93","code_128","pdf417","qr_code","data_matrix"].includes(f));
+     if(formats.length){
+       const bitmap=await createImageBitmap(file);
+       try{
+         const found=await new window.BarcodeDetector({formats}).detect(bitmap);
+         for(const item of found){const vin=extractScannedVIN(item.rawValue);if(vin)return vin;}
+       }finally{bitmap.close();}
+     }
+   }catch(_){}
+ }
+ try{
+   await loadScannerScript("https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js","Html5Qrcode");
+   const reader=new window.Html5Qrcode("vinScanFileReader",{},false);
+   try{return extractScannedVIN(await reader.scanFile(file,true));}
+   finally{try{reader.clear();}catch(_){}}
+ }catch(_){return null;}
+}
+async function recognizePrintedVIN(source,width,height,token){
+ scanStatus("Reading printed VIN on this device… first scan may download language data.");
+ const worker=await getOcrWorker();
+ if(!scannerActive||token!==scannerSession)return null;
+ const canvas=prepareOCRCanvas(source,width,height);
+ let recognized=await worker.recognize(canvas);
+ let vin=extractScannedVIN(recognized.data.text);
+ if(!vin){
+   await worker.setParameters({tessedit_pageseg_mode:6});
+   recognized=await worker.recognize(canvas);
+   vin=extractScannedVIN(recognized.data.text);
+   await worker.setParameters({tessedit_pageseg_mode:7});
+ }
+ return vin;
+}
+$("scanVIN").addEventListener("click",startScanner);
+$("vinScanClose").addEventListener("click",()=>stopScanner(true));
+scanDialog.addEventListener("close",()=>stopScanner(false));
+$("vinTakePhoto").addEventListener("click",()=>$("vinCameraPhoto").click());
+$("vinPickPhoto").addEventListener("click",()=>$("vinUploadPhoto").click());
+for(const input of [$("vinCameraPhoto"),$("vinUploadPhoto")]){
+ input.addEventListener("change",async()=>{
+   const file=input.files?.[0];input.value="";
+   if(!file)return;
+   if(!scanDialog.open)scanDialog.showModal();
+   if(!scannerActive)scannerActive=true;
+   const token=scannerSession;
+   scanStatus("Checking image for VIN barcode…");
+   try{
+     const barcode=await photoBarcodeScan(file);
+     if(barcode&&scannerActive&&token===scannerSession){fillScannedVIN(barcode,"photo barcode");return;}
+     const bitmap=await createImageBitmap(file);
+     try{
+       const vin=await recognizePrintedVIN(bitmap,bitmap.width,bitmap.height,token);
+       if(vin&&scannerActive&&token===scannerSession){fillScannedVIN(vin,"photo text");return;}
+     }finally{bitmap.close();}
+     if(scannerActive&&token===scannerSession)scanStatus("No clear 17-character VIN found. Retake the photo closer, avoid glare, or enter it manually.");
+   }catch(error){
+     if(scannerActive&&token===scannerSession)scanStatus("Unable to read the photo. Try a sharper image or type the VIN manually.");
+   }
+ });
+}
+scanTextButton.addEventListener("click",async()=>{
+ if(!scannerActive)return;
+ const token=scannerSession;
+ const video=scanVideo.hidden?scanFallback.querySelector("video"):scanVideo;
+ if(!video||!video.videoWidth||!video.videoHeight){scanStatus("Camera preview isn't ready. Try Camera photo instead.");return;}
+ scanTextButton.disabled=true;
+ try{
+   const vin=await recognizePrintedVIN(video,video.videoWidth,video.videoHeight,token);
+   if(vin&&scannerActive&&token===scannerSession)fillScannedVIN(vin,"camera text");
+   else if(scannerActive&&token===scannerSession)scanStatus("Could not recognize the printed VIN. Move closer or take a photo.");
+ }catch(_){if(scannerActive&&token===scannerSession)scanStatus("Text recognition unavailable. Try Camera photo or type VIN.");}
+ finally{scanTextButton.disabled=false;}
+});
+
 $("refresh").addEventListener("click",reload);
 $("search").addEventListener("input",render);
 $("showAll").addEventListener("click",()=>{allVersions=!allVersions;render();});
