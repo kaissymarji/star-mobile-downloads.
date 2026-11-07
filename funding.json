@@ -1,7 +1,7 @@
 {
   "goal": 5000,
-  "raised": null,
-  "updatedAt": null,
+  "raised": 105,
+  "updatedAt": "2026-11-06",
   "categories": [
     {
       "icon": "▣",
