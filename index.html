@@ -72,7 +72,7 @@ th:nth-child(4){width:22%}
 .count{color:#7cf2d3;font-size:16px;font-weight:850;font-variant-numeric:tabular-nums}
 .download-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:34px;padding:6px 11px;background:var(--green);border-radius:8px;color:#04252b;text-decoration:none;font-size:12px;font-weight:900}
 .download-btn:hover{background:#b2ffeb}
-.notes{display:inline-block;font-size:10px;color:#b0cce0;margin-left:9px;text-decoration:underline;text-underline-offset:2px}
+
 .empty{padding:30px 13px;text-align:center;color:var(--muted)}
 .tablefooter{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:9px 0 0}
 .tablefooter p{margin:0;font-size:11px;color:#92a9bf}
@@ -119,7 +119,7 @@ th:nth-child(4){width:22%}
  .time small{font-size:9px}
  .count{font-size:13px}
  .download-btn{font-size:10px;width:100%;min-height:32px;padding:5px}
- .notes{font-size:9px;margin:3px 0 0;display:block;text-align:center}
+
  .tablefooter{margin-top:7px}
  .tablefooter p,.tablefooter button{font-size:10px}
  .quicklinks{margin-top:10px}
@@ -142,11 +142,11 @@ th:nth-child(4){width:22%}
 <body>
 <header class="mast"><div class="shell top">
 <a class="brand" href="./" aria-label="Star Mobile Service app downloads"><span class="brandmark" aria-hidden="true">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB / DOWNLOADS</small></span></a>
-<nav aria-label="Main links"><a href="community.html#account">Activation</a><a class="donate" href="donate.html">Donate</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">Owner ↗</a><button id="soundToggle" class="sound-toggle" type="button" aria-label="Turn off startup sound" aria-pressed="true" title="Startup sound on">🔊</button></nav>
+<nav aria-label="Main links"><a href="community.html#account">Activation</a><a class="donate" href="donate.html">Donate</a><button id="soundToggle" class="sound-toggle" type="button" aria-label="Turn off startup sound" aria-pressed="true" title="Startup sound on">🔊</button></nav>
 </div></header>
 <main class="shell">
 <div class="heading">
-<div><div class="eyebrow">Official GitHub Releases</div><h1>Download Apps</h1></div>
+<div><div class="eyebrow">Official App Downloads</div><h1>Download Apps</h1></div>
 <div class="clock" aria-label="Current Pacific date and time"><b id="todayDate">Pacific date</b><time id="nowTime">Pacific time</time></div>
 </div>
 <div class="stats" aria-label="GitHub release download totals">
@@ -165,7 +165,7 @@ th:nth-child(4){width:22%}
 </table>
 </div>
 <div class="tablefooter"><p id="statusText" role="status">Checking live GitHub Releases…</p><button id="showAll" type="button" aria-expanded="false" hidden>↓ Show all versions</button></div>
-<div class="quicklinks"><a href="community.html#account">Technician activation ↗</a><a href="donate.html">Support development ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">Upload new APK ↗</a></div>
+<div class="quicklinks"><a href="community.html#account">Technician activation ↗</a><a href="donate.html">Support development ↗</a></div>
 <p class="warning">Experimental APKs. Compatibility and supported functions vary by release. GitHub download counts exclude raw-file downloads.</p>
 </main>
 <script>
@@ -310,12 +310,12 @@ const hiddenCount=chosen.length-rows.length;
 $("showAll").hidden=!!q||(!allVersions&&hiddenCount===0);
 $("showAll").textContent=allVersions?"↑ Show latest only":"↓ Show "+hiddenCount+" previous versions";
 $("showAll").setAttribute("aria-expanded",String(allVersions));
-if(!rows.length){$("downloadRows").innerHTML='<tr><td colspan="4" class="empty">'+(loaded?"No APKs match this search.":"GitHub data unavailable. <a href=\"https://github.com/kaissymarji/star-mobile-downloads./releases\">Open GitHub Releases ↗</a>")+'</td></tr>';return;}
+if(!rows.length){$("downloadRows").innerHTML='<tr><td colspan="4" class="empty">'+(loaded?"No APKs match this search.":"Download list temporarily unavailable. Please refresh the page.")+'</td></tr>';return;}
 $("downloadRows").innerHTML=rows.map(a=>{
 const val=stamp(a),valid=val&&!Number.isNaN(Date.parse(val)),date=valid?new Date(val):null;
 const dateLabel=valid?uploadedDay.format(date):"Date unavailable",timeLabel=valid?uploadedClock.format(date):"";
 const latest=newest.has(a.asset.id||a.url);
-return '<tr><td><div class="app-title">'+esc(a.title)+'</div><div class="info-line"><span class="version">'+esc(ver(a))+'</span> · '+(latest?"Latest":"Older")+' <span class="filename">· '+esc(a.asset.name)+'</span></div></td><td><div class="time"><time'+(valid?' datetime="'+esc(val)+'"':'')+'>'+esc(dateLabel)+'<small>'+esc(timeLabel)+'</small></time></div></td><td class="count">'+fmt(a.count)+'</td><td><a class="download-btn" href="'+esc(a.url)+'">↓ APK</a><a class="notes" href="'+esc(a.release.html_url)+'" target="_blank" rel="noopener noreferrer">Notes ↗</a></td></tr>';
+return '<tr><td><div class="app-title">'+esc(a.title)+'</div><div class="info-line"><span class="version">'+esc(ver(a))+'</span> · '+(latest?"Latest":"Older")+' <span class="filename">· '+esc(a.asset.name)+'</span></div></td><td><div class="time"><time'+(valid?' datetime="'+esc(val)+'"':'')+'>'+esc(dateLabel)+'<small>'+esc(timeLabel)+'</small></time></div></td><td class="count">'+fmt(a.count)+'</td><td><a class="download-btn" href="'+esc(a.url)+'">↓ APK</a></td></tr>';
 }).join("");
 }
 async function reload(){
