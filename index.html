@@ -25,6 +25,9 @@ button{cursor:pointer}
 .top nav{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
 .top nav a{font-size:12px;font-weight:750;text-decoration:none;border:1px solid #324b62;border-radius:9px;padding:8px 10px;background:#11243a;white-space:nowrap}
 .top nav .donate{border-color:#3a9f8e;color:#75f4d3}
+.sound-toggle{display:grid;place-items:center;flex:0 0 auto;width:34px;height:34px;min-height:34px;padding:0;border:1px solid #3e667d;border-radius:9px;background:#11283a;color:#d5fff3;font-size:17px;line-height:1}
+.sound-toggle:hover,.sound-toggle:focus-visible{border-color:var(--green);outline-offset:2px}
+.sound-toggle[aria-pressed="false"]{color:#91a5b9;border-color:#30475c;background:#102032}
 main{padding-top:18px!important}
 .heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
 .eyebrow{font-size:10px;font-weight:850;letter-spacing:.15em;color:var(--green);text-transform:uppercase}
@@ -134,7 +137,7 @@ th:nth-child(4){width:22%}
 <body>
 <header class="mast"><div class="shell top">
 <a class="brand" href="./" aria-label="Star Mobile Service app downloads"><span class="brandmark" aria-hidden="true">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB / DOWNLOADS</small></span></a>
-<nav aria-label="Main links"><a href="community.html#account">Activation</a><a class="donate" href="donate.html">Donate</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">Owner ↗</a></nav>
+<nav aria-label="Main links"><a href="community.html#account">Activation</a><a class="donate" href="donate.html">Donate</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">Owner ↗</a><button id="soundToggle" class="sound-toggle" type="button" aria-label="Turn off startup sound" aria-pressed="true" title="Startup sound on">🔊</button></nav>
 </div></header>
 <main class="shell">
 <div class="heading">
@@ -166,6 +169,68 @@ th:nth-child(4){width:22%}
 const REPO="kaissymarji/star-mobile-downloads.";
 const API="https://api.github.com/repos/"+REPO+"/releases?per_page=100&page=";
 const $=id=>document.getElementById(id);
+/* Tiny, original two-note ECU power-on chime synthesized locally with Web Audio.
+   Autoplay is attempted only when enabled; browsers may require a first user gesture.
+   No audio file, tracking request, or external service is involved. */
+let introSoundEnabled=true, introSoundPlayed=false, introAudioContext=null;
+try{introSoundEnabled=localStorage.getItem("star-mobile-startup-sound")!=="off";}catch(_){}
+function updateSoundToggle(){
+  const button=$("soundToggle");
+  button.textContent=introSoundEnabled?"🔊":"🔇";
+  button.setAttribute("aria-pressed",String(introSoundEnabled));
+  button.setAttribute("aria-label",introSoundEnabled?"Turn off startup sound":"Turn on startup sound");
+  button.title=introSoundEnabled?"Startup sound on":"Startup sound off";
+}
+function playIntroSound(){
+  if(!introSoundEnabled||introSoundPlayed)return;
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass)return;
+  try{
+    const context=introAudioContext||(introAudioContext=new AudioContextClass());
+    const begin=()=>{
+      if(context.state!=="running"||introSoundPlayed||!introSoundEnabled)return;
+      introSoundPlayed=true;
+      document.removeEventListener("pointerdown",handleIntroPointer,true);
+      document.removeEventListener("keydown",handleIntroKey,true);
+      const t=context.currentTime+0.012;
+      function tone(start,from,to,duration,volume){
+        const oscillator=context.createOscillator(),gain=context.createGain();
+        oscillator.type="sine";
+        oscillator.frequency.setValueAtTime(from,start);
+        oscillator.frequency.exponentialRampToValueAtTime(to,start+duration);
+        gain.gain.setValueAtTime(0.0001,start);
+        gain.gain.exponentialRampToValueAtTime(volume,start+0.016);
+        gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);
+        oscillator.connect(gain);gain.connect(context.destination);
+        oscillator.start(start);oscillator.stop(start+duration+0.015);
+        oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
+      }
+      tone(t,530,650,0.17,0.028);
+      tone(t+0.15,760,970,0.23,0.038);
+    };
+    if(context.state==="running")begin();
+    else context.resume().then(begin).catch(()=>{});
+  }catch(_){}
+}
+function handleIntroPointer(event){
+  if(event.target instanceof Element&&event.target.closest("#soundToggle"))return;
+  playIntroSound();
+}
+function handleIntroKey(event){
+  if(event.repeat||(event.key!=="Enter"&&event.key!==" "))return;
+  if(event.target instanceof Element&&event.target.closest("#soundToggle"))return;
+  playIntroSound();
+}
+$("soundToggle").addEventListener("click",()=>{
+  introSoundEnabled=!introSoundEnabled;
+  try{localStorage.setItem("star-mobile-startup-sound",introSoundEnabled?"on":"off");}catch(_){}
+  updateSoundToggle();
+  if(introSoundEnabled&&!introSoundPlayed)playIntroSound();
+});
+updateSoundToggle();
+document.addEventListener("pointerdown",handleIntroPointer,{capture:true,passive:true});
+document.addEventListener("keydown",handleIntroKey,true);
+playIntroSound();
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
 const pacificClock=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",hour:"numeric",minute:"2-digit",second:"2-digit",timeZoneName:"short"});
 const uploadedDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",year:"numeric"});
