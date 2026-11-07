@@ -17,9 +17,9 @@
     },
     {
       "icon": "◈",
-      "name": "V200 and protocol research",
+      "name": "J2534 and protocol research",
       "amount": 750,
-      "detail": "Bluetooth / USB capture, diagnostic transport and compatible hardware testing."
+      "detail": "Pass-Thru adapters, transport protocols and programming-session testing."
     },
     {
       "icon": "↗",
