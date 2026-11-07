@@ -44,14 +44,117 @@ footer{padding:32px 0 45px;border-top:1px solid var(--border);color:#8da4bc;font
 .countnote{font-size:12px;color:#8da4bc;margin:17px 0 0}.support-strip{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border:1px solid #3c6a69;border-radius:21px;background:linear-gradient(125deg,#163438,#122233);padding:27px 30px;margin:0 0 73px}.support-strip h2{font-size:clamp(22px,3vw,30px);letter-spacing:-.04em;margin:7px 0}.support-strip p{color:#b4c8cd;margin:0;font-size:13px;max-width:680px}.support-strip .btn{flex-shrink:0}.warn{color:var(--yellow)}
 @media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:56px}.terminal{max-width:620px;transform:none}.catalog{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}}
 @media(max-width:620px){nav a:not(.navowner){display:none}.nav{min-height:66px}.brand{font-size:12px}.hero{padding-top:45px;padding-bottom:40px}.hero h1{font-size:47px}.stats{grid-template-columns:1fr 1fr;gap:9px;padding-bottom:55px}.stat:last-child{grid-column:1/-1}.stat strong{font-size:25px}.catalog{grid-template-columns:1fr}.section-top{align-items:start;flex-direction:column}.current-timebar{align-items:flex-start;flex-direction:column;gap:5px}.owner{padding:24px}.section{padding-bottom:62px}.actions .btn{width:100%}.term-foot{font-size:10px}}
+
+/* Compact desktop-style download dashboard across screen sizes. */
+#downloads{padding-top:26px;padding-bottom:28px;scroll-margin-top:80px}
+#downloads .section-top{align-items:center;margin-bottom:12px}
+#downloads h2{font-size:clamp(23px,3vw,32px);margin:3px 0}
+#downloads .sub{font-size:12px;margin:0}
+#downloads .toolbar{gap:8px;margin-bottom:10px}
+#downloads .search{min-width:150px;padding:9px 11px;font-size:13px}
+#downloads .filter{padding:9px 11px;font-size:11px}
+#downloads .current-timebar{margin:0 0 10px;padding:8px 11px}
+#downloads .catalog{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#downloads .appcard{min-height:0;gap:6px;padding:13px;border-radius:13px}
+#downloads .appicon{width:33px;height:33px;border-radius:9px;font-size:18px}
+#downloads .appcard h3{font-size:17px;margin:3px 0 0}
+#downloads .appcard p{font-size:11px;line-height:1.35}
+#downloads .appcard .app-desc{display:none}
+#downloads .appcard .build-name{overflow-wrap:anywhere}
+#downloads .appcard .uploadtime{font-size:11px;line-height:1.35}
+#downloads .details{gap:10px;margin-top:4px;padding-top:7px;font-size:10px}
+#downloads .details b{font-size:12px}
+#downloads .cardactions{gap:7px;flex-wrap:wrap}
+#downloads .btn.sm{min-height:36px;padding:7px 10px;font-size:11px}
+#downloads .cardactivation{margin-top:1px}
+#downloads .countnote{margin-top:9px;font-size:11px}
+.catalog-options{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:10px 0}
+.archive-toggle{background:#15283c;color:#d6edff;border:1px solid #3c647a;border-radius:9px;padding:8px 12px;font-size:11px;font-weight:800}
+.archive-toggle:hover,.archive-toggle:focus-visible{border-color:var(--mint);color:var(--mint)}
+.archive-toggle[hidden]{display:none}
+.stats{padding:0 0 26px}
+.stat{padding:14px 17px}
+.stat strong{font-size:26px}
+.hero{padding-top:34px;padding-bottom:34px}
+.support-strip{margin-bottom:35px}
+@media(max-width:1050px){
+  #downloads .catalog{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:720px){
+  #downloads .catalog{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .container{padding-left:12px;padding-right:12px}
+  .nav{min-height:58px;gap:8px}
+  .brand{font-size:11px;gap:7px;letter-spacing:.02em}
+  .brandmark{width:31px;height:31px;font-size:18px}
+  .navowner{padding:7px 9px;font-size:10px}
+  #downloads{padding-top:14px;padding-bottom:19px}
+  #downloads .section-top{flex-direction:row;align-items:center;gap:8px}
+  #downloads .section-top .kicker{font-size:9px}
+  #downloads h2{font-size:24px}
+  #downloads .sub{font-size:10px}
+  #downloads .refresh{padding:7px 8px;font-size:10px;flex-shrink:0}
+  #downloads .toolbar{flex-direction:column;align-items:stretch;gap:7px}
+  #downloads .search{flex:none;min-width:0;width:100%;padding:9px 11px}
+  #downloads .filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  #downloads .filter{padding:8px 4px;font-size:11px}
+  #downloads .current-timebar{flex-direction:row;align-items:center;justify-content:space-between;gap:5px;padding:6px 9px}
+  #downloads .clock-label{font-size:9px}
+  #downloads .clock-value{font-size:10px}
+  #downloads .appcard{padding:10px;gap:5px}
+  #downloads .appcard h3{font-size:14px;line-height:1.2}
+  #downloads .appicon{width:27px;height:27px;font-size:16px}
+  #downloads .tag{padding:3px 6px;font-size:8px}
+  #downloads .appcard .build-name{font-size:10px}
+  #downloads .appcard .uploadtime{font-size:10px;gap:4px}
+  #downloads .details{gap:7px;font-size:9px}
+  #downloads .details b{font-size:11px}
+  #downloads .details span:last-child{display:none}
+  #downloads .cardactions{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+  #downloads .cardactions .btn{width:100%;font-size:11px}
+  #downloads .textlink{text-align:center;font-size:10px}
+  #downloads .cardactivation .btn{width:100%;padding:5px;font-size:10px;min-height:32px}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding-bottom:18px}
+  .stat{padding:10px}
+  .stat strong{font-size:22px}
+  .stat small{font-size:9px;letter-spacing:.03em}
+  .hero{grid-template-columns:1fr;padding-top:18px;padding-bottom:22px;gap:0}
+  .hero h1{font-size:32px;margin:9px 0}
+  .hero .lead{font-size:13px;margin-bottom:12px}
+  .hero .terminal{display:none}
+  .hero .actions{gap:7px}
+  .hero .actions .btn{width:auto;min-height:36px;padding:8px 10px;font-size:11px}
+  .support-strip{padding:18px;margin-bottom:25px}
+  .support-strip h2{font-size:21px}
+  .activation{padding:18px;margin-bottom:24px}
+  .owner{margin-bottom:24px}
+  .section{padding-bottom:24px}
+}
+@media(max-width:370px){
+  #downloads .appcard{padding:8px}
+  #downloads .appcard h3{font-size:13px}
+  #downloads .details{gap:5px}
+  #downloads .filters{gap:4px}
+}
+
 </style>
 </head>
 <body>
 <header><div class="container nav">
-<a class="brand" href="#home"><span class="brandmark">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB</small></span></a>
+<a class="brand" href="#downloads"><span class="brandmark">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB</small></span></a>
 <nav><a href="#downloads">Apps &amp; Downloads</a><a href="#about">About</a><a class="nav-donate" href="donate.html">♡ Support development</a><a class="navowner" href="#manage">Owner Controls ↗</a></nav>
 </div></header>
 <main class="container">
+<section class="section" id="downloads"><div class="section-top"><div><div class="kicker">Official GitHub Releases</div><h2>App library</h2><p class="sub">Latest versions first, with upload time and one-click downloads. Older builds are still available.</p></div><button class="refresh" id="refresh" type="button">↻ Refresh releases</button></div>
+<div class="toolbar"><input id="search" class="search" type="search" aria-label="Search apps" placeholder="Search apps, versions, filenames…"><div class="filters" role="group" aria-label="Filter apps"><button class="filter" data-filter="all" aria-pressed="true">All</button><button class="filter" data-filter="v200" aria-pressed="false">V200</button><button class="filter" data-filter="eeprom" aria-pressed="false">EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false">BMW</button></div></div>
+<div class="current-timebar" aria-label="Current Pacific date and time"><span class="clock-label"><span class="clock-led" aria-hidden="true"></span>Current Pacific time</span><span class="clock-value"><time id="todayDate">Checking date…</time><span class="clock-divider" aria-hidden="true">·</span><time id="nowTime">Checking time…</time></span></div>
+<div class="catalog-options"><button class="archive-toggle" id="archiveToggle" type="button" aria-controls="catalog" aria-expanded="false" hidden>↓ Show previous versions</button></div>
+<div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
+<p class="countnote" id="countNote">Counts come from GitHub Release assets, not website visits. Downloads of raw repository files cannot be counted by GitHub.</p></section>
+<section class="stats" aria-label="GitHub download statistics">
+<div class="stat"><small>APK downloads</small><strong id="totalDownloads">—</strong></div>
+<div class="stat"><small>Published APK builds</small><strong id="buildCount">—</strong></div>
+<div class="stat"><small>V200 downloads</small><strong id="v200Downloads">—</strong></div>
+</section>
 <section class="hero" id="home"><div>
 <div class="eyebrow"><i class="dot"></i> BUILDING BETTER BENCH TOOLS</div>
 <h1>V200 Diagnostic.<br><span>Built for the bench.</span></h1>
@@ -68,17 +171,7 @@ footer{padding:32px 0 45px;border-top:1px solid var(--border);color:#8da4bc;font
 <g fill="#62f1cb"><circle cx="240" cy="145" r="4"/><circle cx="240" cy="50" r="4"/></g></svg></div>
 <div class="term-foot"><span>INTERACTIVE TOPOLOGY · IN DEVELOPMENT</span><span class="pill">TEST BUILD</span></div>
 </div></section>
-<section class="stats" aria-label="GitHub download statistics">
-<div class="stat"><small>APK downloads</small><strong id="totalDownloads">—</strong></div>
-<div class="stat"><small>Published APK builds</small><strong id="buildCount">—</strong></div>
-<div class="stat"><small>V200 downloads</small><strong id="v200Downloads">—</strong></div>
-</section>
 <section class="support-strip" aria-label="Support project development"><div><div class="kicker">INDEPENDENT DIAGNOSTIC SOFTWARE</div><h2>Help put more ECUs on the test bench.</h2><p>Hardware testing takes donor modules, wiring, power equipment and time. See the proposed $5,000 development budget and what needs testing next.</p></div><a class="btn" href="donate.html">See the funding goal ↗</a></section>
-<section class="section" id="downloads"><div class="section-top"><div><div class="kicker">Official GitHub Releases</div><h2>App library</h2><p class="sub">Download genuine published APKs. New releases and their upload dates appear automatically.</p></div><button class="refresh" id="refresh" type="button">↻ Refresh releases</button></div>
-<div class="toolbar"><input id="search" class="search" type="search" aria-label="Search apps" placeholder="Search apps, versions, filenames…"><div class="filters" role="group" aria-label="Filter apps"><button class="filter" data-filter="all" aria-pressed="true">All</button><button class="filter" data-filter="v200" aria-pressed="false">V200</button><button class="filter" data-filter="eeprom" aria-pressed="false">EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false">BMW</button></div></div>
-<div class="current-timebar" aria-label="Current Pacific date and time"><span class="clock-label"><span class="clock-led" aria-hidden="true"></span>Current Pacific time</span><span class="clock-value"><time id="todayDate">Checking date…</time><span class="clock-divider" aria-hidden="true">·</span><time id="nowTime">Checking time…</time></span></div>
-<div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
-<p class="countnote" id="countNote">Counts come from GitHub Release assets, not website visits. Downloads of raw repository files cannot be counted by GitHub.</p></section>
 <section class="activation" id="activate"><div class="kicker">V200 DIAGNOSTIC / ACTIVATION</div><h2>Activate V200 Diagnostic for $5.</h2><p>Download the app and sign in to your technician account. Automatic payment verification and unique PIN delivery are being connected; new automatic activations are not live yet. The PIN is never stored in public website code.</p><div class="actions"><a class="btn pay" href="community.html#account" target="_blank" rel="noopener noreferrer">🔑 Open activation account ↗</a><a class="btn secondary" href="#downloads">↓ Download the APK first</a></div><div class="steps"><div class="step"><b>01 / DOWNLOAD</b><h3>Install app</h3><p>Download the official Android APK.</p></div><div class="step"><b>02 / PAYMENT</b><h3>Pay through verified checkout</h3><p>A tracked checkout will be available after Stripe verification is connected. Please do not pay again until it is enabled.</p></div><div class="step"><b>03 / VERIFICATION</b><h3>Receive your PIN</h3><p>After paying, send your Stripe receipt privately to the developer through the channel where you received the app link. Your PIN is issued after payment verification.</p></div></div><div class="paynote">Security: Stripe payment verification is required before the activation code is issued. A screenshot or unverified success-page visit is not sufficient proof.</div></section>
 <section class="section" id="about"><div class="kicker">A real project, growing release by release</div><h2>Built to test. Made to improve.</h2><p class="sub" style="max-width:740px">V200 Diagnostic is an experimental Android development project. Module discovery, topology, active tests, Bluetooth and vehicle-specific routines have differing levels of implementation and validation. Use on appropriate test hardware. APKs may be debug-signed and are not guaranteed to update over separately signed builds.</p></section>
 <section class="owner" id="manage"><div class="owner-top"><div><div class="kicker">OWNER / PUBLISHING</div><h2>Manage your downloads.</h2><p class="sub">Add an APK, publish a new version or remove an old release using your GitHub account. The public app library syncs with published releases automatically.</p></div><span class="pill">GITHUB SIGN-IN REQUIRED</span></div>
@@ -99,7 +192,7 @@ const pacificClock=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angele
 function updateLiveClock(){const now=new Date();$("todayDate").dateTime=now.toISOString();$("nowTime").dateTime=now.toISOString();$("todayDate").textContent=pacificDay.format(now);$("nowTime").textContent=pacificClock.format(now);}
 updateLiveClock();
 setInterval(updateLiveClock,1000);
-let apps=[],filter="all",lastOkay=false;
+let apps=[],filter="all",lastOkay=false,showArchive=false;
 const fmt=n=>Number(n||0).toLocaleString("en-US");
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const size=n=>n>=1048576?(n/1048576).toFixed(1)+" MB":Math.round(n/1024)+" KB";
@@ -123,13 +216,19 @@ dl.href="#manage";dl.classList.remove("disabled");dl.removeAttribute("aria-disab
 }}
 function render(){
 const q=$("search").value.trim().toLowerCase();
-const rows=apps.filter(x=>(filter==="all"||x.family===filter)&&(x.asset.name+" "+x.title+" "+x.tag+" "+x.release.name).toLowerCase().includes(q));
-if(!rows.length){$("catalog").innerHTML='<div class="empty">'+(lastOkay?"No published APKs match the current filter.":"Could not load GitHub Release data. Try refreshing, or open the official Releases page.")+'</div>';return;}
+const selected=apps.filter(x=>(filter==="all"||x.family===filter)&&(x.asset.name+" "+x.title+" "+x.tag+" "+x.release.name).toLowerCase().includes(q));
 const newestURLs=new Set(),seenApps=new Set();
 for(const a of apps){if(!seenApps.has(a.title)){seenApps.add(a.title);newestURLs.add(a.url);}}
+const rows=selected.filter(a=>showArchive||q||newestURLs.has(a.url));
+const olderCount=selected.length-rows.length;
+const archiveToggle=$("archiveToggle");
+archiveToggle.hidden=!!q||(!showArchive&&!olderCount);
+archiveToggle.setAttribute("aria-expanded",String(showArchive));
+archiveToggle.textContent=showArchive?"↑ Show latest only":"↓ Show "+olderCount+" previous versions";
+if(!rows.length){$("catalog").innerHTML='<div class="empty">'+(lastOkay?"No published APKs match the current filter.":"Could not load GitHub Release data. Try refreshing, or open the official Releases page.")+'</div>';return;}
 $("catalog").innerHTML=rows.map(a=>{
 const fresh=newestURLs.has(a.url);
-return '<article class="appcard"><div class="apphead"><span class="appicon '+(a.family==="bmw"?"blue":a.family==="eeprom"?"gold":"")+'">'+iconFor(a.family)+'</span><span class="tag">'+(fresh?"LATEST":"ARCHIVE")+'</span></div><h3>'+esc(a.title)+'</h3><p>'+esc(description(a.family))+'</p><p><strong>'+esc(a.tag)+'</strong> · '+esc(a.asset.name)+'</p>'+uploadMarkup(a)+'<div class="details"><span><b>'+fmt(a.count)+'</b><br>Downloads</span><span><b>'+size(a.asset.size)+'</b><br>APK size</span><span><b>'+(a.release.prerelease?"Test":"Release")+'</b><br>Build type</span></div><div class="cardactions"><a class="btn sm" href="'+esc(a.url)+'">↓ Download APK</a><a class="textlink" href="'+esc(a.release.html_url)+'" target="_blank" rel="noopener noreferrer">Release notes ↗</a></div>'+(a.family==="v200"?'<div style="margin-top:10px"><a class="btn pay sm" href="community.html#account" target="_blank" rel="noopener noreferrer">🔑 My activation account ↗</a></div>':'')+'</article>';
+return '<article class="appcard"><div class="apphead"><span class="appicon '+(a.family==="bmw"?"blue":a.family==="eeprom"?"gold":"")+'">'+iconFor(a.family)+'</span><span class="tag">'+(fresh?"LATEST":"ARCHIVE")+'</span></div><h3>'+esc(a.title)+'</h3><p class="app-desc">'+esc(description(a.family))+'</p><p class="build-name"><strong>'+esc(a.tag)+'</strong> · '+esc(a.asset.name)+'</p>'+uploadMarkup(a)+'<div class="details"><span><b>'+fmt(a.count)+'</b><br>Downloads</span><span><b>'+size(a.asset.size)+'</b><br>APK size</span><span><b>'+(a.release.prerelease?"Test":"Release")+'</b><br>Build type</span></div><div class="cardactions"><a class="btn sm" href="'+esc(a.url)+'">↓ Download APK</a><a class="textlink" href="'+esc(a.release.html_url)+'" target="_blank" rel="noopener noreferrer">Release notes ↗</a></div>'+(a.family==="v200"?'<div class="cardactivation"><a class="btn pay sm" href="community.html#account" target="_blank" rel="noopener noreferrer">🔑 My activation account ↗</a></div>':'')+'</article>';
 }).join("");
 }
 async function reload(){
@@ -159,6 +258,7 @@ $("countNote").textContent="GitHub counts are temporarily unavailable (possibly 
 $("year").textContent=new Date().getFullYear();
 $("refresh").addEventListener("click",reload);
 $("search").addEventListener("input",render);
+$("archiveToggle").addEventListener("click",()=>{showArchive=!showArchive;render();});
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.filter;document.querySelectorAll(".filter").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render();}));
 reload();
 })();
