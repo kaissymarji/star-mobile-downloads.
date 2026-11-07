@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081018">
+  <meta name="description" content="Support independent automotive diagnostics software development. Help Star Mobile Service fund donor ECUs, V200 Bluetooth research, bench equipment, testing and Android releases.">
+  <meta property="og:title" content="Support the Star Mobile Software Lab">
+  <meta property="og:description" content="Real ECUs. Real bench testing. Better automotive diagnostic tools. See the development plan and help fund the next round of testing.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kaissymarji.github.io/star-mobile-downloads./donate.html">
+  <title>Support Development | Star Mobile Software Lab</title>
+  <style>
+    :root {color-scheme:dark; --bg:#081018; --bg2:#0d1722; --panel:#111f2b; --panel2:#172734; --line:#2b3e4d; --white:#f5f8f8; --muted:#a0b5bf; --green:#65e7c4; --mint:#a0ffdf; --orange:#ffbd7a; --blue:#80aaff; --radius:20px}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;min-width:320px;background:radial-gradient(ellipse 55% 30% at 72% -2%,#123b40 0%,transparent 75%),linear-gradient(180deg,#0a151d 0%,#080f16 40%,#081018 100%);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+    a{color:inherit}button{font:inherit;cursor:pointer} .wrap{max-width:1160px;padding:0 25px;margin:0 auto}
+    .skip{position:absolute;left:12px;top:-100px;background:var(--green);color:#061911;padding:10px;z-index:30}.skip:focus{top:12px}
+    header{position:sticky;top:0;z-index:20;background:rgba(8,16,24,.91);border-bottom:1px solid #223745;backdrop-filter:blur(18px)}
+    .top{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:22px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:.08em;line-height:1.3}.brandmark{width:41px;height:41px;border-radius:11px;display:grid;place-items:center;font-size:24px;color:#092017;background:linear-gradient(135deg,#9dfbda,#61b8c4)}.brand span small{display:block;font-size:10px;letter-spacing:.18em;color:#91abb4;margin-top:2px}.top nav{display:flex;align-items:center;gap:25px}.top nav a{font-size:12px;font-weight:800;text-decoration:none;color:#bfced2}.top nav a:hover,.link:hover{color:var(--green)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:49px;background:var(--green);color:#07241b;border:1px solid var(--green);border-radius:12px;padding:12px 21px;text-decoration:none;font-weight:850;font-size:13px;line-height:1.3;transition:transform .2s,background .2s,border-color .2s}
+    .btn:hover{transform:translateY(-2px);background:#9bffe3}.btn:focus-visible,.link:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+    .btn.outline{background:transparent;color:var(--white);border-color:#405465}.btn.outline:hover{background:#1b3240}.btn.small{min-height:39px;padding:8px 14px;font-size:12px}.top nav .btn{color:#061e16}
+    .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:62px;align-items:center;padding-top:79px;padding-bottom:72px}.overline{color:var(--green);text-transform:uppercase;letter-spacing:.19em;font-size:11px;font-weight:900;display:flex;gap:10px;align-items:center}.overline .led{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 16px #65e7c499}
+    h1,h2,h3,p{overflow-wrap:break-word}h1{font-size:clamp(44px,5.1vw,69px);line-height:1.07;letter-spacing:-.067em;margin:17px 0 20px;font-weight:900}.accent{color:var(--green)}.intro{font-size:17px;color:#afc1c8;max-width:570px;margin:0 0 28px;line-height:1.68}.hero-actions{display:flex;flex-wrap:wrap;gap:11px}.micro{display:flex;flex-wrap:wrap;gap:18px;margin-top:28px;color:#90acb6;font-size:12px;font-weight:650}.micro span::before{content:"✓";color:var(--green);margin-right:7px}
+    .workbench{position:relative;border:1px solid #35515b;background:linear-gradient(160deg,#142b35 0%,#0f1a26 45%,#101c29 100%);border-radius:25px;padding:20px;min-height:410px;box-shadow:0 38px 85px #0007,0 0 80px #147c7540;overflow:hidden;isolation:isolate}.workbench::before{content:"";position:absolute;inset:0;background-image:linear-gradient(#a6d8df0a 1px,transparent 1px),linear-gradient(90deg,#a6d8df0a 1px,transparent 1px);background-size:22px 22px;pointer-events:none;z-index:-1}.bench-header,.bench-footer{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#a2c3c9;font-size:11px;font-weight:850;letter-spacing:.08em}.bench-header strong{color:var(--green)}.live-pill{font-size:9px;color:var(--orange);border:1px solid #9f754a;padding:5px 8px;border-radius:99px;background:#49351e60}.bench-graphic{display:block;width:100%;height:278px;margin:12px 0 6px}.bench-footer{padding-top:12px;border-top:1px solid #334753;letter-spacing:0;text-transform:none;font-weight:650}.trace-line{stroke-dasharray:700;stroke-dashoffset:700;animation:trace 3s ease forwards}.pulse{animation:blink 2.2s infinite}@keyframes trace{to{stroke-dashoffset:0}}@keyframes blink{50%{opacity:.35}}
+    .test-points{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-bottom:79px}.point{padding:20px;border-radius:15px;border:1px solid var(--line);background:linear-gradient(140deg,#12232c,#101a25)}.point b{font-size:14px;display:block;letter-spacing:-.015em}.point p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.65}.point small{display:block;color:var(--green);letter-spacing:.12em;font-size:10px;font-weight:900;margin-bottom:8px}
+    .section{padding:9px 0 91px;scroll-margin-top:105px}.sectionhead{margin-bottom:27px}.eyebrow{font-size:11px;font-weight:900;letter-spacing:.17em;text-transform:uppercase;color:var(--green)}h2{font-size:clamp(31px,4.2vw,46px);line-height:1.13;letter-spacing:-.052em;margin:11px 0 11px}.desc{font-size:14px;color:var(--muted);max-width:730px;margin:0}
+    .funding{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:18px}.goal{padding:34px;background:linear-gradient(140deg,#162f36,#11212d 68%);border:1px solid #4b7573;border-radius:23px;box-shadow:0 16px 60px #0003}.goal .topline{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.tag{color:#b5d6d3;font-size:10px;letter-spacing:.1em;border:1px solid #476b6a;border-radius:50px;padding:5px 10px;text-transform:uppercase;font-weight:800}.goal-num{font-size:clamp(55px,6vw,78px);line-height:1.1;letter-spacing:-.075em;font-weight:900;margin:24px 0 2px;font-variant-numeric:tabular-nums}.goal-caption{color:#a4bcc3;font-size:13px}.numbers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:26px}.numbers span{display:block;font-size:11px;color:#9bb4bf}.numbers strong{font-size:25px;letter-spacing:-.05em;display:block;font-variant-numeric:tabular-nums}.meter{margin:21px 0 4px;height:11px;width:100%;background:#30434a;border:1px solid #405b62;border-radius:999px;overflow:hidden}.meterfill{width:0%;height:100%;background:linear-gradient(90deg,#5cd6af,#a6ffdf);border-radius:999px;transition:width .6s ease}.meterline{display:flex;justify-content:space-between;gap:12px;color:#b3c9cf;font-size:11px;margin-top:9px}.goal .note{color:#9aafba;font-size:12px;margin:20px 0 0;line-height:1.55}.goal .btn{width:100%;margin-top:25px;font-size:15px;min-height:55px}.goal .underbtn{font-size:11px;text-align:center;color:#93adb5;margin-top:11px}
+    .mission{background:#101d28;border:1px solid var(--line);border-radius:23px;padding:32px}.mission h3{font-size:23px;letter-spacing:-.04em;line-height:1.2;margin:0 0 15px}.mission p{font-size:14px;color:#abc1cb;line-height:1.7;margin:0 0 18px}.mission ul{list-style:none;margin:0;padding:0;display:grid;gap:12px}.mission li{display:flex;gap:12px;font-size:13px;color:#dce8ea;align-items:start}.mission li:before{content:"↗";color:var(--green);font-size:15px;font-weight:900;line-height:1.5}.mission hr{border:0;border-top:1px solid #2c404c;margin:24px 0}.mission .honesty{font-size:12px;color:#9fb4bd;margin:0}
+    .budget{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.budget-card{border:1px solid var(--line);background:linear-gradient(145deg,#132430,#0f1b27);border-radius:17px;padding:23px}.budget-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.budget-icon{width:41px;height:41px;border-radius:12px;background:#244241;border:1px solid #3e6b64;color:var(--green);display:grid;place-items:center;font-size:19px;font-weight:800}.budget-amount{color:#f7f7f5;font-weight:900;font-size:22px;letter-spacing:-.035em}.budget-card h3{font-size:16px;letter-spacing:-.02em;line-height:1.3;margin:0 0 8px}.budget-card p{font-size:12px;color:var(--muted);margin:0 0 17px;min-height:55px}.budget-track{height:5px;background:#30414b;border-radius:10px;overflow:hidden}.budget-track span{display:block;height:100%;background:var(--green);border-radius:10px}.budget-foot{display:flex;justify-content:space-between;font-size:10px;color:#8ca9b5;margin-top:8px}.budget-disclaimer{color:#8fa7b2;font-size:12px;max-width:800px;margin:16px 0 0}
+    .workflow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.work{display:grid;grid-template-columns:48px 1fr;gap:17px;background:#101e29;border:1px solid #2d424e;border-radius:18px;padding:25px}.work .num{display:grid;place-items:center;width:43px;height:43px;background:#1e3940;border:1px solid #406d67;border-radius:12px;color:var(--green);font-weight:900;font-size:12px}.work h3{margin:0 0 8px;font-size:16px;letter-spacing:-.02em}.work p{font-size:12px;color:#a5bac3;margin:0;line-height:1.65}.work .state{display:inline-block;color:var(--orange);font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:850;margin:12px 0 0}.work .state.active{color:var(--green)}
+    .milestones{border:1px solid var(--line);border-radius:23px;background:#111e29;padding:17px 30px}.milestone{display:grid;grid-template-columns:130px 1fr;gap:24px;align-items:start;padding:23px 2px}.milestone + .milestone{border-top:1px solid #273d49}.milestone b{color:var(--green);font-size:23px;letter-spacing:-.035em}.milestone h3{font-size:16px;margin:0 0 6px}.milestone p{font-size:12px;color:#9db3bd;margin:0}.milestone small{color:#94aab3;display:block;font-size:10px;margin-top:6px}
+    .cta{border:1px solid #3c6865;background:radial-gradient(circle at 85% 30%,#1b594e60,transparent 40%),linear-gradient(135deg,#143239,#111d2c);padding:45px 50px;border-radius:25px;display:flex;align-items:center;justify-content:space-between;gap:24px}.cta h2{font-size:clamp(28px,3.5vw,40px);margin:0 0 10px}.cta p{color:#adbfca;font-size:14px;margin:0;max-width:620px}.cta .btn{flex-shrink:0}
+    .faq{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.faq article{border-top:1px solid #3a515c;padding-top:17px}.faq h3{font-size:14px;margin:0 0 8px}.faq p{margin:0;color:#9eb3be;font-size:12px;line-height:1.7}
+    footer{border-top:1px solid #273943;padding:30px 0 45px;color:#93aab4;font-size:12px}.footerinner{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}.footerinner a{text-underline-offset:3px}.floating{display:none}
+    @media(max-width:950px){.hero{gap:25px;grid-template-columns:1fr 1fr}.budget{grid-template-columns:repeat(2,minmax(0,1fr))}.top nav{gap:16px}.top nav .text-nav:last-of-type{display:none}}
+    @media(max-width:740px){.hero{grid-template-columns:1fr;padding-top:52px}.workbench{max-width:570px}.funding{grid-template-columns:1fr}.test-points{grid-template-columns:1fr}.test-points .point{padding:16px 19px}.workflow{grid-template-columns:1fr}.faq{grid-template-columns:1fr;gap:22px}.cta{padding:30px;display:block}.cta .btn{margin-top:20px}.top nav a.text-nav{display:none}.section{padding-bottom:68px}}
+    @media(max-width:520px){.wrap{padding:0 18px}.top{min-height:66px}.brand{font-size:11px}.brandmark{width:35px;height:35px;font-size:20px}.top nav .btn{padding:8px 10px;min-height:38px;font-size:11px}.hero{padding-top:41px;padding-bottom:45px}.hero h1{font-size:45px}.intro{font-size:15px}.hero-actions .btn{width:100%}.workbench{min-height:342px;padding:16px}.bench-graphic{height:231px}.test-points{gap:9px;padding-bottom:58px}.goal,.mission{padding:25px}.goal-num{font-size:62px}.budget{grid-template-columns:1fr}.budget-card p{min-height:0}.milestones{padding:7px 19px}.milestone{grid-template-columns:90px 1fr;gap:9px}.milestone b{font-size:19px}.micro{gap:9px 15px}.cta .btn{width:100%}.floating{display:flex;position:fixed;bottom:13px;left:14px;right:14px;z-index:21;box-shadow:0 9px 32px #000a;border-radius:13px}.footerinner{padding-bottom:50px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}.trace-line{stroke-dashoffset:0}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><div class="wrap top"><a class="brand" href="index.html" aria-label="Star Mobile Service — app downloads"><span class="brandmark" aria-hidden="true">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB / SUPPORT</small></span></a><nav aria-label="Site navigation"><a class="text-nav" href="#budget">Where funds go</a><a class="text-nav" href="#roadmap">Development work</a><a class="text-nav" href="index.html">App downloads</a><a class="btn small" href="https://www.paypal.com/ncp/payment/PLB-DSQXGYUD97NK" target="_blank" rel="noopener noreferrer">Donate ↗</a></nav></div></header>
+<main id="main">
+  <div class="wrap">
+    <section class="hero" aria-labelledby="heroTitle"><div>
+      <div class="overline"><i class="led" aria-hidden="true"></i> Independently developed · Built on real hardware</div>
+      <h1 id="heroTitle">Real ECUs.<br>Real bench time.<br><span class="accent">Better tools.</span></h1>
+      <p class="intro">I'm building practical Android diagnostic and ECU software, one tested function at a time. Hardware, donor modules, wiring, captures and vehicle testing all cost money. If this project helps you, you can help push it forward.</p>
+      <div class="hero-actions"><a class="btn" href="https://www.paypal.com/ncp/payment/PLB-DSQXGYUD97NK" target="_blank" rel="noopener noreferrer">Support development with PayPal ↗</a><a class="btn outline" href="#roadmap">See what I'm working on ↓</a></div>
+      <div class="micro"><span>Real bench testing</span><span>Public development updates</span><span>No fake feature claims</span></div>
+    </div>
+    <div class="workbench" role="img" aria-label="Illustrated hardware lab: V200 diagnostic adapter connected to a powered ECU, scope signal and computer">
+      <div class="bench-header"><strong>STAR LAB / BENCH 01</strong><span class="live-pill">DEVELOPMENT / TESTING</span></div>
+      <svg class="bench-graphic" viewBox="0 0 480 295" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="board" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2b4f54"/><stop offset="1" stop-color="#142832"/></linearGradient><linearGradient id="cu" x1="0" x2="1"><stop stop-color="#63e3bb"/><stop offset="1" stop-color="#68a4db"/></linearGradient></defs>
+        <path d="M90 70 H176 V117 H196 M300 118 H360 V66 H398 M200 180 H140 V244 H87" stroke="#57bca9" stroke-width="3" stroke-linecap="round" fill="none" class="trace-line"/>
+        <path d="M300 180 H360 V238 H410" stroke="#5c95a8" stroke-width="2" fill="none" stroke-dasharray="6 6"/>
+        <rect x="17" y="30" width="126" height="72" rx="12" fill="#0c2029" stroke="#426674" stroke-width="2"/>
+        <text x="30" y="51" fill="#95b6c6" font-size="10" font-family="monospace">ANDROID / V200</text>
+        <rect x="31" y="62" width="66" height="23" rx="5" fill="#1b4a48" stroke="#73e8c6"/>
+        <text x="64" y="78" text-anchor="middle" fill="#b4ffdf" font-size="12" font-weight="bold" font-family="monospace">BT + USB</text>
+        <circle cx="117" cy="73" r="5" fill="#63e9c1" class="pulse"/>
+        <rect x="161" y="100" width="161" height="116" rx="13" fill="url(#board)" stroke="#7ac2b2" stroke-width="2"/>
+        <g stroke="#498f89" stroke-width="2" fill="none" opacity=".9"><path d="M179 125 H203 V140 H219 M302 125 H280 V142 H265 M184 187 H204 V172 H219 M303 188 H278 V175 H267"/><path d="M168 149 H220 M269 152 H316"/></g>
+        <g fill="#315a5b" stroke="#70c2b3"><rect x="216" y="129" width="53" height="57" rx="6"/><rect x="175" y="107" width="33" height="11" rx="3"/><rect x="276" y="201" width="33" height="8" rx="2"/></g>
+        <g stroke="#92e7ca" stroke-width="1.8"><path d="M216 136 h-10 M216 145 h-10 M216 154 h-10 M216 163 h-10 M216 172 h-10 M269 136 h10 M269 145 h10 M269 154 h10 M269 163 h10 M269 172 h10"/></g>
+        <text x="242" y="153" text-anchor="middle" fill="#d8fff0" font-family="monospace" font-size="13" font-weight="bold">ECU</text><text x="242" y="169" text-anchor="middle" fill="#9ac5c7" font-family="monospace" font-size="8">BENCH MODULE</text>
+        <g fill="#294d51" stroke="#7bd2bd"><circle cx="178" cy="139" r="4"/><circle cx="304" cy="172" r="4"/><circle cx="193" cy="202" r="4"/></g>
+        <rect x="346" y="31" width="118" height="70" rx="11" fill="#102630" stroke="#426674" stroke-width="2"/><text x="358" y="51" fill="#95b6c6" font-family="monospace" font-size="10">SCOPE / SIGNAL</text>
+        <path d="M359 75 h15 l6 -12 10 25 11 -25 9 14 8 -9 7 7 h23" fill="none" stroke="url(#cu)" stroke-width="2.5" stroke-linecap="round"/>
+        <rect x="20" y="226" width="142" height="54" rx="10" fill="#0e242d" stroke="#426674" stroke-width="2"/><text x="34" y="245" fill="#95b6c6" font-size="10" font-family="monospace">POWER SUPPLY</text><text x="34" y="266" fill="#85f1ce" font-size="18" font-weight="bold" font-family="monospace">13.80 V</text><circle cx="137" cy="253" r="5" fill="#6ee8bf"/>
+        <rect x="347" y="218" width="118" height="61" rx="11" fill="#0c2029" stroke="#426674" stroke-width="2"/><text x="359" y="238" fill="#95b6c6" font-size="10" font-family="monospace">LIVE LOG</text><text x="359" y="256" fill="#76ecbd" font-size="11" font-family="monospace">CAN TX / RX</text><text x="359" y="269" fill="#9dbdcc" font-size="9" font-family="monospace">VERIFY RESPONSE</text>
+        <g fill="#6ce9c6"><circle cx="176" cy="117" r="4"/><circle cx="358" cy="66" r="4"/><circle cx="140" cy="244" r="4"/></g>
+      </svg>
+      <div class="bench-footer"><span>Bench diagram · illustration only</span><span>ECU · CAN · VCI</span></div>
+    </div></section>
+    <div class="test-points" aria-label="Development priorities"><article class="point"><small>01 / HARDWARE</small><b>ECUs and modules on the bench</b><p>Donor DMEs, BCMs, clusters and connectors for repeatable testing without risking customer vehicles.</p></article><article class="point"><small>02 / COMMUNICATION</small><b>Bluetooth, CAN and diagnostic sessions</b><p>Trace the V200 adapter, build reliable connections, verify replies and handle errors properly.</p></article><article class="point"><small>03 / SOFTWARE</small><b>Android features that actually work</b><p>Vehicle identification, fault reading, topology, reports and carefully validated advanced functions.</p></article></div>
+    <section class="section" id="funding" aria-labelledby="fundingTitle"><div class="sectionhead"><div class="eyebrow">The funding goal</div><h2 id="fundingTitle">Help fund the next round of testing.</h2><p class="desc">This is an estimated starter budget, not a claim that the project is fully funded or that every feature is finished.</p></div>
+      <div class="funding">
+        <div class="goal"><div class="topline"><span class="eyebrow">Community support target</span><span class="tag">Initial goal · adjustable</span></div><div class="goal-num" id="goalNum">$5,000</div><div class="goal-caption">to expand the hardware lab and keep development moving</div>
+          <div class="numbers"><div><span>Donations publicly recorded</span><strong id="raisedNum">Not reported</strong></div><div><span>Remaining target</span><strong id="remainingNum">Pending</strong></div></div>
+          <div class="meter" role="progressbar" aria-label="Verified reported donations toward funding target" aria-valuemin="0" aria-valuemax="5000" aria-valuenow="0" aria-valuetext="No verified amount reported yet" id="meter"><div class="meterfill" id="meterFill"></div></div>
+          <div class="meterline"><span id="progressLabel">Progress awaiting verified donation total</span><span id="percentLabel">—</span></div>
+          <a class="btn" href="https://www.paypal.com/ncp/payment/PLB-DSQXGYUD97NK" target="_blank" rel="noopener noreferrer">Donate securely through PayPal ↗</a>
+          <div class="underbtn">Opens PayPal's own checkout · donations are voluntary</div>
+          <p class="note" id="fundingNote">Funding numbers are updated manually once donations are verified. This website cannot read PayPal transactions, so it will never show fake live donation totals.</p>
+        </div>
+        <aside class="mission"><h3>What your donation pays for</h3><p>This isn't just software on a screen. To make a diagnostic function work, I need to connect to actual modules, capture traffic, compare results, fix the code and test it again.</p><ul><li>Buy used ECUs and body modules to test safely on the bench</li><li>Build harnesses, breakout connections and power setups</li><li>Capture USB / Bluetooth / CAN communications and verify responses</li><li>Repeat testing on more vehicles and manufacturers</li><li>Turn working results into stable app updates and clear documentation</li></ul><hr><p class="honesty"><strong style="color:#f3faf6">Important:</strong> Donating supports development; it does not purchase app activation, guarantee a release date, or unlock unfinished vehicle functions.</p></aside>
+      </div>
+    </section>
+    <section class="section" id="budget" aria-labelledby="budgetTitle"><div class="sectionhead"><div class="eyebrow">Transparent cost breakdown</div><h2 id="budgetTitle">Where the money would go.</h2><p class="desc">A practical starter budget for parts, test equipment and development work. These are estimates, not invoices or money already spent.</p></div>
+      <div class="budget" id="budgetCards">
+        <article class="budget-card"><div class="budget-top"><span class="budget-icon">▣</span><span class="budget-amount">$1,450</span></div><h3>Donor ECUs, modules and keys</h3><p>Used DME/ECU units, BCMs, clusters, immobilizer modules, keys and connector pigtails.</p><div class="budget-track"><span style="width:29%"></span></div><div class="budget-foot"><span>Estimated allocation</span><span>29%</span></div></article>
+        <article class="budget-card"><div class="budget-top"><span class="budget-icon">⌁</span><span class="budget-amount">$850</span></div><h3>Bench wiring and equipment</h3><p>Harnesses, breakouts, regulated power, safe wiring, adapters and replacement parts.</p><div class="budget-track"><span style="width:17%"></span></div><div class="budget-foot"><span>Estimated allocation</span><span>17%</span></div></article>
+        <article class="budget-card"><div class="budget-top"><span class="budget-icon">◈</span><span class="budget-amount">$750</span></div><h3>V200 and protocol research</h3><p>Bluetooth / USB capture, diagnostic transport and compatible hardware testing.</p><div class="budget-track"><span style="width:15%"></span></div><div class="budget-foot"><span>Estimated allocation</span><span>15%</span></div></article>
+        <article class="budget-card"><div class="budget-top"><span class="budget-icon">↗</span><span class="budget-amount">$800</span></div><h3>Vehicle-level testing</h3><p>Real-car verification, travel, supplies and access to additional vehicle platforms.</p><div class="budget-track"><span style="width:16%"></span></div><div class="budget-foot"><span>Estimated allocation</span><span>16%</span></div></article>
+        <article class="budget-card"><div class="budget-top"><span class="budget-icon">{ }</span><span class="budget-amount">$650</span></div><h3>Debugging and release QA</h3><p>App development, regression testing, troubleshooting and reliable update builds.</p><div class="budget-track"><span style="width:13%"></span></div><div class="budget-foot"><span>Estimated allocation</span><span>13%</span></div></article>
+        <article class="budget-card"><div class="budget-top"><span class="budget-icon">✦</span><span class="budget-amount">$500</span></div><h3>Documentation and spares</h3><p>Bench notes, test reports, community support, backup modules and consumables.</p><div class="budget-track"><span style="width:10%"></span></div><div class="budget-foot"><span>Estimated allocation</span><span>10%</span></div></article>
+      </div><p class="budget-disclaimer">Planned total: <strong id="budgetTotal">$5,000</strong>. Costs and ordering may change based on actual hardware availability and test results. The goal and categories can be edited in <code>funding.json</code>.</p>
+    </section>
+    <section class="section" id="roadmap" aria-labelledby="roadmapTitle"><div class="sectionhead"><div class="eyebrow">Development workflow</div><h2 id="roadmapTitle">What actually needs to be done.</h2><p class="desc">A working app isn't just a menu full of buttons. Every useful feature needs a successful hardware transaction and a tested result.</p></div>
+      <div class="workflow">
+        <article class="work"><div class="num">01</div><div><h3>Bench setups &amp; donor ECUs</h3><p>Find modules, identify pinouts, wire CAN/K-line and power safely. Record the exact hardware used in each test.</p><span class="state active">Ongoing</span></div></article>
+        <article class="work"><div class="num">02</div><div><h3>V200 Bluetooth &amp; USB communication</h3><p>Verify connection, adapter initialization, session handling, packet parsing, timeouts and repeatable diagnostic responses.</p><span class="state active">In active development</span></div></article>
+        <article class="work"><div class="num">03</div><div><h3>Read ECU ID, VIN and fault codes</h3><p>Confirm supported protocols and modules, then validate IDs, faults, clear-fault behavior and vehicle coverage against the real car.</p><span class="state active">Testing varies by vehicle</span></div></article>
+        <article class="work"><div class="num">04</div><div><h3>Topology, reports &amp; live data</h3><p>Connect scan results to usable screens; confirm each module shown is based on an actual response rather than a placeholder.</p><span class="state active">Under development</span></div></article>
+        <article class="work"><div class="num">05</div><div><h3>Advanced tests and immobilizer functions</h3><p>Research ECU-specific commands and required authorization; bench-validate before enabling any write, routine or key-programming action.</p><span class="state">Not broadly validated</span></div></article>
+        <article class="work"><div class="num">06</div><div><h3>Ship, document &amp; retest</h3><p>Publish Android builds, share the actual limitations, collect confirmed test results and fix regressions before expanding coverage.</p><span class="state active">Continuous work</span></div></article>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="phaseTitle"><div class="sectionhead"><div class="eyebrow">How funding helps</div><h2 id="phaseTitle">What each funding stage can unlock.</h2><p class="desc">These are proposed spending priorities, not release-date promises or automatic features unlocked by a donation total.</p></div>
+      <div class="milestones"><div class="milestone"><b>$750</b><div><h3>Strengthen the bench</h3><p>Additional harnesses, connectors, a safer repeatable power and signal setup, and spare parts.</p></div></div><div class="milestone"><b>$2,000</b><div><h3>Expand ECU coverage</h3><p>More donor ECUs, body modules and families to test against the V200 and software tools.</p></div></div><div class="milestone"><b>$3,500</b><div><h3>Confirm more real-car functions</h3><p>Vehicle-level checks of module identification, DTCs, data screens and supported diagnostics.</p></div></div><div class="milestone"><b>$5,000</b><div><h3>More stable public releases</h3><p>Broader regression checks, stronger error handling, technical notes and public build updates.</p></div></div></div>
+    </section>
+    <section class="section" aria-labelledby="faqTitle"><div class="sectionhead"><div class="eyebrow">Straight answers</div><h2 id="faqTitle">A few important things.</h2></div><div class="faq"><article><h3>Does donating activate an app?</h3><p>No. Donations support development only. App activation and any subscription are handled separately.</p></article><article><h3>Is the donation counter live?</h3><p>No. A verified running total can be entered by the developer in the public funding file. The page cannot access private PayPal transactions.</p></article><article><h3>Are advanced ECU functions already finished?</h3><p>No. Compatibility differs by module and version. Advanced and immobilizer actions must be verified on suitable test hardware before release.</p></article></div></section>
+    <section class="section" aria-label="Donation call to action"><div class="cta"><div><div class="eyebrow" style="margin-bottom:8px">Help build the next release</div><h2>Support real testing, not placeholders.</h2><p>Every contribution helps cover hardware and time spent making these tools more useful. You can also share the project with other technicians.</p></div><a class="btn" href="https://www.paypal.com/ncp/payment/PLB-DSQXGYUD97NK" target="_blank" rel="noopener noreferrer">Donate with PayPal ↗</a></div></section>
+  </div>
+</main>
+<footer><div class="wrap footerinner"><span>© <span id="year">2026</span> Star Mobile Service · Independent Automotive Software Lab</span><span><a href="index.html">App downloads</a> · <a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">GitHub Releases</a> · <a href="#funding">Funding goal</a></span></div></footer>
+<a class="btn floating" href="https://www.paypal.com/ncp/payment/PLB-DSQXGYUD97NK" target="_blank" rel="noopener noreferrer">Support development on PayPal ↗</a>
+<script>
+(function () {
+  'use strict';
+  const defaults = {
+    goal: 5000,
+    raised: null,
+    updatedAt: null,
+    categories: [
+      {icon:'▣', name:'Donor ECUs, modules and keys', amount:1450, detail:'Used DME/ECU units, BCMs, clusters, immobilizer modules, keys and connector pigtails.'},
+      {icon:'⌁', name:'Bench wiring and equipment', amount:850, detail:'Harnesses, breakouts, regulated power, safe wiring, adapters and replacement parts.'},
+      {icon:'◈', name:'V200 and protocol research', amount:750, detail:'Bluetooth / USB capture, diagnostic transport and compatible hardware testing.'},
+      {icon:'↗', name:'Vehicle-level testing', amount:800, detail:'Real-car verification, travel, supplies and access to additional vehicle platforms.'},
+      {icon:'{ }', name:'Debugging and release QA', amount:650, detail:'App development, regression testing, troubleshooting and reliable update builds.'},
+      {icon:'✦', name:'Documentation and spares', amount:500, detail:'Bench notes, test reports, community support, backup modules and consumables.'}
+    ]
+  };
+  const usd = v => '$' + Math.round(v).toLocaleString('en-US');
+  const byId = id => document.getElementById(id);
+  function render(data) {
+    const goal = Number(data.goal);
+    const raised = data.raised === null || data.raised === undefined || data.raised === '' ? null : Number(data.raised);
+    if (!Number.isFinite(goal) || goal <= 0 || (raised !== null && (!Number.isFinite(raised) || raised < 0))) return;
+    byId('goalNum').textContent = usd(goal);
+    byId('raisedNum').textContent = raised === null ? 'Not reported' : usd(raised);
+    byId('remainingNum').textContent = raised === null ? 'Pending' : usd(Math.max(0,goal-raised));
+    const percent = raised === null ? null : Math.min(100,Math.max(0,(raised / goal) * 100));
+    byId('meterFill').style.width = percent === null ? '0%' : percent.toFixed(2)+'%';
+    byId('percentLabel').textContent = percent === null ? '—' : percent.toFixed(percent < 1 && percent > 0 ? 1 : 0) + '%';
+    byId('progressLabel').textContent = percent === null ? 'Progress awaiting verified donation total' : 'Reported contributions toward goal';
+    byId('meter').setAttribute('aria-valuemax',String(goal));
+    byId('meter').setAttribute('aria-valuenow',String(raised ?? 0));
+    byId('meter').setAttribute('aria-valuetext',raised === null ? 'No verified amount reported yet' : usd(raised)+' recorded of '+usd(goal)+' goal');
+    let stamp = '';
+    if (data.updatedAt && !Number.isNaN(Date.parse(data.updatedAt))) {
+      stamp = ' Last manual update: ' + new Date(data.updatedAt).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',timeZone:'UTC'}) + '.';
+    }
+    byId('fundingNote').textContent = 'Donation totals are entered manually after verification; this website does not access PayPal transactions.' + stamp;
+    const categories = Array.isArray(data.categories) && data.categories.length ? data.categories : defaults.categories;
+    if (!categories.every(c=>typeof c.name==='string' && typeof c.detail==='string' && Number.isFinite(Number(c.amount)) && Number(c.amount)>=0)) return;
+    const container=byId('budgetCards');container.replaceChildren();
+    let sum=0;
+    categories.forEach(c=>{
+      const amount=Number(c.amount);sum+=amount;
+      const share = Math.min(100,Math.max(0,amount/goal*100));
+      const card=document.createElement('article');card.className='budget-card';
+      const top=document.createElement('div');top.className='budget-top';
+      const ic=document.createElement('span');ic.className='budget-icon';ic.textContent=String(c.icon||'◈').slice(0,4);
+      const money=document.createElement('span');money.className='budget-amount';money.textContent=usd(amount);
+      top.append(ic,money);
+      const h=document.createElement('h3');h.textContent=c.name;
+      const p=document.createElement('p');p.textContent=c.detail;
+      const track=document.createElement('div');track.className='budget-track';
+      const bar=document.createElement('span');bar.style.width=share.toFixed(2)+'%';track.append(bar);
+      const foot=document.createElement('div');foot.className='budget-foot';
+      const footName=document.createElement('span');footName.textContent='Estimated allocation';
+      const footPct=document.createElement('span');footPct.textContent=(amount/goal*100).toFixed(share%1===0?0:1)+'%';
+      foot.append(footName,footPct);card.append(top,h,p,track,foot);container.append(card);
+    });
+    byId('budgetTotal').textContent=usd(sum);
+    if(Math.abs(sum-goal)>0.01){byId('budgetTotal').textContent=usd(sum)+' (budget differs from target '+usd(goal)+')';}
+  }
+  byId('year').textContent=String(new Date().getFullYear());
+  render(defaults);
+  fetch('funding.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Funding file not available');return r.json()}).then(data=>render({...defaults,...data})).catch(()=>{});
+})();
+</script>
+</body>
+</html>
