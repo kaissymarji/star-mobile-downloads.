@@ -38,7 +38,7 @@ h1 span{color:var(--mint)}.lead{max-width:570px;color:#afc2d7;font-size:17px;mar
 .catalog{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.appcard{display:flex;flex-direction:column;gap:11px;background:linear-gradient(150deg,#15233a,#0d182a);border:1px solid var(--border);border-radius:19px;padding:22px;min-height:308px;transition:border-color .2s,transform .2s}.appcard:hover{border-color:#4d6d87;transform:translateY(-3px)}.apphead{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .appicon{height:49px;width:49px;border-radius:14px;display:grid;place-items:center;font-size:23px;font-weight:900;background:#1b3b52;color:var(--mint);border:1px solid #375875}
 .appicon.blue{background:#1c2f55;color:#9cbcff}.appicon.gold{background:#3b2d26;color:#f8c88b}.tag{font-size:10px;color:#acc4df;border-radius:100px;border:1px solid #39506a;padding:5px 9px}
-.appcard h3{font-size:21px;letter-spacing:-.04em;line-height:1.16;margin:7px 0 0}.appcard p{font-size:13px;color:#a5bad1;margin:0}.details{display:flex;gap:16px;flex-wrap:wrap;color:#89a5c0;font-size:12px;margin-top:auto;padding-top:12px;border-top:1px solid #263c55}.details b{color:var(--mint);font-size:14px}.cardactions{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:5px}.textlink{color:#b3c9e5;font-size:12px;text-decoration:underline;text-underline-offset:3px}.empty{grid-column:1/-1;border:1px dashed #4b6079;border-radius:17px;padding:28px;color:#abc0d4}
+.appcard h3{font-size:21px;letter-spacing:-.04em;line-height:1.16;margin:7px 0 0}.appcard p{font-size:13px;color:#a5bad1;margin:0}.details{display:flex;gap:16px;flex-wrap:wrap;color:#89a5c0;font-size:12px;margin-top:auto;padding-top:12px;border-top:1px solid #263c55}.details b{color:var(--mint);font-size:14px}.appcard .uploadtime{display:flex;gap:7px;align-items:baseline;flex-wrap:wrap;font-size:12px;color:#91abc4}.appcard .uploadtime time{font-weight:800;color:#e0efff}.cardactions{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:5px}.textlink{color:#b3c9e5;font-size:12px;text-decoration:underline;text-underline-offset:3px}.empty{grid-column:1/-1;border:1px dashed #4b6079;border-radius:17px;padding:28px;color:#abc0d4}
 .owner{border:1px solid #335369;background:linear-gradient(135deg,#162c3f,#0e1c30);border-radius:24px;padding:34px;margin-bottom:75px;position:relative;overflow:hidden}.owner:before{content:"";position:absolute;top:-70px;right:-90px;width:300px;height:300px;background:radial-gradient(circle,#2dd6c01a,transparent 66%);pointer-events:none}.owner-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;position:relative}.owner h2{font-size:33px;letter-spacing:-.04em;margin:8px 0}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:25px 0;position:relative}.step{background:#0c1a2c;border:1px solid #304960;padding:18px;border-radius:14px}.step b{color:var(--mint);font-size:12px}.step h3{margin:8px 0;font-size:16px}.step p{font-size:12px;color:#9cb2c9;margin:0}.owner-note{font-size:12px;color:#96b0c9}
 footer{padding:32px 0 45px;border-top:1px solid var(--border);color:#8da4bc;font-size:12px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
 .countnote{font-size:12px;color:#8da4bc;margin:17px 0 0}.support-strip{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border:1px solid #3c6a69;border-radius:21px;background:linear-gradient(125deg,#163438,#122233);padding:27px 30px;margin:0 0 73px}.support-strip h2{font-size:clamp(22px,3vw,30px);letter-spacing:-.04em;margin:7px 0}.support-strip p{color:#b4c8cd;margin:0;font-size:13px;max-width:680px}.support-strip .btn{flex-shrink:0}.warn{color:var(--yellow)}
@@ -74,7 +74,7 @@ footer{padding:32px 0 45px;border-top:1px solid var(--border);color:#8da4bc;font
 <div class="stat"><small>V200 downloads</small><strong id="v200Downloads">—</strong></div>
 </section>
 <section class="support-strip" aria-label="Support project development"><div><div class="kicker">INDEPENDENT DIAGNOSTIC SOFTWARE</div><h2>Help put more ECUs on the test bench.</h2><p>Hardware testing takes donor modules, wiring, power equipment and time. See the proposed $5,000 development budget and what needs testing next.</p></div><a class="btn" href="donate.html">See the funding goal ↗</a></section>
-<section class="section" id="downloads"><div class="section-top"><div><div class="kicker">Official GitHub Releases</div><h2>App library</h2><p class="sub">Download genuine published APKs. New releases appear automatically.</p></div><button class="refresh" id="refresh" type="button">↻ Refresh counts</button></div>
+<section class="section" id="downloads"><div class="section-top"><div><div class="kicker">Official GitHub Releases</div><h2>App library</h2><p class="sub">Download genuine published APKs. New releases and their upload dates appear automatically.</p></div><button class="refresh" id="refresh" type="button">↻ Refresh releases</button></div>
 <div class="toolbar"><input id="search" class="search" type="search" aria-label="Search apps" placeholder="Search apps, versions, filenames…"><div class="filters" role="group" aria-label="Filter apps"><button class="filter" data-filter="all" aria-pressed="true">All</button><button class="filter" data-filter="v200" aria-pressed="false">V200</button><button class="filter" data-filter="eeprom" aria-pressed="false">EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false">BMW</button></div></div>
 <div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
 <p class="countnote" id="countNote">Counts come from GitHub Release assets, not website visits. Downloads of raw repository files cannot be counted by GitHub.</p></section>
@@ -97,6 +97,10 @@ let apps=[],filter="all",lastOkay=false;
 const fmt=n=>Number(n||0).toLocaleString("en-US");
 const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const size=n=>n>=1048576?(n/1048576).toFixed(1)+" MB":Math.round(n/1024)+" KB";
+const uploadedAt=a=>a.asset.created_at||a.release.published_at||a.release.created_at||"";
+const pacificDateTime=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit",hour12:true,timeZoneName:"short"});
+function uploadLabel(a){const value=uploadedAt(a);return value&&!Number.isNaN(Date.parse(value))?pacificDateTime.format(new Date(value)):"Date unavailable";}
+function uploadMarkup(a){const raw=uploadedAt(a);const valid=raw&&!Number.isNaN(Date.parse(raw));return '<p class="uploadtime"><span>Uploaded:</span> <time'+(valid?' datetime="'+esc(raw)+'"':'')+'>'+esc(uploadLabel(a))+'</time></p>';}
 function family(filename){const n=filename.toLowerCase();return n.includes("v200")||n.includes("stardiagnostic")?"v200":n.includes("eeprom")||n.includes("xp400")?"eeprom":n.includes("bmw")?"bmw":"other";}
 function title(f,n){if(f==="v200")return "V200 Diagnostic";if(f==="eeprom")return n.toLowerCase().includes("xp400")?"XP400 Reader":"EEPROM Studio";if(f==="bmw")return "BMW Standard Tools";return n.replace(/\.apk$/i,"").replace(/[_-]+/g," ").replace(/\b\d+(?:\.\d+){1,4}\b/g,"").trim()||"Android Utility";}
 function iconFor(f){return f==="v200"?"⌁":f==="eeprom"?"▣":f==="bmw"?"◎":"⬡";}
@@ -105,7 +109,7 @@ function updateHero(){
 const match=apps.filter(a=>a.family==="v200");
 const dl=$("heroDownload"),meta=$("heroMeta");
 if(match.length){
-const a=match[0];dl.href=a.url;dl.classList.remove("disabled");dl.removeAttribute("aria-disabled");dl.textContent="↓ Download V200 APK";meta.textContent="GitHub Release · "+a.asset.name+" · "+size(a.asset.size)+" · "+fmt(match.reduce((n,x)=>n+x.count,0))+" recorded downloads";
+const a=match[0];dl.href=a.url;dl.classList.remove("disabled");dl.removeAttribute("aria-disabled");dl.textContent="↓ Download V200 APK";meta.textContent="Latest V200 upload: "+uploadLabel(a)+" · "+a.asset.name+" · "+size(a.asset.size)+" · "+fmt(match.reduce((n,x)=>n+x.count,0))+" recorded downloads";
 }else if(!lastOkay){
 dl.href=FALLBACK;dl.classList.remove("disabled");dl.removeAttribute("aria-disabled");dl.textContent="↓ Download V200 test APK";meta.textContent="Temporary raw-file fallback · GitHub cannot count these downloads";
 }else{
@@ -115,10 +119,11 @@ function render(){
 const q=$("search").value.trim().toLowerCase();
 const rows=apps.filter(x=>(filter==="all"||x.family===filter)&&(x.asset.name+" "+x.title+" "+x.tag+" "+x.release.name).toLowerCase().includes(q));
 if(!rows.length){$("catalog").innerHTML='<div class="empty">'+(lastOkay?"No published APKs match the current filter.":"Could not load GitHub Release data. Try refreshing, or open the official Releases page.")+'</div>';return;}
-const latest=new Set();
+const newestURLs=new Set(),seenApps=new Set();
+for(const a of apps){if(!seenApps.has(a.title)){seenApps.add(a.title);newestURLs.add(a.url);}}
 $("catalog").innerHTML=rows.map(a=>{
-const key=a.title;const fresh=!latest.has(key);latest.add(key);
-return '<article class="appcard"><div class="apphead"><span class="appicon '+(a.family==="bmw"?"blue":a.family==="eeprom"?"gold":"")+'">'+iconFor(a.family)+'</span><span class="tag">'+(fresh?"LATEST":"ARCHIVE")+'</span></div><h3>'+esc(a.title)+'</h3><p>'+esc(description(a.family))+'</p><p><strong>'+esc(a.tag)+'</strong> · '+esc(a.asset.name)+'</p><div class="details"><span><b>'+fmt(a.count)+'</b><br>Downloads</span><span><b>'+size(a.asset.size)+'</b><br>APK size</span><span><b>'+(a.release.prerelease?"Test":"Release")+'</b><br>Build type</span></div><div class="cardactions"><a class="btn sm" href="'+esc(a.url)+'">↓ Download APK</a><a class="textlink" href="'+esc(a.release.html_url)+'" target="_blank" rel="noopener noreferrer">Release notes ↗</a></div>'+(a.family==="v200"?'<div style="margin-top:10px"><a class="btn pay sm" href="community.html#account" target="_blank" rel="noopener noreferrer">🔑 My activation account ↗</a></div>':'')+'</article>';
+const fresh=newestURLs.has(a.url);
+return '<article class="appcard"><div class="apphead"><span class="appicon '+(a.family==="bmw"?"blue":a.family==="eeprom"?"gold":"")+'">'+iconFor(a.family)+'</span><span class="tag">'+(fresh?"LATEST":"ARCHIVE")+'</span></div><h3>'+esc(a.title)+'</h3><p>'+esc(description(a.family))+'</p><p><strong>'+esc(a.tag)+'</strong> · '+esc(a.asset.name)+'</p>'+uploadMarkup(a)+'<div class="details"><span><b>'+fmt(a.count)+'</b><br>Downloads</span><span><b>'+size(a.asset.size)+'</b><br>APK size</span><span><b>'+(a.release.prerelease?"Test":"Release")+'</b><br>Build type</span></div><div class="cardactions"><a class="btn sm" href="'+esc(a.url)+'">↓ Download APK</a><a class="textlink" href="'+esc(a.release.html_url)+'" target="_blank" rel="noopener noreferrer">Release notes ↗</a></div>'+(a.family==="v200"?'<div style="margin-top:10px"><a class="btn pay sm" href="community.html#account" target="_blank" rel="noopener noreferrer">🔑 My activation account ↗</a></div>':'')+'</article>';
 }).join("");
 }
 async function reload(){
@@ -133,12 +138,12 @@ const page=await response.json();if(!Array.isArray(page))throw Error("Invalid re
 releases=releases.concat(page);
 if(page.length<100)break;
 }
-apps=releases.filter(x=>!x.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded").map(a=>({asset:a,release:r,count:Number(a.download_count||0),tag:r.tag_name,title:title(family(a.name),a.name),family:family(a.name),url:a.browser_download_url}))).sort((a,b)=>new Date(b.release.published_at||b.release.created_at)-new Date(a.release.published_at||a.release.created_at));
+apps=releases.filter(x=>!x.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded").map(a=>({asset:a,release:r,count:Number(a.download_count||0),tag:r.tag_name,title:title(family(a.name),a.name),family:family(a.name),url:a.browser_download_url}))).sort((a,b)=>(Date.parse(uploadedAt(b))||0)-(Date.parse(uploadedAt(a))||0));
 lastOkay=true;
 $("totalDownloads").textContent=fmt(apps.reduce((n,x)=>n+x.count,0));
 $("buildCount").textContent=fmt(apps.length);
 $("v200Downloads").textContent=fmt(apps.filter(x=>x.family==="v200").reduce((n,x)=>n+x.count,0));
-$("countNote").textContent="Live GitHub Release asset download counts. Counters can be delayed and exclude raw-file downloads. Removing an asset removes its visible count.";
+$("countNote").textContent="Live GitHub Release asset download counts and file upload times (Pacific Time). Counters can be delayed and exclude raw-file downloads. Removing an asset removes its visible count.";
 }catch(err){
 lastOkay=false;
 $("totalDownloads").textContent="—";$("buildCount").textContent="—";$("v200Downloads").textContent="—";
