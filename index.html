@@ -142,7 +142,7 @@ th:nth-child(4){width:22%}
 <body>
 <header class="mast"><div class="shell top">
 <a class="brand" href="./" aria-label="Star Mobile Service app downloads"><span class="brandmark" aria-hidden="true">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB / DOWNLOADS</small></span></a>
-<nav aria-label="Main links"><a href="community.html#account">Activation</a><a class="donate" href="donate.html">Donate</a><button id="soundToggle" class="sound-toggle" type="button" aria-label="Play soft welcome music" aria-pressed="false" title="Play soft welcome music">🔇</button></nav>
+<nav aria-label="Main links"><a href="community.html#account">Activation</a><a class="donate" href="donate.html">Donate</a><button id="soundToggle" class="sound-toggle" type="button" aria-label="Play ECU rap" aria-pressed="false" title="Play Bench Mode — ECU rap">🎤</button></nav>
 </div></header>
 <main class="shell">
 <div class="heading">
@@ -179,105 +179,206 @@ const $=id=>document.getElementById(id);
    No audio file, tracking request, or external service is involved. */
 // Gentle original five-minute setup ambience. Not the Microsoft recording or melody.
 // Quiet by default: visitors choose when to hear it by pressing the speaker button.
-let introSoundEnabled=false,introAudioContext=null,musicStarted=false;
-let musicTimer=null,musicOutput=null,musicStart=0,nextChord=0;
-const WELCOME_MUSIC_LENGTH=300;
-try{introSoundEnabled=localStorage.getItem("star-mobile-calm-music-v2")==="on";}catch(_){}
+// BENCH MODE: an original hip-hop beat and browser-voiced ECU rap.
+// Playback requires a click; the website keeps music off by default.
+const RAP_BPM=92,RAP_DURATION=300;
+let rapEnabled=false,rapRunning=false,rapContext=null,rapOutput=null,rapTicker=null;
+let rapStep=0,rapStartedAt=0,rapSession=0,rapLine=0,rapLineTimeout=null;
+const rapLyrics=[
+"Star Mobile Service. Bench mode. Plug it in. Let's get to work.",
+"Keys on the counter, ECU on the bench. Every byte matters when we're checking the sense.",
+"Check the VIN, keep the voltage in check. No guesswork here, we respect the tech.",
+"C A N high, C A N low, watch that network flow. If the module starts talking, then the live data shows.",
+"J twenty five thirty four, pass through the gate. Stable power supply before the flash, never late.",
+"Read the old file, make a backup that stays. Verify the checksum before we change the ways.",
+"Code it, flash it, test it twice. Clean work on the bench, that's the technician's advice.",
+"From a no start problem to a clean running ride. We follow what the diagnostics say inside.",
+"ECU, key and code, that's the rhythm of the road. Star Mobile Service, let the good data load.",
+"Flash it right, code it clean, watch that dashboard glow. Authorized key programming, we keep the signals flowing.",
+"ECU, key and code, from the shop to the street. J twenty five thirty four riding over this beat.",
+"Read, verify, then we start. Automotive locksmith with an engineer's heart.",
+"EEPROM on the bench and the scope light blue. Microscope above it while the data comes through.",
+"CAS and FEM, every module needs a plan. Don't press write blind when the code is in your hand.",
+"Keys cut clean, transponders verified. Security access first, then the modules synchronized.",
+"ABS, BCM, and a cluster on the bus. One missing response means another thing to discuss.",
+"Pinouts and grounds, make the harness tight. A voltage dip can turn a good flash into a long night.",
+"Logs on the screen, CAN frames in time. Each reply is a clue, every trace is a sign.",
+"No fake function buttons, just the tests that we know. We build it, bench it, check it, then the software grows.",
+"ECU, key and code, that's the rhythm of the road. Star Mobile Service, let the good data load.",
+"Flash it right, code it clean, watch that dashboard glow. Authorized key programming, we keep the signals flowing.",
+"ECU, key and code, from the shop to the street. J twenty five thirty four riding over this beat.",
+"Read, verify, then we start. Automotive locksmith with an engineer's heart.",
+"Bluetooth in the bay, USB at the desk. V two hundred running checks with the protocol test.",
+"Live data tells a story no screen can invent. We follow actual messages from the modules that were sent.",
+"Engine light on, got a trouble code to read. Diagnose the cause before buying what you need.",
+"Firmware matched to the hardware and the car. Check the right calibration before we travel far.",
+"From BMW to Audi, the process has a name. Adaptation and coding aren't a guessing game.",
+"Backup before the edit, battery kept alive. Confirm the ECU answers when the flash is verified.",
+"Locksmith with the keys, software in the zone. Building tools for technicians from the laptop to the phone.",
+"ECU, key and code, that's the rhythm of the road. Star Mobile Service, let the good data load.",
+"Flash it right, code it clean, watch that dashboard glow. Authorized key programming, we keep the signals flowing.",
+"ECU, key and code, from the shop to the street. J twenty five thirty four riding over this beat.",
+"Read, verify, then we start. Automotive locksmith with an engineer's heart.",
+"Bench test all morning, another build at night. Find the bug in the logs, then make the timing right.",
+"One new release, a hundred lessons from the car. Progress takes precision, that's what makes us who we are.",
+"Never claim it works until the real hardware replies. That's how you turn a project into something you can trust.",
+"From key programming to flashing, we're raising up the bar. Star Mobile Service, now you know who we are.",
+"ECU, key and code, that's the rhythm of the road. Star Mobile Service, let the good data load.",
+"Flash it right, code it clean, watch that dashboard glow. Authorized key programming, we keep the signals flowing.",
+"From the bench to the bay, let the diagnostics speak. Back up every module, make the fix last all week.",
+"J twenty five thirty four, let the verified bits flow. Star Mobile Service. Bench mode. Let's go."
+];
 function updateSoundToggle(){
-  const button=$("soundToggle");
-  button.textContent=introSoundEnabled?"🔊":"🔇";
-  button.setAttribute("aria-pressed",String(introSoundEnabled));
-  button.setAttribute("aria-label",introSoundEnabled?"Mute soft welcome music":"Play soft welcome music");
-  button.title=introSoundEnabled?"Soft welcome music: on":"Play soft welcome music";
+  const b=document.getElementById("soundToggle");
+  b.textContent=rapRunning?"⏹":"🎤";
+  b.setAttribute("aria-pressed",String(rapRunning));
+  b.setAttribute("aria-label",rapRunning?"Stop ECU rap":"Play ECU rap");
+  b.title=rapRunning?"Stop Bench Mode rap":"Play Bench Mode — ECU rap";
 }
 function stopWelcomeMusic(){
-  if(musicTimer!==null){clearInterval(musicTimer);musicTimer=null;}
-  if(musicOutput&&introAudioContext){
-    const now=introAudioContext.currentTime;
-    musicOutput.gain.cancelScheduledValues(now);
-    musicOutput.gain.setValueAtTime(Math.max(0.00001,musicOutput.gain.value),now);
-    musicOutput.gain.linearRampToValueAtTime(0,now+0.18);
-    const previous=musicOutput;
-    setTimeout(()=>{try{previous.disconnect();}catch(_){}},900);
-    musicOutput=null;
+  rapEnabled=false;
+  rapRunning=false;
+  rapSession++;
+  if(rapTicker!==null){clearInterval(rapTicker);rapTicker=null;}
+  if(rapLineTimeout!==null){clearTimeout(rapLineTimeout);rapLineTimeout=null;}
+  try{if("speechSynthesis" in window)window.speechSynthesis.cancel();}catch(_){}
+  if(rapOutput&&rapContext){
+    const gain=rapOutput,now=rapContext.currentTime;
+    gain.gain.cancelScheduledValues(now);
+    gain.gain.setValueAtTime(Math.max(0.00001,gain.gain.value),now);
+    gain.gain.linearRampToValueAtTime(0,now+0.12);
+    setTimeout(()=>{try{gain.disconnect();}catch(_){}},500);
   }
-  musicStarted=false;
+  rapOutput=null;
+  updateSoundToggle();
+}
+function speakNext(session){
+  if(!rapEnabled||session!==rapSession||!("speechSynthesis" in window))return;
+  if(rapContext&&rapContext.currentTime-rapStartedAt>=RAP_DURATION-3)return;
+  const words=rapLyrics[rapLine++%rapLyrics.length];
+  const utterance=new SpeechSynthesisUtterance(words);
+  utterance.lang="en-US";
+  utterance.rate=1.16;
+  utterance.pitch=0.82;
+  utterance.volume=0.36;
+  const voices=window.speechSynthesis.getVoices();
+  const preferred=voices.find(v=>v.lang==="en-US")||voices.find(v=>v.lang.startsWith("en"));
+  if(preferred)utterance.voice=preferred;
+  let finished=false;
+  function done(){
+    if(finished)return;
+    finished=true;
+    if(rapLineTimeout!==null){clearTimeout(rapLineTimeout);rapLineTimeout=null;}
+    if(session===rapSession&&rapEnabled)rapLineTimeout=setTimeout(()=>speakNext(session),220);
+  }
+  utterance.onend=done;
+  utterance.onerror=done;
+  // Recover from speech engines that occasionally stop reporting completion.
+  rapLineTimeout=setTimeout(()=>{try{window.speechSynthesis.cancel();}catch(_){}done();},8500);
+  try{window.speechSynthesis.speak(utterance);}catch(_){done();}
 }
 function playIntroSound(){
-  if(!introSoundEnabled||musicStarted)return;
+  if(rapRunning)return;
   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
   if(!AudioContextClass)return;
-  try{
-    const context=introAudioContext||(introAudioContext=new AudioContextClass());
-    const begin=()=>{
-      if(context.state!=="running"||musicStarted||!introSoundEnabled)return;
-      musicStarted=true;
-      const master=context.createGain();
-      master.gain.setValueAtTime(0.00001,context.currentTime);
-      master.gain.linearRampToValueAtTime(0.105,context.currentTime+2.5);
-      master.connect(context.destination);
-      musicOutput=master;
-      musicStart=context.currentTime+0.04;
-      nextChord=0;
-      // Slow, warm sine-wave chords with no bright chimes or piercing notes.
-      const progression=[
-        [164.81,220.00,329.63],
-        [146.83,220.00,293.66],
-        [130.81,174.61,261.63],
-        [146.83,196.00,293.66],
-        [164.81,246.94,329.63],
-        [146.83,196.00,293.66],
-        [130.81,164.81,261.63],
-        [146.83,220.00,293.66]
-      ];
-      const lowpass=context.createBiquadFilter();
-      lowpass.type="lowpass";
-      lowpass.frequency.value=560;
-      lowpass.Q.value=0.4;
-      lowpass.connect(master);
-      function pad(hz,at,seconds,volume){
-        if(seconds<0.3)return;
-        const oscillator=context.createOscillator(),gain=context.createGain();
-        oscillator.type="sine";
-        oscillator.frequency.setValueAtTime(hz,at);
-        gain.gain.setValueAtTime(0.00001,at);
-        const attack=Math.min(2.1,seconds*0.35);
-        gain.gain.linearRampToValueAtTime(volume,at+attack);
-        gain.gain.setValueAtTime(volume,Math.max(at+attack,at+seconds-2.6));
-        gain.gain.linearRampToValueAtTime(0,at+seconds);
-        oscillator.connect(gain);
-        gain.connect(lowpass);
-        oscillator.start(at);
-        oscillator.stop(at+seconds+0.04);
-        oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
-      }
-      function schedule(){
-        const horizon=Math.min(musicStart+WELCOME_MUSIC_LENGTH,context.currentTime+15);
-        while(musicStart+nextChord*9.5<horizon&&nextChord*9.5<WELCOME_MUSIC_LENGTH){
-          const position=nextChord*9.5,t=musicStart+position;
-          const duration=Math.min(11.8,WELCOME_MUSIC_LENGTH-position);
-          const chord=progression[nextChord%progression.length];
-          for(let i=0;i<chord.length;i++)pad(chord[i],t,duration,i===0?0.019:0.012);
-          nextChord++;
-        }
-        if(context.currentTime>=musicStart+WELCOME_MUSIC_LENGTH){
-          stopWelcomeMusic();
-          updateSoundToggle();
-        }
-      }
-      schedule();
-      musicTimer=setInterval(schedule,3200);
-    };
-    if(context.state==="running")begin();
-    else context.resume().then(begin).catch(()=>{});
-  }catch(_){}
-}
-$("soundToggle").addEventListener("click",()=>{
-  introSoundEnabled=!introSoundEnabled;
-  try{localStorage.setItem("star-mobile-calm-music-v2",introSoundEnabled?"on":"off");}catch(_){}
-  if(!introSoundEnabled)stopWelcomeMusic();
+  rapEnabled=true;
+  rapRunning=true;
+  rapLine=0;
+  const session=++rapSession;
   updateSoundToggle();
-  if(introSoundEnabled)playIntroSound();
+  try{
+    const context=rapContext||(rapContext=new AudioContextClass());
+    const output=context.createGain();
+    output.gain.setValueAtTime(0.0001,context.currentTime);
+    output.gain.linearRampToValueAtTime(0.22,context.currentTime+0.8);
+    output.connect(context.destination);
+    rapOutput=output;
+    rapStartedAt=context.currentTime+0.1;
+    rapStep=0;
+    const stepSeconds=60/RAP_BPM/2;
+    const noise=context.createBuffer(1,Math.floor(context.sampleRate*.13),context.sampleRate);
+    const n=noise.getChannelData(0);
+    for(let i=0;i<n.length;i++)n[i]=(Math.random()*2-1);
+    function kick(t){
+      const osc=context.createOscillator(),g=context.createGain();
+      osc.type="sine";
+      osc.frequency.setValueAtTime(122,t);
+      osc.frequency.exponentialRampToValueAtTime(46,t+.19);
+      g.gain.setValueAtTime(.52,t);
+      g.gain.exponentialRampToValueAtTime(.0001,t+.22);
+      osc.connect(g);g.connect(output);
+      osc.start(t);osc.stop(t+.24);
+      osc.onended=()=>{osc.disconnect();g.disconnect();};
+    }
+    function noiseHit(t,volume,cutoff,seconds){
+      const src=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain();
+      src.buffer=noise;
+      filter.type="highpass";filter.frequency.value=cutoff;
+      gain.gain.setValueAtTime(volume,t);
+      gain.gain.exponentialRampToValueAtTime(.0001,t+seconds);
+      src.connect(filter);filter.connect(gain);gain.connect(output);
+      src.start(t);src.stop(t+seconds+.005);
+      src.onended=()=>{src.disconnect();filter.disconnect();gain.disconnect();};
+    }
+    function bass(t,hz){
+      const osc=context.createOscillator(),gain=context.createGain(),filter=context.createBiquadFilter();
+      osc.type="triangle";
+      osc.frequency.value=hz;
+      filter.type="lowpass";filter.frequency.value=200;
+      gain.gain.setValueAtTime(.0001,t);
+      gain.gain.linearRampToValueAtTime(.075,t+.025);
+      gain.gain.exponentialRampToValueAtTime(.0001,t+.6);
+      osc.connect(filter);filter.connect(gain);gain.connect(output);
+      osc.start(t);osc.stop(t+.61);
+      osc.onended=()=>{osc.disconnect();filter.disconnect();gain.disconnect();};
+    }
+    function chord(t,notes){
+      for(const frequency of notes){
+        const osc=context.createOscillator(),gain=context.createGain();
+        osc.type="sine";osc.frequency.value=frequency;
+        gain.gain.setValueAtTime(.0001,t);
+        gain.gain.linearRampToValueAtTime(.014,t+.15);
+        gain.gain.exponentialRampToValueAtTime(.0001,t+1.45);
+        osc.connect(gain);gain.connect(output);
+        osc.start(t);osc.stop(t+1.48);
+        osc.onended=()=>{osc.disconnect();gain.disconnect();};
+      }
+    }
+    const roots=[65.41,51.91,58.27,49.00];
+    const chords=[
+      [261.63,311.13,392.00],
+      [207.65,311.13,415.30],
+      [233.08,293.66,349.23],
+      [196.00,293.66,392.00]
+    ];
+    function schedule(){
+      if(!rapRunning||session!==rapSession)return;
+      while(rapStartedAt+rapStep*stepSeconds<context.currentTime+2&&rapStep*stepSeconds<RAP_DURATION){
+        const t=rapStartedAt+rapStep*stepSeconds;
+        const pos=rapStep%8,bar=Math.floor(rapStep/8),key=Math.floor(bar/2)%4;
+        if(pos===0||pos===4)kick(t);
+        if(pos===2||pos===6)noiseHit(t,.12,930,.115);
+        noiseHit(t,pos%2===0?.012:.006,2900,.035);
+        if(pos===0||pos===4)bass(t,roots[key]);
+        if(pos===0&&bar%2===0)chord(t,chords[key]);
+        rapStep++;
+      }
+      if(context.currentTime-rapStartedAt>=RAP_DURATION)stopWelcomeMusic();
+    }
+    context.resume().then(()=>{
+      if(session!==rapSession)return;
+      schedule();
+      rapTicker=setInterval(schedule,220);
+    }).catch(()=>{stopWelcomeMusic();});
+    // A native device voice performs the original rap over the synthesized beat.
+    // Starting speech directly from the user's tap satisfies mobile browser restrictions.
+    try{window.speechSynthesis.cancel();}catch(_){}
+    speakNext(session);
+  }catch(_){stopWelcomeMusic();}
+}
+document.getElementById("soundToggle").addEventListener("click",()=>{
+  if(rapRunning)stopWelcomeMusic();
+  else playIntroSound();
 });
 updateSoundToggle();
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
