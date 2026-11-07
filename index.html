@@ -32,7 +32,7 @@ main{padding-top:18px!important}
 .heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:12px}
 .eyebrow{font-size:10px;font-weight:850;letter-spacing:.15em;color:var(--green);text-transform:uppercase}
 h1{font-size:clamp(22px,3vw,32px);line-height:1.15;letter-spacing:-.045em;margin:4px 0}
-.intro{font-size:12px;color:var(--muted);margin:0}
+
 .clock{border:1px solid #35546b;border-radius:11px;background:#102438;padding:7px 11px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .clock b{display:block;color:#7cf5d7;font-size:11px;font-weight:850}
 .clock time{font-size:12px;font-weight:800}
@@ -87,7 +87,7 @@ th:nth-child(4){width:22%}
  main{padding-top:11px!important}
  .heading{gap:6px;margin-bottom:8px}
  h1{font-size:22px;margin:2px 0}
- .intro{font-size:10px}
+
  .eyebrow{font-size:9px}
  .clock{padding:5px 7px}
  .clock b{font-size:9px}
@@ -141,7 +141,7 @@ th:nth-child(4){width:22%}
 </div></header>
 <main class="shell">
 <div class="heading">
-<div><div class="eyebrow">Official GitHub Releases</div><h1>Download Apps</h1><p class="intro">Latest builds first · Complete download list without the long homepage</p></div>
+<div><div class="eyebrow">Official GitHub Releases</div><h1>Download Apps</h1></div>
 <div class="clock" aria-label="Current Pacific date and time"><b id="todayDate">Pacific date</b><time id="nowTime">Pacific time</time></div>
 </div>
 <div class="stats" aria-label="GitHub release download totals">
@@ -160,7 +160,7 @@ th:nth-child(4){width:22%}
 </table>
 </div>
 <div class="tablefooter"><p id="statusText" role="status">Checking live GitHub Releases…</p><button id="showAll" type="button" aria-expanded="false" hidden>↓ Show all versions</button></div>
-<div class="quicklinks"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">All GitHub releases ↗</a><a href="community.html#account">Technician activation ↗</a><a href="donate.html">Support development ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">Upload new APK ↗</a></div>
+<div class="quicklinks"><a href="community.html#account">Technician activation ↗</a><a href="donate.html">Support development ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">Upload new APK ↗</a></div>
 <p class="warning">Experimental APKs. Compatibility and supported functions vary by release. GitHub download counts exclude raw-file downloads.</p>
 </main>
 <script>
@@ -169,7 +169,7 @@ th:nth-child(4){width:22%}
 const REPO="kaissymarji/star-mobile-downloads.";
 const API="https://api.github.com/repos/"+REPO+"/releases?per_page=100&page=";
 const $=id=>document.getElementById(id);
-/* Tiny, original two-note ECU power-on chime synthesized locally with Web Audio.
+/* Original, soft multi-note startup chime with a nostalgic early-2000s desktop feel, synthesized using Web Audio.
    Autoplay is attempted only when enabled; browsers may require a first user gesture.
    No audio file, tracking request, or external service is involved. */
 let introSoundEnabled=true, introSoundPlayed=false, introAudioContext=null;
@@ -192,21 +192,33 @@ function playIntroSound(){
       introSoundPlayed=true;
       document.removeEventListener("pointerdown",handleIntroPointer,true);
       document.removeEventListener("keydown",handleIntroKey,true);
-      const t=context.currentTime+0.012;
-      function tone(start,from,to,duration,volume){
-        const oscillator=context.createOscillator(),gain=context.createGain();
-        oscillator.type="sine";
-        oscillator.frequency.setValueAtTime(from,start);
-        oscillator.frequency.exponentialRampToValueAtTime(to,start+duration);
-        gain.gain.setValueAtTime(0.0001,start);
-        gain.gain.exponentialRampToValueAtTime(volume,start+0.016);
-        gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);
-        oscillator.connect(gain);gain.connect(context.destination);
-        oscillator.start(start);oscillator.stop(start+duration+0.015);
-        oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
+      const t=context.currentTime+0.025;
+      const master=context.createGain();
+      master.gain.setValueAtTime(0.55,t);
+      master.connect(context.destination);
+      // Three gentle, original rising chords — not a recording or melody from Windows.
+      const chords=[
+        {delay:0,notes:[392,493.88,587.33],level:0.012},
+        {delay:0.38,notes:[440,554.37,659.25],level:0.014},
+        {delay:0.78,notes:[523.25,659.25,783.99],level:0.019}
+      ];
+      for(const chord of chords){
+        const start=t+chord.delay;
+        const end=start+(chord.delay>0.7?1.06:0.66);
+        for(const hz of chord.notes){
+          const oscillator=context.createOscillator(),gain=context.createGain();
+          oscillator.type="sine";
+          oscillator.frequency.setValueAtTime(hz,start);
+          oscillator.frequency.linearRampToValueAtTime(hz*1.003,start+0.18);
+          gain.gain.setValueAtTime(0.0001,start);
+          gain.gain.linearRampToValueAtTime(chord.level,start+0.1);
+          gain.gain.setValueAtTime(chord.level,end-0.5);
+          gain.gain.exponentialRampToValueAtTime(0.0001,end);
+          oscillator.connect(gain);gain.connect(master);
+          oscillator.start(start);oscillator.stop(end+0.02);
+          oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
+        }
       }
-      tone(t,530,650,0.17,0.028);
-      tone(t+0.15,760,970,0.23,0.038);
     };
     if(context.state==="running")begin();
     else context.resume().then(begin).catch(()=>{});
