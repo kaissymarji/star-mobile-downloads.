@@ -17,7 +17,7 @@ header{position:sticky;top:0;z-index:10;background:rgba(7,13,26,.91);backdrop-fi
 .brand{display:flex;align-items:center;gap:12px;font-weight:850;letter-spacing:.045em;text-decoration:none;font-size:15px}
 .brandmark{height:38px;width:38px;display:grid;place-items:center;background:linear-gradient(140deg,var(--mint),#5397ff);color:#031323;border-radius:11px;font-size:22px;box-shadow:0 8px 25px #34d9bf21}
 .brand small{display:block;color:var(--muted);letter-spacing:.2em;font-size:9px;font-weight:700}
-nav{display:flex;align-items:center;gap:26px}nav a{text-decoration:none;color:#c0d1e5;font-size:13px;font-weight:700}nav a:hover{color:var(--mint)}
+nav{display:flex;align-items:center;gap:26px}nav a{text-decoration:none;color:#c0d1e5;font-size:13px;font-weight:700}nav a:hover{color:var(--mint)}.nav-donate{color:var(--mint)!important}
 .navowner{padding:9px 14px;border:1px solid #3b546b;border-radius:10px}
 .hero{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:38px;padding-top:80px;padding-bottom:70px}
 .eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--mint);font-size:11px;font-weight:850;letter-spacing:.18em;text-transform:uppercase}
@@ -41,7 +41,7 @@ h1 span{color:var(--mint)}.lead{max-width:570px;color:#afc2d7;font-size:17px;mar
 .appcard h3{font-size:21px;letter-spacing:-.04em;line-height:1.16;margin:7px 0 0}.appcard p{font-size:13px;color:#a5bad1;margin:0}.details{display:flex;gap:16px;flex-wrap:wrap;color:#89a5c0;font-size:12px;margin-top:auto;padding-top:12px;border-top:1px solid #263c55}.details b{color:var(--mint);font-size:14px}.cardactions{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-top:5px}.textlink{color:#b3c9e5;font-size:12px;text-decoration:underline;text-underline-offset:3px}.empty{grid-column:1/-1;border:1px dashed #4b6079;border-radius:17px;padding:28px;color:#abc0d4}
 .owner{border:1px solid #335369;background:linear-gradient(135deg,#162c3f,#0e1c30);border-radius:24px;padding:34px;margin-bottom:75px;position:relative;overflow:hidden}.owner:before{content:"";position:absolute;top:-70px;right:-90px;width:300px;height:300px;background:radial-gradient(circle,#2dd6c01a,transparent 66%);pointer-events:none}.owner-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;position:relative}.owner h2{font-size:33px;letter-spacing:-.04em;margin:8px 0}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:25px 0;position:relative}.step{background:#0c1a2c;border:1px solid #304960;padding:18px;border-radius:14px}.step b{color:var(--mint);font-size:12px}.step h3{margin:8px 0;font-size:16px}.step p{font-size:12px;color:#9cb2c9;margin:0}.owner-note{font-size:12px;color:#96b0c9}
 footer{padding:32px 0 45px;border-top:1px solid var(--border);color:#8da4bc;font-size:12px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
-.countnote{font-size:12px;color:#8da4bc;margin:17px 0 0}.warn{color:var(--yellow)}
+.countnote{font-size:12px;color:#8da4bc;margin:17px 0 0}.support-strip{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;border:1px solid #3c6a69;border-radius:21px;background:linear-gradient(125deg,#163438,#122233);padding:27px 30px;margin:0 0 73px}.support-strip h2{font-size:clamp(22px,3vw,30px);letter-spacing:-.04em;margin:7px 0}.support-strip p{color:#b4c8cd;margin:0;font-size:13px;max-width:680px}.support-strip .btn{flex-shrink:0}.warn{color:var(--yellow)}
 @media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:56px}.terminal{max-width:620px;transform:none}.catalog{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:1fr}}
 @media(max-width:620px){nav a:not(.navowner){display:none}.nav{min-height:66px}.brand{font-size:12px}.hero{padding-top:45px;padding-bottom:40px}.hero h1{font-size:47px}.stats{grid-template-columns:1fr 1fr;gap:9px;padding-bottom:55px}.stat:last-child{grid-column:1/-1}.stat strong{font-size:25px}.catalog{grid-template-columns:1fr}.section-top{align-items:start;flex-direction:column}.owner{padding:24px}.section{padding-bottom:62px}.actions .btn{width:100%}.term-foot{font-size:10px}}
 </style>
@@ -49,14 +49,14 @@ footer{padding:32px 0 45px;border-top:1px solid var(--border);color:#8da4bc;font
 <body>
 <header><div class="container nav">
 <a class="brand" href="#home"><span class="brandmark">★</span><span>STAR MOBILE SERVICE<small>SOFTWARE LAB</small></span></a>
-<nav><a href="#downloads">Apps &amp; Downloads</a><a href="#about">About</a><a class="navowner" href="#manage">Owner Controls ↗</a></nav>
+<nav><a href="#downloads">Apps &amp; Downloads</a><a href="#about">About</a><a class="nav-donate" href="donate.html">♡ Support development</a><a class="navowner" href="#manage">Owner Controls ↗</a></nav>
 </div></header>
 <main class="container">
 <section class="hero" id="home"><div>
 <div class="eyebrow"><i class="dot"></i> BUILDING BETTER BENCH TOOLS</div>
 <h1>V200 Diagnostic.<br><span>Built for the bench.</span></h1>
 <p class="lead">Android automotive diagnostics in development for the Autel MaxiVCI V200. Browse builds, get the latest test APK, and follow the project as it grows.</p>
-<div class="actions"><a class="btn disabled" id="heroDownload" aria-disabled="true" href="#downloads">↓ Checking latest APK…</a><a class="btn pay" href="community.html#account" target="_blank" rel="noopener noreferrer">🔑 Technician account / activation ↗</a><a class="btn secondary" href="#downloads">Explore all apps ↗</a></div>
+<div class="actions"><a class="btn disabled" id="heroDownload" aria-disabled="true" href="#downloads">↓ Checking latest APK…</a><a class="btn pay" href="community.html#account" target="_blank" rel="noopener noreferrer">🔑 Technician account / activation ↗</a><a class="btn secondary" href="#downloads">Explore all apps ↗</a><a class="btn secondary" href="donate.html">♡ Fund bench testing ↗</a></div>
 <div class="meta" id="heroMeta">Developer / test build • Features and vehicle coverage vary</div>
 </div>
 <div class="terminal" aria-label="Decorative ECU network topology illustration">
@@ -73,6 +73,7 @@ footer{padding:32px 0 45px;border-top:1px solid var(--border);color:#8da4bc;font
 <div class="stat"><small>Published APK builds</small><strong id="buildCount">—</strong></div>
 <div class="stat"><small>V200 downloads</small><strong id="v200Downloads">—</strong></div>
 </section>
+<section class="support-strip" aria-label="Support project development"><div><div class="kicker">INDEPENDENT DIAGNOSTIC SOFTWARE</div><h2>Help put more ECUs on the test bench.</h2><p>Hardware testing takes donor modules, wiring, power equipment and time. See the proposed $5,000 development budget and what needs testing next.</p></div><a class="btn" href="donate.html">See the funding goal ↗</a></section>
 <section class="section" id="downloads"><div class="section-top"><div><div class="kicker">Official GitHub Releases</div><h2>App library</h2><p class="sub">Download genuine published APKs. New releases appear automatically.</p></div><button class="refresh" id="refresh" type="button">↻ Refresh counts</button></div>
 <div class="toolbar"><input id="search" class="search" type="search" aria-label="Search apps" placeholder="Search apps, versions, filenames…"><div class="filters" role="group" aria-label="Filter apps"><button class="filter" data-filter="all" aria-pressed="true">All</button><button class="filter" data-filter="v200" aria-pressed="false">V200</button><button class="filter" data-filter="eeprom" aria-pressed="false">EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false">BMW</button></div></div>
 <div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
