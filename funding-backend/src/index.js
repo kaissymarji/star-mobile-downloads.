@@ -76,7 +76,10 @@ async function readOrder(orderId, token) {
   const response = await fetch(PAYPAL_API + '/v2/checkout/orders/' + encodeURIComponent(orderId), {
     headers: { 'authorization': 'Bearer ' + token, 'accept': 'application/json' }
   });
-  if (!response.ok) throw new Error('PayPal order details not accessible');
+  // Some Pay Links cannot be read through the merchant's newly created REST app.
+  // Do not retry unrelated/inaccessible orders indefinitely.
+  if (response.status === 403 || response.status === 404) return null;
+  if (!response.ok) throw new Error('PayPal order lookup temporarily unavailable');
   return response.json();
 }
 
