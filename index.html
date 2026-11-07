@@ -156,6 +156,86 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .bottom-nav{margin-top:12px}.bottom-nav a,.bottom-nav button{min-height:55px;font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* ECU Command Center — photographic-layout inspired dashboard, fully functional. */
+.software-intro{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:15px 0 8px}
+.software-intro h2{margin:0;font-size:21px;letter-spacing:.01em;font-weight:950}
+.software-intro span{font-size:11px;color:#a4c5d3}
+.hero{height:270px}
+.hero-copy{top:34px}
+.monitors{grid-template-columns:1.12fr .88fr;align-items:stretch}
+.vin-panel{min-width:0}
+.vin-body{padding:13px 14px}
+.vin-intro{color:#a9c8d7;font-size:11px;margin:0 0 11px}
+.vin-form{display:flex;gap:8px}
+.vin-form input{width:100%;min-width:0;flex:1;min-height:40px;background:#062438;border:1px solid #397991;border-radius:8px;color:#fff;letter-spacing:.04em;font-size:13px;padding:9px 11px;font-family:ui-monospace,monospace;outline:0}
+.vin-form input:focus{border-color:#29f9f4;box-shadow:0 0 0 2px #29f9f433}
+.vin-form button{border:0;background:linear-gradient(115deg,#24f4ed,#2ad6ec);color:#05212a;border-radius:8px;font-size:12px;font-weight:900;padding:9px 15px;white-space:nowrap}
+.vin-form button:disabled{opacity:.6;cursor:wait}
+.vin-status{font-size:11px;color:#bfd6df;margin:9px 0 0;line-height:1.4}
+.vin-source{color:#43efea;font-size:10px;text-decoration:underline;text-underline-offset:3px}
+.vin-privacy{color:#809fb1;font-size:9px;margin:7px 0 0}
+.vin-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:9px}
+.vin-results[hidden]{display:none}
+.vin-pair{display:flex;gap:3px;flex-direction:column;border:1px solid #1b465e;background:#062236;border-radius:6px;padding:6px 8px;min-width:0}
+.vin-pair span{color:#9cc6d6;font-size:9px}
+.vin-pair strong{font-size:11px;font-weight:800;overflow-wrap:anywhere}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.catalog{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;align-items:stretch}
+.appcard{display:flex;flex-direction:column;align-items:stretch;gap:10px;min-height:270px;padding:16px;border-radius:14px}
+.appcard:before{top:12px;bottom:12px}
+.app-top{display:flex;align-items:center;gap:10px}
+.app-top .app-icon{flex:none}
+.app-heading{min-width:0}
+.app-name{font-size:16px;margin:0}
+.app-desc{font-size:11px;margin:4px 0 0}
+.hardware{border-top:1px solid #246079;border-bottom:1px solid #246079;padding:10px 0}
+.hardware>strong{display:block;font-size:10px;letter-spacing:.065em;color:#38f5eb}
+.hardware>div{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.hardware span{display:block;font-size:11px;line-height:1.35;color:#dfecf1}
+.app-info{display:flex;flex-direction:column;gap:5px;color:#bdd3df;font-size:10px;margin-top:auto;min-width:0}
+.app-info .version-tag{color:#ecfaff;font-size:12px;font-weight:900}
+.app-actions{width:100%;margin-top:2px}
+.download-btn{min-height:40px}
+.features-strip{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #244f6c;border-radius:12px;margin:20px 0 10px;background:#071d2b}
+.features-strip span{padding:13px 6px;display:grid;place-items:center;text-align:center;font-size:11px;font-weight:850;color:#aaf2ee}
+.features-strip span+span{border-left:1px solid #29566d}
+.bottom-links{display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;margin:10px 0}
+.bottom-links a,.bottom-links button{font-size:11px;color:#a8c6d8;text-decoration:underline;text-underline-offset:3px;border:0;background:transparent;cursor:pointer}
+.bottom-links a:hover,.bottom-links button:hover{color:#38f5ea}
+@media(max-width:780px){
+.hero{height:230px}
+.monitors{grid-template-columns:1.08fr .92fr}
+.vin-form{flex-wrap:wrap}
+.vin-form button{min-height:34px}
+.catalog{grid-template-columns:repeat(2,minmax(0,1fr))}
+.appcard{min-height:263px}
+}
+@media(max-width:510px){
+.hero{height:182px}
+.monitors{grid-template-columns:1fr}
+.vin-form{flex-wrap:nowrap}
+.vin-form input{font-size:12px}
+.vin-form button{font-size:11px;padding:6px 9px}
+.topology-body{height:95px}
+.software-intro{margin:10px 0 6px}
+.software-intro h2{font-size:16px}
+.software-intro span{font-size:9px}
+.catalog{grid-template-columns:1fr;gap:7px}
+.appcard{min-height:0;padding:11px 12px;gap:7px}
+.app-top{gap:9px}
+.app-name{font-size:13px}
+.app-desc{font-size:10px}
+.hardware{padding:7px 0}
+.hardware>div{flex-direction:row;flex-wrap:wrap;column-gap:15px}
+.hardware span{font-size:10px}
+.app-info{gap:3px}
+.app-actions .download-btn{min-height:34px;font-size:11px}
+.features-strip{gap:0}
+.features-strip span{font-size:8px;padding:9px 3px}
+.bottom-links{gap:10px}
+}
+
 </style>
 </head>
 <body>
@@ -210,15 +290,20 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <div class="hero-copy"><p class="hero-kicker">AUTOMOTIVE SOFTWARE / ENGINEERING LAB</p><h1>ECU COMMAND <span>CENTER 2.0</span></h1><p class="hero-caption">J2534 • ECU FLASHING • IMMOBILIZER • CODING</p><a class="hero-link" href="#software">↓ EXPLORE DOWNLOADS</a></div>
 <span class="hero-signal">STAR MOBILE / BUILD LAB</span>
 </section>
-<div class="techstrip"><div class="ready">● SYSTEM READY</div><div class="protocols"><label>PROTOCOLS</label><b>CAN</b><b>K-LINE</b><b>UDS</b></div><div class="techstamp"><span class="levels"><i></i><i></i><i></i><i></i></span><span>J2534 LAB <span class="mini-note">/ DEMO</span></span></div></div>
+<div class="techstrip"><div class="ready">● DOWNLOAD CENTER READY</div><div class="protocols"><label>PROTOCOLS</label><b>CAN</b><b>K-LINE</b><b>UDS</b></div><div class="techstamp"><span class="levels"><i></i><i></i><i></i><i></i></span><span>SOFTWARE CATALOG <span class="mini-note">/ ONLINE</span></span></div></div>
 <section class="kpis" aria-label="Live GitHub statistics">
 <div class="kpi"><div class="k-label"><span class="k-icon">⇩</span>Total Downloads</div><strong id="totalDownloads">—</strong><small>Published APK assets</small><svg class="spark" viewBox="0 0 90 36" aria-hidden="true"><polyline points="0,30 13,24 23,27 37,15 49,20 64,7 76,12 88,2" fill="none" stroke="#1df7f9" stroke-width="2"/></svg></div>
 <div class="kpi"><div class="k-label"><span class="k-icon">▣</span>APK Versions</div><strong id="buildCount">—</strong><small>GitHub release assets</small></div>
 <div class="kpi"><div class="k-label"><span class="k-icon">▱</span>V200 Downloads</div><strong id="v200Downloads">—</strong><small>Recorded on GitHub</small><svg class="spark" viewBox="0 0 90 36" aria-hidden="true"><path d="M0 31V25H7V31M12 31V18H19V31M24 31V20H31V31M36 31V10H43V31M48 31V14H55V31M60 31V6H67V31M72 31V1H79V31" stroke="#24faff" stroke-width="7"/></svg></div>
 </section>
 <div class="monitors" id="monitor">
-<section class="panel" aria-label="Simulated CAN waveform"><div class="panel-heading"><span>⌁ CAN-BUS MONITOR</span><span class="demo-chip">SIMULATED SIGNAL</span></div><div class="monitor-body"><div class="wavefield"><svg viewBox="0 0 330 90" preserveAspectRatio="none" aria-hidden="true"><path id="trace" d="M0 60H30V25H65V64H95V30H125V60H158V24H190V65H225V33H260V58H295V27H330"/></svg></div><div class="monitor-spec"><div><span>CAN (HS)</span><strong>500 kbps*</strong></div><div><span>CAN (LS)</span><strong>125 kbps*</strong></div><div><span>FRAMES</span><strong>DEMO</strong></div><div><span>ERRORS</span><strong>—</strong></div><small>* Illustration only</small></div></div></section>
-<section class="panel" aria-label="Illustrative ECU topology"><div class="panel-heading"><span>♧ ECU NETWORK (TOPOLOGY)</span><span class="demo-chip">DEMO MAP</span></div><div class="topology-body"><svg class="topology-svg" viewBox="0 0 420 145" role="img" aria-label="Demonstration schematic connecting ECU to PCM, TCM, ABS, BCM, immobilizer and instrument cluster">
+<section class="panel vin-panel" id="vinLookup" aria-label="Online VIN decoder"><div class="panel-heading"><span>⌗ VIN DECODER</span><a href="https://vpic.nhtsa.dot.gov/decoder/" target="_blank" rel="noopener noreferrer" class="vin-source">NHTSA vPIC ↗</a></div>
+<div class="vin-body"><p class="vin-intro">Decode year, make, model, engine and vehicle information using official NHTSA data.</p>
+<form id="vinForm" class="vin-form"><label for="vinInput" class="sr-only">17-character vehicle identification number</label><input id="vinInput" maxlength="17" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter 17-character VIN" required aria-describedby="vinStatus"/><button id="decodeVIN" type="submit">⌕ Decode VIN</button></form>
+<div id="vinStatus" class="vin-status" role="status">Enter a VIN to retrieve vehicle details.</div>
+<div id="vinResult" class="vin-results" hidden></div>
+<p class="vin-privacy">VIN is sent to the NHTSA decoding service only when you tap Decode.</p></div></section>
+<section class="panel" aria-label="Illustrative ECU topology"><div class="panel-heading"><span>♧ ECU NETWORK (TOPOLOGY)</span><span class="demo-chip">EXAMPLE</span></div><div class="topology-body"><svg class="topology-svg" viewBox="0 0 420 145" role="img" aria-label="Demonstration schematic connecting ECU to PCM, TCM, ABS, BCM, immobilizer and instrument cluster">
 <path d="M170 72H140L116 22H89M170 72H133L113 72H89M170 72H140L116 122H89M250 72H286L309 22H332M250 72H302H332M250 72H286L309 122H332"/>
 <rect class="hub" x="170" y="47" width="80" height="50" rx="8"/><text x="210" y="72">ECU</text>
 <rect class="module" x="17" y="7" width="72" height="30" rx="8"/><rect class="module" x="17" y="57" width="72" height="30" rx="8"/><rect class="module" x="17" y="107" width="72" height="30" rx="8"/>
@@ -227,25 +312,19 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <text x="368" y="22">BCM</text><text x="368" y="72">IMMO</text><text x="368" y="122">IC</text>
 </svg></div></section>
 </div>
-<section class="panel terminal" id="tools" aria-label="Interactive demonstration terminal"><div class="panel-heading"><span>▤ TERMINAL / COMMAND</span><span class="demo-chip">CATALOG DEMO — NO VEHICLE CONNECTION</span></div><div class="terminal-inner"><pre id="termOutput" aria-live="polite">STAR&gt; SYSTEM READY
-MODE: DOWNLOAD CATALOG / DEMO
-INFO: No ECU is connected.
-STAR&gt; Select IDENTIFY or READ INFO</pre><div class="terminal-buttons"><button type="button" data-cmd="identify">› IDENTIFY</button><button type="button" data-cmd="read">ⓘ READ INFO</button><button type="button" data-cmd="help">▤ HELP</button><button type="button" data-cmd="clear">▤ CLEAR</button></div></div></section>
 <section id="software" aria-label="Official software releases">
+<div class="software-intro"><h2>⇩ SOFTWARE DOWNLOADS</h2><span>Latest Android APK releases · Real GitHub counts</span></div>
 <div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, tools, or versions..." aria-label="Search download catalog"/></div>
 <div class="filters" role="group" aria-label="Software filters"><button class="filter" data-filter="all" aria-pressed="true" type="button">▦ All</button><button class="filter" data-filter="v200" aria-pressed="false" type="button">⌁ V200</button><button class="filter" data-filter="eeprom" aria-pressed="false" type="button">▣ EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false" type="button">◉ BMW</button></div>
 <div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
 <div class="catalog-foot"><span id="statusText" role="status">Checking live GitHub Releases…</span><button id="showAll" aria-expanded="false" type="button" hidden>↓ Show previous versions</button><button id="refresh" type="button">↻ Refresh</button></div>
 </section>
-<nav class="bottom-nav" aria-label="Command center navigation">
-<a href="#home" class="active"><svg viewBox="0 0 24 24"><path d="M3 11 12 3 21 11V22H14V15H10V22H3Z"/></svg>Home</a>
-<a href="#software"><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5 9-5ZM3 12l9 5 9-5M3 17l9 5 9-5"/></svg>Software</a>
-<button id="guideButton" type="button"><svg viewBox="0 0 24 24"><path d="M12 6C9 3 5 4 2 4v16c4-1 8-1 10 2m0-16c3-3 7-2 10-2v16c-4-1-8-1-10 2V6Z"/></svg>Docs</button>
-<a href="#tools"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m10 2-1 3-3 1-3-1-2 4 3 2v3l-3 2 2 4 3-1 3 1 1 3h4l1-3 3-1 3 1 2-4-3-2v-3l3-2-2-4-3 1-3-1-1-3Z"/></svg>Tools</a>
-</nav>
-<p class="footertext">Star Mobile Service · Independent automotive software development · CAN/ECU visuals above are demonstrations, not live vehicle diagnostics. APK features vary by release.</p>
+<div class="features-strip" aria-label="Automotive software specialties">
+<span>⌁ Diagnostics</span><span>▣ ECU Programming</span><span>⚿ Immobilizer</span><span>⌘ Coding</span><span>⚙ Service Functions</span></div>
+<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button></nav>
+<p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Topology is an illustration, not a live vehicle connection.</p>
 </main>
-<dialog id="guide"><h2>ECU Command Center Guide</h2><p>This page shows the latest published APKs, real GitHub download counts, and upload times in Pacific Time. Search or filter to find V200 Diagnostic, EEPROM Studio, or BMW Standard Tools. Tap Download to get the corresponding release asset.</p><p>The waveform, topology, and terminal are website demonstrations only. They do not connect to your vehicle or execute diagnostic commands.</p><p>Tap 🎤 in the header to start or stop the original Bench Mode ECU rap. Sound is off by default.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
+<dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><p>The ECU network graphic is illustrative only; this website is not connected to any vehicle. Use the 🎤 control to start or stop the optional ECU rap.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
 <script>
 (function(){
 "use strict";
@@ -471,6 +550,12 @@ eeprom:'<svg viewBox="0 0 32 32"><rect x="7" y="7" width="18" height="18" rx="2"
 bmw:'<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13"/><circle cx="16" cy="16" r="9"/><path d="M16 7V25M7 16H25"/></svg><b>BMW</b>',
 other:'<svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" rx="4"/><path d="M11 17H21M16 12V22"/></svg><b>APP</b>'
 };
+function hardwareInfo(f){
+ if(f==="v200")return ["Autel MaxiVCI V200","USB / Bluetooth connection"];
+ if(f==="eeprom")return ["CH341A","XP400 Pro"];
+ if(f==="bmw")return ["K+DCAN / ENET / ICOM","Interface varies by BMW function"];
+ return ["Check this app's compatibility before use"];
+}
 function render(){
  const query=$("search").value.toLowerCase().trim(),keys=latestIds();
  const selected=apps.filter(a=>(filter==="all"||a.family===filter)&&(a.title+" "+a.asset.name+" "+a.release.tag_name+" "+a.release.name).toLowerCase().includes(query));
@@ -480,13 +565,14 @@ function render(){
  toggle.hidden=!!query||(!allVersions&&hiddenCount===0);
  toggle.textContent=allVersions?"↑ Show latest only":"↓ Show "+hiddenCount+" previous versions";
  toggle.setAttribute("aria-expanded",String(allVersions));
- if(!shown.length){$("catalog").innerHTML='<div class="empty">'+(loaded?"No APKs match your search.":"Unable to load GitHub releases; try Refresh.")+'</div>';return;}
+ if(!shown.length){$("catalog").innerHTML='<div class="empty">'+(loaded?"No APKs match your search.":"Unable to load GitHub releases; tap Refresh.")+'</div>';return;}
  $("catalog").innerHTML=shown.map(a=>{
   const latest=keys.has(a.asset.id||a.url),date=uploaded(a),valid=date&&!Number.isNaN(Date.parse(date));
   const dateLabel=valid?pacificTime.format(new Date(date)):"Date unavailable";
-  const subtitle=a.family==="v200"?"Android diagnostic development and V200 adapter testing":a.family==="eeprom"?"EEPROM and programmer utilities":a.family==="bmw"?"BMW coding and diagnostic tools":"Automotive Android utility";
+  const subtitle=a.family==="v200"?"Android vehicle diagnostics and adapter testing":a.family==="eeprom"?"EEPROM read, backup and programming utilities":a.family==="bmw"?"BMW coding and diagnostic software":"Automotive Android utility";
   const accent=a.family==="bmw"?"#62a8ff":a.family==="eeprom"?"#63fc95":"#22e6f4";
-  return '<article class="appcard" style="--accent:'+accent+'"><div class="app-icon">'+(icons[a.family]||icons.other)+'</div><div class="app-content"><div class="app-name">'+safe(a.title)+'</div><div class="app-desc">'+safe(subtitle)+'</div><div class="app-meta"><span>◷ Uploaded: <strong>'+(valid?'<time datetime="'+safe(date)+'">'+safe(dateLabel)+'</time>':safe(dateLabel))+'</strong></span><span>◇ <strong>'+safe(version(a))+'</strong> · '+(latest?'Latest':'Archive')+'</span></div></div><div class="app-actions"><a class="download-btn" href="'+safe(a.url)+'">⇩ Download</a><div class="dl-count">⇩ '+format(a.count)+' downloads</div></div></article>';
+  const devices=hardwareInfo(a.family);
+  return '<article class="appcard" style="--accent:'+accent+'"><div class="app-top"><div class="app-icon">'+(icons[a.family]||icons.other)+'</div><div class="app-heading"><h3 class="app-name">'+safe(a.title)+'</h3><p class="app-desc">'+safe(subtitle)+'</p></div></div><div class="hardware"><strong>HARDWARE SUPPORTED</strong><div>'+devices.map(d=>'<span>✓ '+safe(d)+'</span>').join("")+'</div></div><div class="app-info"><span class="version-tag">'+safe(version(a))+' '+(latest?"· Latest":"· Archive")+'</span><span>◷ <time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></span><span>⇩ '+format(a.count)+' downloads</span></div><div class="app-actions"><a class="download-btn" href="'+safe(a.url)+'">⇩ Download APK</a></div></article>';
  }).join("");
 }
 async function reload(){
@@ -516,39 +602,59 @@ const guide=$("guide");
 $("guideButton").addEventListener("click",()=>{if(guide.showModal)guide.showModal();else guide.setAttribute("open","");});
 $("closeGuide").addEventListener("click",()=>guide.close?guide.close():guide.removeAttribute("open"));
 guide.addEventListener("click",event=>{if(event.target===guide&&guide.close)guide.close();});
-const terminal=$("termOutput");
-function setTerminal(value){terminal.textContent=value;}
-document.querySelectorAll("[data-cmd]").forEach(button=>button.addEventListener("click",()=>{
-const cmd=button.dataset.cmd;
-if(cmd==="clear"){setTerminal("STAR> READY\nDEMO MODE — NO VEHICLE CONNECTED\nSTAR> _");return;}
-if(cmd==="help"){setTerminal("STAR> HELP\nIDENTIFY   — inspect published app families\nREAD INFO  — inspect current release data\nCLEAR      — clear this demo terminal\n\nNo vehicle commands are sent.");return;}
-if(cmd==="identify"){
- const families=[...new Set(apps.map(a=>a.title))];
- setTerminal("STAR> IDENTIFY\nMODE: OFFLINE WEBSITE DEMO\nFOUND APPS: "+families.length+"\n"+(families.length?families.map(n=>"• "+n).join("\n"):"Release data not loaded")+"\nSTAR> _");return;
-}
-if(cmd==="read"){
-const v=apps.find(a=>a.family==="v200");
-setTerminal("STAR> READ INFO\nSOURCE: GITHUB RELEASES\n"+(v?"LATEST V200: "+version(v)+"\nDOWNLOADS: "+format(v.count)+"\nUPLOAD: "+pacificTime.format(new Date(uploaded(v))):"Release data not loaded")+"\n\nNo ECU or vehicle connected.\nSTAR> _");
-}
-}));
+const vinForm=$("vinForm"),vinInput=$("vinInput"),vinStatus=$("vinStatus"),vinResult=$("vinResult"),decodeButton=$("decodeVIN");
+let vinRequest=0;
+vinInput.addEventListener("input",()=>{vinInput.value=vinInput.value.toUpperCase().replace(/\s+/g,"").slice(0,17);});
+vinForm.addEventListener("submit",async event=>{
+ event.preventDefault();
+ const vin=vinInput.value.trim().toUpperCase();
+ vinResult.replaceChildren();vinResult.hidden=true;
+ if(!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)){
+  vinStatus.textContent="Enter exactly 17 VIN characters (letters I, O, and Q are not allowed).";
+  return;
+ }
+ const ticket=++vinRequest;
+ const abort=new AbortController();
+ const timeout=setTimeout(()=>abort.abort(),14000);
+ decodeButton.disabled=true;
+ vinStatus.textContent="Checking NHTSA vehicle records…";
+ try{
+   const uri="https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/"+encodeURIComponent(vin)+"?format=json";
+   const response=await fetch(uri,{signal:abort.signal,headers:{"Accept":"application/json"}});
+   if(!response.ok)throw Error("NHTSA returned "+response.status);
+   const json=await response.json();
+   if(ticket!==vinRequest)return;
+   if(!json||!Array.isArray(json.Results)||!json.Results.length)throw Error("No decode data was returned.");
+   const data=json.Results[0];
+   const entries=[["Year",data.ModelYear],["Make",data.Make],["Model",data.Model],["Trim",data.Trim],["Engine",data.EngineModel],["Displacement",data.DisplacementL?data.DisplacementL+" L":""],["Cylinders",data.EngineCylinders],["Fuel",data.FuelTypePrimary],["Body",data.BodyClass],["Plant country",data.PlantCountry]];
+   for(const [label,value] of entries){
+     const str=String(value??"").trim();
+     if(!str||str==="0"||str==="Not Applicable")continue;
+     const pair=document.createElement("div");pair.className="vin-pair";
+     const name=document.createElement("span");name.textContent=label;
+     const val=document.createElement("strong");val.textContent=str;
+     pair.append(name,val);vinResult.appendChild(pair);
+   }
+   const warnings=String(data.ErrorText||"").trim();
+   const code=String(data.ErrorCode||"0").trim();
+   if(!vinResult.children.length){
+      vinStatus.textContent="NHTSA could not identify vehicle details for this VIN."+(warnings?" "+warnings:"");
+   }else{
+      vinStatus.textContent="Decoded using NHTSA vPIC."+(code!=="0"&&warnings?" Note: "+warnings:"");
+      vinResult.hidden=false;
+   }
+ }catch(error){
+   if(ticket!==vinRequest)return;
+   vinStatus.textContent="VIN lookup unavailable ("+(error.name==="AbortError"?"request timed out":"network or service error")+"). Use the NHTSA link above to try directly.";
+ }finally{
+   clearTimeout(timeout);
+   if(ticket===vinRequest)decodeButton.disabled=false;
+ }
+});
 $("refresh").addEventListener("click",reload);
 $("search").addEventListener("input",render);
 $("showAll").addEventListener("click",()=>{allVersions=!allVersions;render();});
 document.querySelectorAll(".filter").forEach(button=>button.addEventListener("click",()=>{filter=button.dataset.filter;document.querySelectorAll(".filter").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));render();}));
-(function animateTrace(){
- const trace=$("trace"),points=24;
- if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
- let time=0;
- function frame(){
-  if(document.visibilityState!=="hidden"){
-    const coords=[];
-    for(let i=0;i<=points;i++){const x=i*330/points;const signal=((Math.floor(i/3+time/24)%4)===0?29:(Math.floor(i/3+time/24)%4)===2?64:51);coords.push((i?"L":"M")+x.toFixed(1)+" "+(signal+Math.sin(i*2.8+time/10)*3).toFixed(1));}
-    trace.setAttribute("d",coords.join(" "));
-  }
-  time++;setTimeout(frame,100);
- }
- frame();
-})();
 reload();
 })();
 </script>
