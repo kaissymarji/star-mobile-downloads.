@@ -14,16 +14,15 @@ The GitHub Pages frontend cannot access private PayPal transactions. PayPal supp
 2. Run `npx wrangler d1 create star-mobile-donations`. Copy the database ID from the output.
 3. Copy `wrangler.example.toml` to `wrangler.toml`, and replace `REPLACE_WITH_YOUR_ACTUAL_D1_DATABASE_ID` with the real ID.
 4. Run `npx wrangler d1 execute star-mobile-donations --remote --file=./schema.sql`.
-5. In your **PayPal business merchant** account, create or select a LIVE app in the PayPal Developer Dashboard.
-6. Set the following secrets on the Worker using commands below (paste values at the hidden terminal prompts, **not** into code, GitHub, screenshots, or chat):
-   - `npx wrangler secret put PAYPAL_CLIENT_ID`
-   - `npx wrangler secret put PAYPAL_CLIENT_SECRET`
-   - `npx wrangler secret put PAYPAL_WEBHOOK_ID`
-7. Deploy: `npx wrangler deploy`.
-8. Register a **LIVE** PayPal webhook listener at `https://<your-worker-hostname>/api/paypal-webhook`, subscribed to `PAYMENT.CAPTURE.COMPLETED` and `PAYMENT.CAPTURE.REFUNDED`. Copy the webhook's actual ID and make sure it matches the Worker secret. A webhook listener belongs to a PayPal app; it must receive payments from **your existing Pay Link**.
-9. Check `https://<your-worker-hostname>/api/funding` — with an empty D1 database it must show `{"goal":5000,"raised":105,"source":"paypal-verified",...}` based on your prior reported balance.
-10. **Before connecting the public page**, make a small test payment from a separate PayPal account, check the PayPal Activity page, confirm the webhook was delivered and verified, and check the counter rose by exactly that amount. Test a redelivered event too: it must not double-count. If refunding the test payment, verify the refund event reverses the contribution.
-11. Edit the donation page's `LIVE_FUNDING_API` string to your Worker `https://<your-worker-hostname>/api/funding` endpoint. The frontend will then poll it every 15 seconds and render the verified total.
+5. Deploy the Worker for the first time using `npx wrangler deploy`. Copy the resulting `https://<your-worker-hostname>` URL. The webhook route will not accept payments until secrets are configured.
+6. In your **PayPal business merchant** account's **Live** Developer Dashboard, create/select a suitable app, then create a webhook subscription for `https://<your-worker-hostname>/api/paypal-webhook` using events `PAYMENT.CAPTURE.COMPLETED` and `PAYMENT.CAPTURE.REFUNDED`. PayPal assigns this subscription a **Webhook ID**.
+7. In the Worker folder, set the three credentials as private Cloudflare Worker secrets (**never in code or GitHub**). Paste each value privately at the command-line prompt:
+   - `npx wrangler secret put PAYPAL_CLIENT_ID` — the **Live** app client ID.
+   - `npx wrangler secret put PAYPAL_CLIENT_SECRET` — the **Live** app secret.
+   - `npx wrangler secret put PAYPAL_WEBHOOK_ID` — the **Live webhook subscription ID**, not the client ID.
+8. Deploy again if needed with `npx wrangler deploy`. Visit `https://<your-worker-hostname>/api/funding` — with an empty database it must show `{"goal":5000,"raised":105,"source":"paypal-verified",...}` based on your reported opening balance.
+9. **Before connecting the public page**, make a small test payment through your existing PayPal link, confirm the PayPal transaction and webhook were delivered, and ensure the counter rose by exactly that amount. Check that resending the same event doesn't count twice; optionally test a refund.
+10. Edit your GitHub donation page's `LIVE_FUNDING_API` constant to `https://<your-worker-hostname>/api/funding`. After a verified successful end-to-end test, the frontend will poll the authenticated backend every 15 seconds for everyone viewing the site.
 
 ## IMPORTANT: Link attribution may need testing
 
