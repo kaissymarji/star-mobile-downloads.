@@ -716,7 +716,13 @@ function vinCheckDigit(vin){
 }
 function extractScannedVIN(raw){
  const upper=String(raw||"").toUpperCase().replace(/[\u200B-\u200D]/g,"");
- const direct=upper.match(/(?:\bVIN\b[\s:#=-]*)?([A-HJ-NPR-Z0-9]{17})(?![A-Z0-9])/);
+ // OCR can insert spaces or dashes inside a VIN. Prefer a VIN-labeled field first.
+ const labeled=upper.match(/\bVIN(?:\s*(?:NUMBER|NO))?\s*[:#=-]?\s*([A-Z0-9][A-Z0-9\s-]{16,50})/);
+ if(labeled){
+   const value=labeled[1].replace(/[^A-Z0-9]/g,"").slice(0,17);
+   if(validVIN.test(value))return value;
+ }
+ const direct=upper.match(/(?:^|[^A-Z0-9])([A-HJ-NPR-Z0-9]{17})(?![A-Z0-9])/);
  if(direct&&validVIN.test(direct[1]))return direct[1];
  const candidates=[];
  const groups=upper.match(/[A-Z0-9\s:_./-]{17,}/g)||[];
@@ -733,6 +739,13 @@ function fillScannedVIN(vin,origin){
  scannerActive=false;
  vinInput.value=vin;
  $("vinScanNotice").hidden=false;
+ // North American VINs require a check digit. Do not automatically decode a
+ // potentially misread printed VIN when the checksum disagrees.
+ if(origin.includes("text")&&/^[1-5]/.test(vin)&&!vinCheckDigit(vin)){
+   stopScanner(true);
+   vinStatus.textContent="Printed VIN captured, but its check digit does not match. Verify and correct the VIN, then tap Decode VIN.";
+   return true;
+ }
  scanStatus("VIN recognized ("+origin+"). Decoding vehicle information…");
  stopScanner(true);
  if(vinForm.requestSubmit)vinForm.requestSubmit();
