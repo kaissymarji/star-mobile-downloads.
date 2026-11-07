@@ -184,7 +184,7 @@
   }
   // Set to your deployed secure Worker API URL after configuring PayPal webhooks.
   // Never put PayPal API credentials in this public HTML.
-  const LIVE_FUNDING_API = '';
+  const LIVE_FUNDING_API = 'https://star-mobile-funding.kaissymarji.workers.dev/api/funding';
   const REFRESH_MS = 15000;
   let loading = false;
   byId('year').textContent=String(new Date().getFullYear());
@@ -203,7 +203,7 @@
           const verified = await response.json();
           if (verified.source !== 'paypal-verified' || !Number.isFinite(Number(verified.raised))) throw new Error('Invalid verified total');
           render({...manual, goal:verified.goal, raised:verified.raised, updatedAt:verified.updatedAt});
-          byId('fundingNote').textContent = 'Auto-updated from verified PayPal payments. This counter checks every 15 seconds. Starting balance includes $105 previously reported by the developer.';
+          byId('fundingNote').textContent = 'Checks the live funding service every 15 seconds. The $105 starting balance was reported by the developer; new PayPal donations will appear automatically only after webhook verification is configured and tested.';
         } catch {
           render(manual);
           byId('fundingNote').textContent = 'Live PayPal verification is temporarily unavailable. Showing the last recorded total; no unverified payments are added.';
