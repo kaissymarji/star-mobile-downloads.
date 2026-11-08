@@ -28,7 +28,6 @@ a{color:inherit;text-decoration:none}button,input{font:inherit}button{cursor:poi
 .navbtn{padding:8px 12px;border-radius:10px;border:1px solid #2897a1;color:#e8faff;background:#062332;font-size:12px;font-weight:800;white-space:nowrap}
 .navbtn:hover,.navbtn:focus-visible{border-color:var(--cyan);box-shadow:0 0 13px #1edade36}
 .navbtn.donate{border-color:#3ec981;color:#afffe1}
-.navbtn.sound{font-size:15px;min-width:40px;height:37px;padding:6px}
 main{padding-bottom:24px}
 .hero{position:relative;height:280px;overflow:hidden;border:1px solid #18516b;border-top:0;background:linear-gradient(110deg,#020b15 3%,#09243a 57%,#071321 100%);isolation:isolate}
 .hero:before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,#020c17 4%,#031524df 34%,#06152217 76%),repeating-linear-gradient(0deg,#27ffff0b 0,#27ffff0b 1px,transparent 1px,transparent 28px)}
@@ -137,7 +136,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 @media(max-width:510px){
 .wrap{padding:0 8px}.header{gap:4px;min-height:61px}.identity{gap:6px}.brandicon{width:37px;height:37px;border-radius:9px}.brandicon svg{width:29px;height:29px}
 .brandname{font-size:12px}.brandsub{font-size:6.5px;letter-spacing:.11em;margin-top:4px}
-.head-actions{gap:4px}.navbtn{font-size:10px;padding:7px 6px}.navbtn.sound{min-width:29px;height:30px;font-size:13px;padding:3px}
+.head-actions{gap:4px}.navbtn{font-size:10px;padding:7px 6px}
 .hero{height:182px}.hero-art{width:91%;right:-55px;opacity:.9}.hero-copy{top:24px;left:13px;max-width:86%}.hero-kicker{font-size:7px;margin-bottom:9px}.hero h1{font-size:clamp(25px,6.8vw,34px)}.hero-caption{font-size:8px;letter-spacing:.07em;margin-top:10px}.hero-link{margin-top:10px;font-size:9px}
 .hero-signal{font-size:8px;bottom:10px}
 .techstrip{padding:8px 7px;gap:4px}.ready{font-size:10px;gap:4px}.protocols{gap:4px}.protocols label{display:none}.protocols b{padding:3px 4px;font-size:9px}
@@ -285,27 +284,13 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .bottom-links .owner-actions small{color:#8eabba;font-size:10px;line-height:1.4}
 
 
-/* Official Spotify audio embed; compact bar, no video. */
-.music-strip{max-width:1250px;margin:7px auto 9px;padding:6px 14px 9px;background:#061726;border:1px solid #18516b;border-radius:12px}
-.music-strip-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:5px;margin:0 0 6px}
-.music-strip-title{font-size:12px;font-weight:850;color:#c5fff9}
-.music-strip-status{font-size:10px;color:#a3bccb}
-.spotify-frame-host{width:100%;min-height:80px;overflow:hidden;border-radius:8px}
-.spotify-frame-host iframe{display:block;width:100%!important;max-width:100%;height:80px;border:0;border-radius:8px}
-.music-strip-note{font-size:10px;color:#99b6c7;margin:5px 0 0;line-height:1.4}
-.music-strip-note a{text-decoration:underline;color:#67f3ef}
 </style>
 </head>
 <body>
 <header class="topline" id="home"><div class="wrap header">
 <a class="identity" href="#home" aria-label="Star Mobile Service home"><span class="brandicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3L29 19L44 21L32 30L35 46L24 37L10 43L15 28L4 19L20 18Z" fill="none" stroke="#4efff1" stroke-width="2.7"/><path d="M13 31L34 13" stroke="#b9faff" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><span class="brandname">STAR MOBILE SERVICE</span><span class="brandsub">SOFTWARE <em>LAB</em> / COMMAND CENTER</span></span></a>
-<nav class="head-actions"><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><button id="soundToggle" class="navbtn sound" type="button" aria-label="Play Freddie Mercury" aria-pressed="false" title="Play or pause Freddie Mercury">♫</button></nav>
+<nav class="head-actions"><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a></nav>
 </div></header>
-<section class="music-strip" aria-label="Freddie Mercury music player">
-  <div class="music-strip-top"><strong class="music-strip-title">♫ Freddie Mercury · Living On My Own</strong><span class="music-strip-status" id="musicStatus" role="status">Loading music…</span></div>
-  <div class="spotify-frame-host" id="spotifyEmbed"></div>
-  <p class="music-strip-note">Autoplay is attempted on opening; some browsers require a tap. <a href="https://open.spotify.com/track/0hkEsP9AYHtCVcAzSzJJBj" target="_blank" rel="noopener noreferrer">Open track in Spotify</a></p>
-</section>
 <main class="wrap">
 <section class="hero" aria-label="ECU Command Center 2.0">
 <svg class="hero-art" viewBox="0 0 780 280" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Stylized sports car, diagnostic tablet and J2534 programming interface illustration">
@@ -399,7 +384,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <input type="file" accept="image/*" id="vinUploadPhoto" hidden>
 <div id="vinScanFileReader" hidden></div>
 </dialog>
-<dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><p>The ECU network graphic is illustrative only; this website is not connected to any vehicle. The compact official Spotify music player attempts to play Freddie Mercury on load; mobile browsers may require tapping Play.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
+<dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><p>The ECU network graphic is illustrative only; this website is not connected to any vehicle.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
 <script>
 (function(){
 "use strict";
@@ -430,60 +415,6 @@ const $=id=>document.getElementById(id);
    output.setAttribute("title","Live visitor total is temporarily unavailable.");
   }
  }
-// Official Spotify audio-only player. The browser decides whether audible autoplay is allowed.
-const musicButton=$("soundToggle"),musicStatus=$("musicStatus");
-let spotifyController=null,spotifyPlaying=false,musicReady=false;
-function setMusicStatus(value){musicStatus.textContent=value;}
-function setMusicButton(playing){
-  spotifyPlaying=playing;
-  musicButton.textContent=playing?"⏸":"♫";
-  musicButton.setAttribute("aria-pressed",String(playing));
-  musicButton.title=playing?"Pause Freddie Mercury":"Play Freddie Mercury";
-  musicButton.setAttribute("aria-label",musicButton.title);
-}
-function playFreddie(){
-  if(!spotifyController)return false;
-  try{spotifyController.play();return true;}catch(_){return false;}
-}
-musicButton.addEventListener("click",()=>{
-  if(!musicReady){setMusicStatus("Player loading — use Spotify controls below.");return;}
-  try{spotifyController.togglePlay();}catch(_){setMusicStatus("Tap Play on the Spotify player.");}
-});
-// Retry only at the visitor's first actual interaction. No unwanted repeat playback.
-function firstUserMusicGesture(event){
-  // Native Spotify and header button handle their own taps; do not double-toggle playback.
-  if(event.target&&event.target.closest&&event.target.closest("#soundToggle, #spotifyEmbed"))return;
-  if(musicReady&&!spotifyPlaying)playFreddie();
-}
-document.addEventListener("pointerdown",firstUserMusicGesture,{once:true,passive:true});
-document.addEventListener("keydown",firstUserMusicGesture,{once:true});
-window.onSpotifyIframeApiReady=function(IFrameAPI){
-  IFrameAPI.createController($("spotifyEmbed"),{
-    uri:"spotify:track:0hkEsP9AYHtCVcAzSzJJBj",width:420,height:80
-  },function(controller){
-    spotifyController=controller;
-    controller.addListener("ready",()=>{
-      musicReady=true;
-      setMusicStatus("Music ready · autoplay requested");
-      // Autoplay attempts can be blocked by browser policy; user can tap Spotify's controls.
-      playFreddie();
-    });
-    controller.addListener("playback_started",()=>{
-      setMusicStatus("Now playing");
-      setMusicButton(true);
-    });
-    controller.addListener("playback_update",event=>{
-      if(event&&event.data&&typeof event.data.isPaused==="boolean"){
-        setMusicButton(!event.data.isPaused);
-        if(event.data.isPaused)setMusicStatus("Paused · tap Play");
-        else setMusicStatus("Now playing");
-      }
-    });
-  });
-};
-// Keep the website functional if Spotify is blocked by extensions or network.
-setMusicStatus("Loading Freddie Mercury…");
-
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
 const pacificTime=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
 let apps=[],filter="all",allVersions=false,loaded=false;
@@ -868,6 +799,5 @@ loadVisitorCounter();
 reload();
 })();
 </script>
-<script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
 </body>
 </html>
