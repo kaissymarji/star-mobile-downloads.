@@ -450,7 +450,11 @@ musicButton.addEventListener("click",()=>{
   try{spotifyController.togglePlay();}catch(_){setMusicStatus("Tap Play on the Spotify player.");}
 });
 // Retry only at the visitor's first actual interaction. No unwanted repeat playback.
-function firstUserMusicGesture(){if(musicReady&&!spotifyPlaying)playFreddie();}
+function firstUserMusicGesture(event){
+  // Native Spotify and header button handle their own taps; do not double-toggle playback.
+  if(event.target&&event.target.closest&&event.target.closest("#soundToggle, #spotifyEmbed"))return;
+  if(musicReady&&!spotifyPlaying)playFreddie();
+}
 document.addEventListener("pointerdown",firstUserMusicGesture,{once:true,passive:true});
 document.addEventListener("keydown",firstUserMusicGesture,{once:true});
 window.onSpotifyIframeApiReady=function(IFrameAPI){
