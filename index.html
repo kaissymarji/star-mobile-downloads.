@@ -404,23 +404,61 @@ const $=id=>document.getElementById(id);
  // This counts approximate daily browser visits, not verified unique people.
  async function loadVisitorCounter(){
   const output=$("siteVisitorCount");
+  if(!output)return;
   const base="https://countapi.mileshilliard.com/api/v1/";
+  // Keep the original counter key so historical visits are not deliberately reset.
   const key="star_mobile_downloads_kaissymarji_visitors_2026";
   const day=new Date().toISOString().slice(0,10);
   const storageKey="star-mobile-downloads:last-counted-day";
+  const lastValueKey="star-mobile-downloads:last-known-visitor-total";
   let countedToday=false;
-  try{countedToday=window.localStorage.getItem(storageKey)===day;}catch(_){}
+  let lastKnown=null;
   try{
-   const response=await fetch(base+(countedToday?"get/":"hit/")+key,{cache:"no-store",headers:{"Accept":"application/json"}});
-   if(!response.ok)throw new Error("Visitor counter unavailable");
-   const data=await response.json();
-   const visits=Number(data.value);
-   if(!Number.isSafeInteger(visits)||visits<0)throw new Error("Invalid visitor count");
-   output.textContent=visits.toLocaleString();
-   if(!countedToday)try{window.localStorage.setItem(storageKey,day);}catch(_){}
-  }catch(_){
-   output.textContent="—";
-   output.setAttribute("title","Live visitor total is temporarily unavailable.");
+   countedToday=window.localStorage.getItem(storageKey)===day;
+   const saved=Number(window.localStorage.getItem(lastValueKey));
+   if(Number.isSafeInteger(saved)&&saved>0)lastKnown=saved;
+  }catch(_){}
+  function showCount(number,offline){
+   output.textContent=number.toLocaleString();
+   output.title=offline?"Last recorded visitor total on this browser; live count temporarily unavailable.":"Live visitor total (approximate browser visits).";
+   output.style.opacity=offline?".7":"1";
+  }
+  if(lastKnown!==null)showCount(lastKnown,true);
+  async function request(mode){
+   const controller=new AbortController();
+   const timeout=setTimeout(()=>controller.abort(),7000);
+   try{
+    const response=await fetch(base+mode+"/"+key,{cache:"no-store",headers:{"Accept":"application/json"},signal:controller.signal});
+    if(!response.ok)throw new Error("Counter HTTP "+response.status);
+    const data=await response.json();
+    const value=Number(data.value);
+    if(!Number.isSafeInteger(value)||value<0)throw new Error("Invalid visitor count");
+    return value;
+   }finally{clearTimeout(timeout);}
+  }
+  try{
+   let visits;
+   try{
+    visits=await request(countedToday?"get":"hit");
+    if(!countedToday)try{window.localStorage.setItem(storageKey,day);}catch(_){}
+   }catch(error){
+    // If incrementing fails, still try to read the existing total.
+    visits=await request("get");
+   }
+   if(lastKnown!==null&&visits<lastKnown){
+    // Do not silently display a lower number if the remote provider loses history.
+    showCount(lastKnown,true);
+    output.title="Previously recorded total; the counter provider returned a lower value.";
+   }else{
+    showCount(visits,false);
+    try{window.localStorage.setItem(lastValueKey,String(visits));}catch(_){}
+   }
+  }catch(error){
+   if(lastKnown===null){
+    output.textContent="Unavailable";
+    output.title="Visitor service is unreachable; previous totals were not reset by this page.";
+   }
+   console.warn("Site visitor count unavailable",error);
   }
  }
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
