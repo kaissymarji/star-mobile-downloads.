@@ -454,11 +454,40 @@ const $=id=>document.getElementById(id);
     try{window.localStorage.setItem(lastValueKey,String(visits));}catch(_){}
    }
   }catch(error){
-   if(lastKnown===null){
-    output.textContent="Unavailable";
-    output.title="Visitor service is unreachable; previous totals were not reset by this page.";
+   console.warn("Original visitor counter unavailable",error);
+   // Track new visits with a separate provider; do not invent/migrate historical totals.
+   const fallbackUrl="https://counterapi.com/api/kaissymarji.github.io/view/star-mobile-downloads";
+   const fallbackDayKey="star-mobile-downloads:backup-counter-day";
+   const detail=output.parentElement&&output.parentElement.querySelector("small");
+   const alreadyTracked=(()=>{try{return localStorage.getItem(fallbackDayKey)===day;}catch(_){return false;}})();
+   try{
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),8000);
+    let response;
+    try{
+     response=await fetch(fallbackUrl+(alreadyTracked?"?readOnly=true":""),{cache:"no-store",signal:controller.signal});
+    }finally{clearTimeout(timeout);}
+    if(!response.ok)throw new Error("Backup counter HTTP "+response.status);
+    const data=await response.json();
+    const backup=Number(data.value);
+    if(!Number.isSafeInteger(backup)||backup<0)throw new Error("Invalid backup count");
+    if(!alreadyTracked)try{localStorage.setItem(fallbackDayKey,day);}catch(_){}
+    if(lastKnown===null){
+     showCount(backup,false);
+     output.title="New visits recorded by the backup provider; historical visits from the original provider are not included.";
+     if(detail)detail.textContent="New counter · previous history unavailable";
+    }else{
+     showCount(lastKnown,true);
+     if(detail)detail.textContent="Saved historical total · live count unavailable";
+    }
+   }catch(backupError){
+    if(lastKnown===null){
+     output.textContent="Unavailable";
+     output.title="Both counter providers are unreachable; no total has been invented.";
+     if(detail)detail.textContent="Visitor tracking temporarily unavailable";
+    }
+    console.warn("Backup visitor counter unavailable",backupError);
    }
-   console.warn("Site visitor count unavailable",error);
   }
  }
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
