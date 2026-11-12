@@ -143,7 +143,11 @@ function field(target,label,value){
  row.append(b,v);target.appendChild(row);
 }
 function decodeNumber(value){
- const s=value.toUpperCase().replace(/[\s-]/g,"").trim();
+ const raw=String(value||"").toUpperCase().trim();
+ // Accept part numbers copied from labels with spaces, punctuation and "BOSCH" prefixes.
+ const numeric=raw.replace(/^(?:ROBERT\s+)?BOSCH\s*[:#-]?\s*/,"").replace(/[^0-9]/g,"");
+ const s=/^\d{10}$/.test(numeric)&&!/\b(?:ME|MED|EDC|MD|MG|MEVD)\d/i.test(raw)
+  ?numeric:raw.replace(/^(?:ROBERT\s+)?BOSCH\s*[:#-]?\s*/,"").replace(/[\s_-]/g,"");
  if(/^\d{10}$/.test(s)){
   const prefix=s.slice(0,4);
   return{title:s.slice(0,1)+" "+s.slice(1,4)+" "+s.slice(4,7)+" "+s.slice(7,10),fields:[
@@ -211,10 +215,14 @@ el("ecu-file").addEventListener("change",async ev=>{
  if(/\.(hex|s19|srec|ihex)$/i.test(file.name)){status.className="state error";status.textContent="Intel HEX/S-record text formats are not raw BIN files. Convert them before analysis.";return}
  status.className="state";status.textContent="Reading file locally…";
  try{
-  const buffer=await file.arrayBuffer();const bytes=new Uint8Array(buffer);
+  const buffer=typeof file.arrayBuffer==="function"?await file.arrayBuffer():await new Response(file).arrayBuffer();
+  const bytes=new Uint8Array(buffer);
   const stats=entropyAndUnique(bytes),text=readStrings(bytes),hex=hexDump(bytes);
   let sha="Unavailable (Web Crypto not supported)";
-  if(window.crypto&&crypto.subtle){const digest=await crypto.subtle.digest("SHA-256",buffer);sha=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("")}
+  if(window.crypto&&window.crypto.subtle){
+   try{const digest=await window.crypto.subtle.digest("SHA-256",buffer);sha=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("")}
+   catch(hashError){sha="Unavailable (device hashing failed)";console.warn("SHA-256 unavailable",hashError)}
+  }
   const cap=capacity(bytes.length);
   lastReport={tool:"Star Mobile Bosch Decoder",version:"1.0",fileName:file.name,sizeBytes:bytes.length,
    capacityNote:cap==="Unknown"?"Cannot infer chip from size":cap+"; capacity match only, not chip identification",
@@ -234,8 +242,10 @@ el("ecu-file").addEventListener("change",async ev=>{
   else text.familyMatches.forEach(s=>field(family,"Observed text",s));
   el("hex-result").textContent=hex;
   el("analysis").hidden=false;
+  // The inspection results sit below the two entry panels; bring them into view after selection.
+  el("analysis").scrollIntoView({behavior:"smooth",block:"start"});
   status.textContent="Local analysis complete for "+file.name+". No data was transmitted.";
- }catch(err){status.className="state error";status.textContent="Could not read this file locally. Try another raw BIN/EEPROM dump."}
+ }catch(err){console.error("Bosch file inspection failed",err);status.className="state error";status.textContent="File inspection failed: "+(err&&err.message?err.message:"Unable to read the selected file")+". Try a raw BIN/EEPROM dump.";}
 });
 el("export-json").addEventListener("click",()=>{
  if(!lastReport)return;
