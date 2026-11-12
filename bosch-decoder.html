@@ -108,6 +108,7 @@ main{padding-top:22px;padding-bottom:35px}
 <section class="panel analysis" id="analysis" aria-labelledby="analysis-title" hidden>
 <div class="index">03 / FILE ANALYSIS</div><h2 id="analysis-title">Binary analysis</h2>
 <p id="file-summary">Results from the selected file.</p>
+<div class="model-highlight" id="file-model-summary" hidden><small>ECU MODEL / EMBEDDED ID INSPECTION</small><strong id="file-model-name">—</strong><em id="file-model-confidence">—</em></div>
 <div class="meters"><div class="meter"><span>File size</span><strong id="size-value">—</strong></div><div class="meter"><span>Byte entropy</span><strong id="entropy-value">—</strong></div><div class="meter"><span>Unique byte values</span><strong id="unique-value">—</strong></div><div class="meter"><span>Likely capacity class</span><strong id="capacity-value">—</strong></div></div>
 <h3 style="font-size:14px;margin:6px 0 9px">SHA-256 fingerprint</h3><div id="hash-value" class="digest">—</div>
 <div class="details">
@@ -227,23 +228,32 @@ function entropyAndUnique(bytes){
  return{entropy,unique};
 }
 function readStrings(bytes){
- const strings=[],seen=new Set(),familiesSeen=new Set();
+ const strings=[],seen=new Set(),familiesSeen=new Set(),hardwareSeen=new Set();
+ const longIds=Object.keys(exactModels).filter(k=>k.length>10);
+ const longPattern=longIds.length?new RegExp(longIds.join("|"),"g"):null;
  let run="",runLength=0;
  const flush=()=>{
-  if(runLength>=5&&runLength<=128&&/[A-Za-z]/.test(run)&&/[0-9]/.test(run)){
+  if(runLength>=4){
    const clean=run.trim();
-   if(clean.length>=5&&!seen.has(clean)&&strings.length<24){seen.add(clean);strings.push(clean)}
-   const found=clean.match(/\b(?:MEVD|MED|ME|EDC|MD|MG)\d[A-Z0-9.]{0,12}\b/gi);
-   if(found)found.forEach(v=>familiesSeen.add(v.toUpperCase()));
+   const candidates=clean.match(/(?:MEVD|MED|ME|EDC|MG|MD)\s*\d[A-Z0-9.]{0,14}/gi)||[];
+   candidates.forEach(x=>familiesSeen.add(x.toUpperCase().replace(/\s/g,"")));
+   const parts=clean.toUpperCase().match(/0(?:261|281|280|265|285|986)[A-Z0-9]{6}/g)||[];
+   parts.forEach(p=>{if(Object.hasOwn(exactModels,p))hardwareSeen.add(p)});
+   // Some new-generation ECUs contain a long internal HW ID rather than a ten-character Bosch PN.
+   if(longPattern){for(const part of clean.toUpperCase().match(longPattern)||[])hardwareSeen.add(part)}
+   if(runLength<=256&&/[A-Z]/i.test(clean)&&/[0-9]/.test(clean)&&!seen.has(clean)&&strings.length<24){
+    seen.add(clean);strings.push(clean)
+   }
   }
   run="";runLength=0;
  };
  for(let i=0;i<bytes.length;i++){
-  const b=bytes[i];
-  if(b>=32&&b<=126){runLength++;if(run.length<128)run+=String.fromCharCode(b)}
+  const ch=bytes[i];
+  if(ch>=32&&ch<=126){runLength++;if(run.length<256)run+=String.fromCharCode(ch)}
   else flush();
  }
- flush();return{strings,familyMatches:Array.from(familiesSeen).slice(0,20)};
+ flush();
+ return{strings,familyMatches:Array.from(familiesSeen).slice(0,20),hardwareMatches:Array.from(hardwareSeen).slice(0,20)};
 }
 function hexDump(bytes){
  const lines=[];
@@ -258,7 +268,7 @@ function hexDump(bytes){
 let lastReport=null;
 const status=el("file-status");
 el("ecu-file").addEventListener("change",async ev=>{
- const file=ev.target.files&&ev.target.files[0];lastReport=null;el("analysis").hidden=true;
+ const file=ev.target.files&&ev.target.files[0];lastReport=null;el("analysis").hidden=true;el("file-model-summary").hidden=true;
  if(!file){status.textContent="No file selected.";return}
  if(!file.size||file.size>16*1024*1024){status.className="state error";status.textContent="Select a non-empty raw binary file up to 16 MiB.";return}
  if(/\.(hex|s19|srec|ihex)$/i.test(file.name)){status.className="state error";status.textContent="Intel HEX/S-record text formats are not raw BIN files. Convert them before analysis.";return}
@@ -276,7 +286,7 @@ el("ecu-file").addEventListener("change",async ev=>{
   lastReport={tool:"Star Mobile Bosch Decoder",version:"1.0",fileName:file.name,sizeBytes:bytes.length,
    capacityNote:cap==="Unknown"?"Cannot infer chip from size":cap+"; capacity match only, not chip identification",
    entropyBitsPerByte:Number(stats.entropy.toFixed(4)),uniqueByteValues:stats.unique,sha256:sha,
-   readableStrings:text.strings,familyTextMatches:text.familyMatches,hexPreview:hex};
+   readableStrings:text.strings,familyTextMatches:text.familyMatches,hardwareTextMatches:text.hardwareMatches,hexPreview:hex};
   el("file-summary").textContent=file.name+" • Read-only binary inspection; no upload performed.";
   el("size-value").textContent=sizeText(bytes.length);
   el("entropy-value").textContent=stats.entropy.toFixed(3)+"/8";
@@ -286,9 +296,24 @@ el("ecu-file").addEventListener("change",async ev=>{
   const list=el("strings-result");list.replaceChildren();
   if(!text.strings.length){const li=document.createElement("li");li.textContent="No qualifying readable strings found.";list.appendChild(li)}
   else text.strings.forEach(s=>{const li=document.createElement("li");li.textContent=s;list.appendChild(li)});
+  const modelBox=el("file-model-summary");
+  const detectedModels=[...new Set(text.hardwareMatches.map(k=>exactModels[k]?.model).filter(Boolean))];
+  if(detectedModels.length===1){
+    modelBox.hidden=false;el("file-model-name").textContent=detectedModels[0];
+    el("file-model-confidence").textContent="Unverified text match from embedded HW identifier(s): "+text.hardwareMatches.join(", ")+". Confirm against the ECU label and diagnostic ID before programming.";
+  }else if(detectedModels.length>1){
+    modelBox.hidden=false;el("file-model-name").textContent="MULTIPLE POSSIBLE MODELS";
+    el("file-model-confidence").textContent=detectedModels.join(" / ")+". Multiple hardware strings were found; no definitive ECU model was selected.";
+  }else if(text.familyMatches.length){
+    modelBox.hidden=false;el("file-model-name").textContent=text.familyMatches.join(", ");
+    el("file-model-confidence").textContent="Family string(s) observed in the binary, not a verified hardware model identification.";
+  }else{
+    modelBox.hidden=false;el("file-model-name").textContent="MODEL NOT IDENTIFIED";
+    el("file-model-confidence").textContent="No known hardware/model strings were found. Use the ECU label number or module identification response for exact decoding.";
+  }
   const family=el("family-result");family.replaceChildren();
-  if(!text.familyMatches.length)family.textContent="No literal Bosch family strings detected.";
-  else text.familyMatches.forEach(s=>field(family,"Observed text",s));
+  if(!text.familyMatches.length&&!text.hardwareMatches.length)family.textContent="No Bosch family or matching hardware strings detected.";
+  else {text.familyMatches.forEach(s=>field(family,"Observed family",s));text.hardwareMatches.forEach(k=>field(family,"Matched hardware",k+" — "+exactModels[k].model))}
   el("hex-result").textContent=hex;
   el("analysis").hidden=false;
   // The inspection results sit below the two entry panels; bring them into view after selection.
