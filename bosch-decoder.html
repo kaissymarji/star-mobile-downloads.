@@ -199,14 +199,14 @@ function decodeNumber(value){
    ["Try","Bosch 0261… / 0281… number, exact OEM hardware number, or a model like MED17.5, EDC17CP14, MG1CS201 or MD1CS003."],
    ["Result","No model assigned; avoid relying on unsupported guesses."]]};
 }
-function showNumber(value){
- const r=decodeNumber(value),out=el("number-result");out.replaceChildren();
+function showNumber(input){
+ const r=decodeNumber(input),out=el("number-result");out.replaceChildren();
  const title=document.createElement("div");title.className="result-title";title.textContent=r.title;out.appendChild(title);
  const hero=document.createElement("div");hero.className="model-highlight";
  const kicker=document.createElement("small");kicker.textContent="DECODED ECU MODEL";
- const value=document.createElement("strong");value.textContent=r.model||"NOT YET VERIFIED";
- const sub=document.createElement("em");sub.textContent=r.modelStatus||"";
- hero.append(kicker,value,sub);out.appendChild(hero);
+ const modelText=document.createElement("strong");modelText.textContent=r.model||"NOT YET VERIFIED";
+ const statusText=document.createElement("em");statusText.textContent=r.modelStatus||"";
+ hero.append(kicker,modelText,statusText);out.appendChild(hero);
  r.fields.forEach(x=>field(out,x[0],x[1]));
  if(r.source){const a=document.createElement("a");a.href=r.source;a.target="_blank";a.rel="noopener noreferrer";a.textContent="View source for hardware-model match ↗";a.style.color="#7ff9eb";out.appendChild(a)}
  else if(r.kind==="unknown-hw"){
