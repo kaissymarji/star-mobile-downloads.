@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#030e19">
+<meta name="description" content="Star Mobile Service Bosch ECU Decoder. Identify Bosch ECU number ranges and inspect ECU BIN / EEPROM files locally in your browser.">
+<title>Bosch ECU Decoder | Star Mobile Service</title>
+<style>
+:root{color-scheme:dark;--bg:#020d18;--card:#0a2031;--line:#275a72;--cyan:#26e9ef;--text:#f1fbff;--muted:#acc8d7;--mint:#65f6ba}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 75% 0,#0e4356 0,transparent 43%),linear-gradient(#020c16,#061625 65%,#030a13);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Arial,sans-serif;line-height:1.5;min-height:100vh}
+a{color:inherit}button,input{font:inherit}button{cursor:pointer}
+.wrap{width:min(1120px,100%);margin:auto;padding:0 18px}
+.top{border-bottom:1px solid #1c4c65;background:#03111eec;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)}
+.top-inner{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{text-decoration:none;font-size:16px;font-weight:900;letter-spacing:.03em}.brand small{display:block;color:#8cc2d1;font-size:10px;letter-spacing:.18em}
+.top nav{display:flex;gap:8px;flex-wrap:wrap}
+.top nav a,.outline{border:1px solid #397c8d;background:#082a3b;padding:9px 12px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:750}
+.top nav a:hover,.outline:hover{border-color:var(--cyan)}
+main{padding-top:22px;padding-bottom:35px}
+.hero{position:relative;overflow:hidden;border:1px solid #2e7488;border-radius:16px;padding:28px 28px 30px;background:linear-gradient(110deg,#061c2d,#0b3748)}
+.hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(90deg,#2de5ed0d 1px,transparent 1px),linear-gradient(#2de5ed0d 1px,transparent 1px);background-size:30px 30px;pointer-events:none}
+.eyebrow{font-size:11px;letter-spacing:.22em;font-weight:900;color:#75f8ef}
+.hero h1{position:relative;margin:8px 0;font-size:clamp(32px,6vw,56px);letter-spacing:-.045em;line-height:1.06;font-weight:950}
+.hero h1 span{color:#3ce8f1}
+.hero p{position:relative;margin:9px 0 0;max-width:700px;color:#c0d9e7;font-size:14px}
+.tags{position:relative;display:flex;gap:8px;flex-wrap:wrap;margin-top:19px}
+.tags span{border:1px solid #328b9a;border-radius:7px;padding:5px 9px;background:#072a3b;color:#8af6ed;font-weight:800;font-size:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:15px;align-items:start}
+.panel{min-width:0;border:1px solid #2c6278;background:linear-gradient(145deg,#092638,#071c2d);border-radius:14px;padding:19px;box-shadow:0 8px 30px #0003}
+.panel h2{font-size:19px;margin:0 0 7px;line-height:1.3}
+.panel p{color:var(--muted);font-size:12px;margin:0 0 14px}
+.panel small{color:#98bbc9}
+.index{color:#41e6f0;font:800 11px/1.8 ui-monospace,Consolas,monospace}
+.entry{display:flex;gap:8px}
+.entry input{min-width:0;flex:1;background:#041b2a;color:#fff;border:1px solid #387d93;border-radius:9px;padding:11px 12px;outline:none}
+.entry input:focus-visible,.filebox:focus-within{outline:2px solid #38dfe5;outline-offset:2px}
+.primary{border:0;border-radius:9px;background:linear-gradient(120deg,#2deceb,#35dce9);color:#00222b;padding:11px 15px;font-weight:900;white-space:nowrap}
+.primary:hover{background:#a4fffa}
+.primary:disabled{opacity:.6;cursor:wait}
+.examples{color:#9ec2d0;font-size:11px;margin-top:10px}
+.examples button{border:0;background:transparent;padding:2px 4px;color:#62e9ed;text-decoration:underline;font-size:11px}
+.result{margin-top:14px;border:1px solid #275a72;border-radius:10px;background:#041a28;padding:14px;font-size:12px}
+.result:empty{display:none}
+.result-title{color:#65f5df;font-size:15px;font-weight:900;margin:0 0 8px;overflow-wrap:anywhere}
+.kv{display:grid;grid-template-columns:130px minmax(0,1fr);gap:7px;padding:7px 0;border-bottom:1px solid #164354}
+.kv:last-child{border-bottom:0}.kv b{color:#9ec7d9}.kv span{color:#f3fbff;overflow-wrap:anywhere}
+.note{font-size:11px;color:#96bacb;margin-top:9px}
+.filebox{position:relative;display:block;text-align:center;background:#062638;border:1px dashed #44a0b1;border-radius:11px;padding:19px 10px;cursor:pointer}
+.filebox strong{display:block;color:#69f4ea;font-size:15px}
+.filebox span{display:block;font-size:11px;color:#b9d7e4;margin-top:5px}
+.filebox input{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.state{margin-top:11px;color:#99c5d6;font-size:12px;min-height:18px}
+.state.error{color:#ff9e9e}
+.info{margin-top:14px;border-left:3px solid #1fd7e3;padding-left:10px;font-size:11px;color:#a7c9d8}
+.analysis{margin-top:15px}
+.analysis[hidden]{display:none}
+.meters{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:15px 0}
+.meter{background:#041a29;border:1px solid #255b71;border-radius:9px;padding:12px;min-width:0}
+.meter span{display:block;color:#9cb9cb;font-size:10px}
+.meter strong{display:block;color:#55f1e8;font-size:clamp(12px,2.5vw,19px);word-break:break-all;margin-top:4px}
+.digest{font:11px/1.6 ui-monospace,Consolas,monospace;color:#d7f8ff;overflow-wrap:anywhere;background:#041624;border:1px solid #27546a;border-radius:9px;padding:10px}
+.details{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:13px}
+.inner{background:#051927;border:1px solid #28566d;padding:15px;border-radius:10px;min-width:0}
+.inner h3{margin:0 0 9px;font-size:14px}
+.inner p{font-size:11px;color:#a7c4d6;margin:0}
+.strings{margin:0;padding-left:18px;font:11px/1.8 ui-monospace,Consolas,monospace;overflow-wrap:anywhere}
+.strings li{padding:0 0 3px}
+.hex{background:#020f18;color:#8eeacb;border:1px solid #234f5f;border-radius:8px;white-space:pre;overflow:auto;padding:12px;font:11px/1.55 ui-monospace,Consolas,monospace;tab-size:2}
+.exportline{display:flex;gap:9px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.exportline .outline{color:#d4faff}
+.footer{border-top:1px solid #1c4b5f;text-align:center;padding:19px;color:#92b0c1;font-size:11px}
+@media(max-width:740px){.grid,.details{grid-template-columns:1fr}.meters{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.wrap{padding:0 10px}.top-inner{min-height:60px}.brand{font-size:12px}.brand small{font-size:8px}.top nav a{padding:7px;font-size:10px}.hero{padding:20px 16px}.panel{padding:15px}.entry{flex-wrap:wrap}.entry input{flex-basis:100%}.entry button{width:100%}.kv{grid-template-columns:100px minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap top-inner">
+<a class="brand" href="./index.html">★ STAR MOBILE SERVICE<small>ECU COMMAND CENTER</small></a>
+<nav><a href="./index.html">Home</a><a href="./index.html#software">Downloads</a><a href="./index.html#vinLookup">VIN Decoder</a></nav>
+</div></header>
+<main class="wrap">
+<section class="hero"><div class="eyebrow">INDEPENDENT TECHNICIAN WORKBENCH</div>
+<h1>BOSCH <span>ECU DECODER</span></h1>
+<p>Identify common Bosch part-number ranges and ECU family labels, or inspect your own ECU BIN and EEPROM files. All file inspection happens on this device—nothing is uploaded.</p>
+<div class="tags"><span>PART NUMBERS</span><span>ME / MED / EDC / MG / MD</span><span>LOCAL BIN INSPECTION</span><span>NO SERVER UPLOAD</span></div></section>
+<div class="grid">
+<section class="panel" aria-labelledby="number-title"><div class="index">01 / LABEL LOOKUP</div><h2 id="number-title">Bosch number decoder</h2>
+<p>Enter a 10-digit Bosch part number or a printed ECU family. This identifies broad product ranges, not exact vehicle compatibility.</p>
+<form id="number-form" class="entry"><label for="number-input" style="position:absolute;left:-9999px">Bosch part number or ECU family</label>
+<input id="number-input" maxlength="55" placeholder="0 261 200 016 / ME7.5" autocomplete="off" spellcheck="false" required>
+<button class="primary" type="submit">⌕ Decode</button></form>
+<div class="examples">Try: <button type="button" data-example="0 261 200 016">0 261 200 016</button><button type="button" data-example="0 281 001 234">0 281…</button><button type="button" data-example="ME7.5">ME7.5</button><button type="button" data-example="EDC17CP14">EDC17CP14</button></div>
+<div id="number-result" class="result" role="status" aria-live="polite"></div>
+<div class="info">A Bosch prefix is not an OE cross-reference. Always confirm the complete Bosch and vehicle OEM numbers, hardware revision, and ECU label before replacing or programming a module.</div>
+</section>
+<section class="panel" aria-labelledby="file-title"><div class="index">02 / RAW FILE INSPECTOR</div><h2 id="file-title">EEPROM / BIN inspector</h2>
+<p>Choose a raw binary dump from a device you are authorized to service. Inspect size, hash, printable identifiers, entropy, and hexadecimal bytes.</p>
+<label class="filebox"><strong>⇧ Select BIN or EEPROM file</strong><span>Local .bin, .eep, .dump or .rom • up to 16 MiB</span>
+<input id="ecu-file" type="file" accept=".bin,.eep,.dump,.rom,application/octet-stream" aria-label="Choose raw ECU binary file"></label>
+<div id="file-status" class="state" role="status" aria-live="polite">No file selected.</div>
+<div class="info">This is read-only inspection. It does not extract PIN/ISN/CS values, remove immobilizers, validate Bosch flash checksums, or identify exact EEPROM chips from file size alone.</div>
+</section>
+</div>
+<section class="panel analysis" id="analysis" aria-labelledby="analysis-title" hidden>
+<div class="index">03 / FILE ANALYSIS</div><h2 id="analysis-title">Binary analysis</h2>
+<p id="file-summary">Results from the selected file.</p>
+<div class="meters"><div class="meter"><span>File size</span><strong id="size-value">—</strong></div><div class="meter"><span>Byte entropy</span><strong id="entropy-value">—</strong></div><div class="meter"><span>Unique byte values</span><strong id="unique-value">—</strong></div><div class="meter"><span>Likely capacity class</span><strong id="capacity-value">—</strong></div></div>
+<h3 style="font-size:14px;margin:6px 0 9px">SHA-256 fingerprint</h3><div id="hash-value" class="digest">—</div>
+<div class="details">
+<div class="inner"><h3>Readable ASCII strings</h3><p>Sample of strings in the file. Strings are not independently verified identifiers.</p><ol id="strings-result" class="strings"></ol></div>
+<div class="inner"><h3>Family text found in file</h3><p>Only literal text matches are shown—not definitive ECU identification.</p><div id="family-result" class="result"></div></div>
+</div>
+<div class="inner" style="margin-top:13px"><h3>First 256 bytes • hex / ASCII</h3><pre id="hex-result" class="hex"></pre></div>
+<div class="exportline"><div class="note">Results are computed in your browser. Exported JSON may contain sensitive identifiers; handle customer files responsibly.</div><button type="button" id="export-json" class="outline">⇩ Export JSON report</button></div>
+</section>
+</main>
+<footer class="footer">STAR MOBILE SERVICE · Independent automotive workshop utility · Not affiliated with Robert Bosch GmbH.<br>Reference-only identification. No ECU connection, memory modification, or vehicle authorization is performed here.</footer>
+<script>
+(function(){
+"use strict";
+const el=id=>document.getElementById(id);
+const group={
+"0261":["Gasoline engine electronics range","Bosch 0 261 numbers commonly appear on petrol engine-control units and related engine-management components."],
+"0281":["Diesel engine control range","Bosch 0 281 numbers commonly appear on diesel engine-control modules."],
+"0265":["ABS / ESP braking electronics range","Bosch 0 265 numbers commonly appear on ABS, ESP, and braking-related modules."],
+"0280":["Fuel injection / sensor component range","Bosch 0 280 numbers often identify fuel-injection and sensor components; not necessarily an ECU."],
+"0986":["Bosch replacement / remanufactured range","Many 0 986 numbers represent service or replacement parts; the prefix alone does not identify a controller."]
+};
+const families=[
+[/^MEVD\d/i,"MEVD","Bosch petrol engine-control family; actual flash and EEPROM layout depend on the exact ECU hardware and software."],
+[/^MED\d/i,"MED","Bosch gasoline direct-injection engine management; actual memory and programming access depend on the exact hardware."],
+[/^ME\d/i,"ME","Bosch Motronic gasoline engine-control family. ME7 is a common older generation; the family text alone cannot establish chip type."],
+[/^EDC\d/i,"EDC","Bosch diesel electronic engine management. EDC15, EDC16, and EDC17 are different generations; confirm the exact ECU."],
+[/^MG\d/i,"MG","Bosch modern gasoline engine-management family. Hardware, boot process, and memory layout vary by revision."],
+[/^MD\d/i,"MD","Bosch modern diesel engine-management family. Hardware, boot process, and memory layout vary by revision."]
+];
+function field(target,label,value){
+ const row=document.createElement("div");row.className="kv";
+ const b=document.createElement("b");b.textContent=label;
+ const v=document.createElement("span");v.textContent=value;
+ row.append(b,v);target.appendChild(row);
+}
+function decodeNumber(value){
+ const s=value.toUpperCase().replace(/[\s-]/g,"").trim();
+ if(/^\d{10}$/.test(s)){
+  const prefix=s.slice(0,4);
+  return{title:s.slice(0,1)+" "+s.slice(1,4)+" "+s.slice(4,7)+" "+s.slice(7,10),fields:[
+   ["Normalized number",s],
+   ["Product range",group[prefix]?group[prefix][0]:"Unknown from offline prefix table"],
+   ["Interpretation",group[prefix]?group[prefix][1]:"This valid-length number is not in the limited offline classification table."],
+   ["Identification level","Prefix classification only; no exact part-number database match"]
+  ]};
+ }
+ for(const entry of families){
+  if(entry[0].test(s))return{title:s,fields:[["Family label",entry[1]],["Interpretation",entry[2]],["Identification level","Family-string recognition only; verify against the ECU label and OEM data"]]};
+ }
+ return{title:"No confirmed match",fields:[["Input",value],["Try","A 10-digit Bosch number (for example 0 261 200 016) or a family name (for example ME7.5 or EDC17CP14)."],["Result","Unrecognized input. No ECU type was guessed."]]};
+}
+function showNumber(value){
+ const r=decodeNumber(value),out=el("number-result");out.replaceChildren();
+ const title=document.createElement("div");title.className="result-title";title.textContent=r.title;out.appendChild(title);
+ r.fields.forEach(x=>field(out,x[0],x[1]));
+}
+el("number-form").addEventListener("submit",ev=>{ev.preventDefault();showNumber(el("number-input").value.trim())});
+document.querySelectorAll("[data-example]").forEach(b=>b.addEventListener("click",()=>{el("number-input").value=b.dataset.example;showNumber(b.dataset.example)}));
+const sizeNames=new Map([[256,"24C02-size"],[512,"95040-size"],[1024,"95080-size"],[2048,"95160-size"],[4096,"95320-size"],[8192,"95640-size"]]);
+function sizeText(n){return n>=1048576?(n/1048576).toFixed(n%1048576===0?0:2)+" MiB":n>=1024?(n/1024).toFixed(n%1024===0?0:2)+" KiB":n+" bytes"}
+function capacity(n){return sizeNames.get(n)||"Unknown"}
+function entropyAndUnique(bytes){
+ const counts=new Uint32Array(256);for(let i=0;i<bytes.length;i++)counts[bytes[i]]++;
+ let entropy=0,unique=0;for(let i=0;i<256;i++)if(counts[i]){unique++;const p=counts[i]/bytes.length;entropy-=p*Math.log2(p)}
+ return{entropy,unique};
+}
+function readStrings(bytes){
+ const strings=[],seen=new Set(),familiesSeen=new Set();
+ let run="",runLength=0;
+ const flush=()=>{
+  if(runLength>=5&&runLength<=128&&/[A-Za-z]/.test(run)&&/[0-9]/.test(run)){
+   const clean=run.trim();
+   if(clean.length>=5&&!seen.has(clean)&&strings.length<24){seen.add(clean);strings.push(clean)}
+   const found=clean.match(/\b(?:MEVD|MED|ME|EDC|MD|MG)\d[A-Z0-9.]{0,12}\b/gi);
+   if(found)found.forEach(v=>familiesSeen.add(v.toUpperCase()));
+  }
+  run="";runLength=0;
+ };
+ for(let i=0;i<bytes.length;i++){
+  const b=bytes[i];
+  if(b>=32&&b<=126){runLength++;if(run.length<128)run+=String.fromCharCode(b)}
+  else flush();
+ }
+ flush();return{strings,familyMatches:Array.from(familiesSeen).slice(0,20)};
+}
+function hexDump(bytes){
+ const lines=[];
+ for(let start=0;start<Math.min(bytes.length,256);start+=16){
+  const line=bytes.subarray(start,start+16);
+  const hex=Array.from(line,b=>b.toString(16).padStart(2,"0").toUpperCase()).join(" ").padEnd(47," ");
+  const ascii=Array.from(line,b=>b>=32&&b<=126?String.fromCharCode(b):".").join("");
+  lines.push(start.toString(16).toUpperCase().padStart(8,"0")+"  "+hex+"  |"+ascii+"|");
+ }
+ return lines.join("\n");
+}
+let lastReport=null;
+const status=el("file-status");
+el("ecu-file").addEventListener("change",async ev=>{
+ const file=ev.target.files&&ev.target.files[0];lastReport=null;el("analysis").hidden=true;
+ if(!file){status.textContent="No file selected.";return}
+ if(!file.size||file.size>16*1024*1024){status.className="state error";status.textContent="Select a non-empty raw binary file up to 16 MiB.";return}
+ if(/\.(hex|s19|srec|ihex)$/i.test(file.name)){status.className="state error";status.textContent="Intel HEX/S-record text formats are not raw BIN files. Convert them before analysis.";return}
+ status.className="state";status.textContent="Reading file locally…";
+ try{
+  const buffer=await file.arrayBuffer();const bytes=new Uint8Array(buffer);
+  const stats=entropyAndUnique(bytes),text=readStrings(bytes),hex=hexDump(bytes);
+  let sha="Unavailable (Web Crypto not supported)";
+  if(window.crypto&&crypto.subtle){const digest=await crypto.subtle.digest("SHA-256",buffer);sha=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("")}
+  const cap=capacity(bytes.length);
+  lastReport={tool:"Star Mobile Bosch Decoder",version:"1.0",fileName:file.name,sizeBytes:bytes.length,
+   capacityNote:cap==="Unknown"?"Cannot infer chip from size":cap+"; capacity match only, not chip identification",
+   entropyBitsPerByte:Number(stats.entropy.toFixed(4)),uniqueByteValues:stats.unique,sha256:sha,
+   readableStrings:text.strings,familyTextMatches:text.familyMatches,hexPreview:hex};
+  el("file-summary").textContent=file.name+" • Read-only binary inspection; no upload performed.";
+  el("size-value").textContent=sizeText(bytes.length);
+  el("entropy-value").textContent=stats.entropy.toFixed(3)+"/8";
+  el("unique-value").textContent=String(stats.unique)+"/256";
+  el("capacity-value").textContent=cap;
+  el("hash-value").textContent=sha;
+  const list=el("strings-result");list.replaceChildren();
+  if(!text.strings.length){const li=document.createElement("li");li.textContent="No qualifying readable strings found.";list.appendChild(li)}
+  else text.strings.forEach(s=>{const li=document.createElement("li");li.textContent=s;list.appendChild(li)});
+  const family=el("family-result");family.replaceChildren();
+  if(!text.familyMatches.length)family.textContent="No literal Bosch family strings detected.";
+  else text.familyMatches.forEach(s=>field(family,"Observed text",s));
+  el("hex-result").textContent=hex;
+  el("analysis").hidden=false;
+  status.textContent="Local analysis complete for "+file.name+". No data was transmitted.";
+ }catch(err){status.className="state error";status.textContent="Could not read this file locally. Try another raw BIN/EEPROM dump."}
+});
+el("export-json").addEventListener("click",()=>{
+ if(!lastReport)return;
+ const blob=new Blob([JSON.stringify(lastReport,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;
+ a.download="bosch-inspection-"+new Date().toISOString().slice(0,10)+".json";
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+});
+})();
+</script>
+</body>
+</html>
