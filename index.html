@@ -284,6 +284,14 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .bottom-links .owner-actions small{color:#8eabba;font-size:10px;line-height:1.4}
 
 
+/* Bosch Decoder landing card; independent from VIN, releases and upload widgets. */
+.bosch-launch{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:14px 0;padding:20px 22px}
+.bosch-launch h2{margin:4px 0;font-size:clamp(18px,2.6vw,24px);font-weight:950}
+.bosch-launch p{margin:4px 0;color:#bed8e5;font-size:12px;max-width:730px}
+.bosch-launch .kicker{color:#62f6e4;font-size:10px;font-weight:850;letter-spacing:.13em}
+.bosch-launch .boschtap{flex:none;min-width:176px;text-align:center}
+@media(max-width:570px){.bosch-launch{padding:14px;flex-direction:column;align-items:stretch;gap:10px}.bosch-launch .boschtap{width:100%}}
+
 </style>
 </head>
 <body>
@@ -361,6 +369,13 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <text x="368" y="22">BCM</text><text x="368" y="72">IMMO</text><text x="368" y="122">IC</text>
 </svg></div></section>
 </div>
+
+<section class="panel bosch-launch" id="boschDecoder" aria-label="Bosch ECU decoder tool">
+<div><div class="kicker">FREE WORKSHOP TOOL · LOCAL BIN INSPECTION</div>
+<h2>⌘ BOSCH ECU DECODER</h2>
+<p>Identify common Bosch ECU numbers and ME / MED / EDC families. Inspect BIN and EEPROM dumps locally, including file size, SHA-256, readable strings and hex preview.</p></div>
+<a class="download-btn boschtap" href="bosch-decoder.html" aria-label="Open Bosch ECU Decoder">Open Bosch Decoder ↗</a>
+</section>
 <section id="software" aria-label="Official software releases">
 <div class="software-intro"><h2>⇩ SOFTWARE DOWNLOADS</h2><span>Latest Android APK releases · Real GitHub counts</span></div>
 <div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, tools, or versions..." aria-label="Search download catalog"/></div>
@@ -379,7 +394,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 </div>
 <p style="margin:10px 0 0;color:#9dbccc;font-size:11px">Only upload logs you have permission to share. Remove customer names, addresses, VINs and access tokens before uploading. ZIP files go privately to the Star Mobile Jotform inbox, not to the public GitHub repository. <a href="https://form.jotform.com/263136040649051" target="_blank" rel="noopener noreferrer" style="color:#63edf1">Open uploader separately</a> if the embedded upload is blocked.</p>
 </section>
-<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
+<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="bosch-decoder.html">Bosch Decoder</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
 <p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Topology is an illustration, not a live vehicle connection.</p>
 </main>
 <dialog id="vinScanDialog" class="vin-scan-dialog" aria-labelledby="vinScanTitle">
