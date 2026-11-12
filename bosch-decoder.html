@@ -83,15 +83,17 @@ main{padding-top:22px;padding-bottom:35px}
 <main class="wrap">
 <section class="hero"><div class="eyebrow">INDEPENDENT TECHNICIAN WORKBENCH</div>
 <h1>BOSCH <span>ECU DECODER</span></h1>
-<p>Identify common Bosch part-number ranges and ECU family labels, or inspect your own ECU BIN and EEPROM files. All file inspection happens on this device—nothing is uploaded.</p>
+<p>Match known Bosch hardware numbers to ME7, ME9, MED17, EDC15/16/17, MG1 and MD1 models, and inspect your own ECU BIN and EEPROM files. All file inspection happens on this device—nothing is uploaded.</p>
 <div class="tags"><span>PART NUMBERS</span><span>ME / MED / EDC / MG / MD</span><span>LOCAL BIN INSPECTION</span><span>NO SERVER UPLOAD</span></div></section>
 <div class="grid">
 <section class="panel" aria-labelledby="number-title"><div class="index">01 / LABEL LOOKUP</div><h2 id="number-title">Bosch number decoder</h2>
-<p>Enter a Bosch part number or printed ECU family. Verified number matches display the ECU model; unknown numbers are not guessed.</p>
+<p>Enter the Bosch or OEM hardware number printed on the ECU. Exact reference matches show the model. Unknown numbers are never guessed.</p>
 <form id="number-form" class="entry"><label for="number-input" style="position:absolute;left:-9999px">Bosch part number or ECU family</label>
 <input id="number-input" maxlength="55" placeholder="0 261 200 016 / ME7.5" autocomplete="off" spellcheck="false" required>
 <button class="primary" type="submit">⌕ Decode</button></form>
 <div class="examples">Try: <button type="button" data-example="0 261 206 043">0 261 206 043</button><button type="button" data-example="0 281 013 253">0 281 013 253</button><button type="button" data-example="ME7.5">ME7.5</button><button type="button" data-example="EDC17CP14">EDC17CP14</button></div>
+<div class="examples">Local catalog: <strong id="catalog-count">—</strong> distinct hardware identifiers across ME7, ME9, MED17, EDC15/16/17, MG1, MD1.</div>
+<div class="examples">Quick models: <button type="button" data-example="ME7.1">ME7.1</button><button type="button" data-example="ME9.7">ME9.7</button><button type="button" data-example="MED17.5">MED17.5</button><button type="button" data-example="EDC15P">EDC15P</button><button type="button" data-example="EDC16CP35">EDC16CP35</button><button type="button" data-example="EDC17CP14">EDC17CP14</button><button type="button" data-example="MG1CS201">MG1CS201</button><button type="button" data-example="MD1CS003">MD1CS003</button></div>
 <div id="number-result" class="result" role="status" aria-live="polite"></div>
 <div class="info">A Bosch prefix is not an OE cross-reference. Always confirm the complete Bosch and vehicle OEM numbers, hardware revision, and ECU label before replacing or programming a module.</div>
 </section>
@@ -100,7 +102,7 @@ main{padding-top:22px;padding-bottom:35px}
 <label class="filebox"><strong>⇧ Select BIN or EEPROM file</strong><span>Local .bin, .eep, .dump or .rom • up to 16 MiB</span>
 <input id="ecu-file" type="file" accept=".bin,.eep,.dump,.rom,application/octet-stream" aria-label="Choose raw ECU binary file"></label>
 <div id="file-status" class="state" role="status" aria-live="polite">No file selected.</div>
-<div class="info">This is read-only inspection. It does not extract PIN/ISN/CS values, remove immobilizers, validate Bosch flash checksums, or identify exact EEPROM chips from file size alone.</div>
+<div class="info">Read-only inspection. No PIN/ISN/CS extraction, immo modification, Bosch checksum repair, or automatic chip identification from file size.</div>
 </section>
 </div>
 <section class="panel analysis" id="analysis" aria-labelledby="analysis-title" hidden>
@@ -117,6 +119,7 @@ main{padding-top:22px;padding-bottom:35px}
 </section>
 </main>
 <footer class="footer">STAR MOBILE SERVICE · Independent automotive workshop utility · Not affiliated with Robert Bosch GmbH.<br>Reference-only identification. No ECU connection, memory modification, or vehicle authorization is performed here.</footer>
+<script src="./bosch-model-catalog.js"></script>
 <script>
 (function(){
 "use strict";
@@ -129,15 +132,9 @@ const group={
 "0986":["Bosch replacement / remanufactured range","Many 0 986 numbers represent service or replacement parts; the prefix alone does not identify a controller."]
 };
 // Exact part-number matches from published lookup references; never infer a model from prefix alone.
-const exactModels={
- "0261200016":{model:"ML1.1",source:"https://www.5021.tips/ujanja/DOWNS/bosch-ecu-hw-numbers%20.pdf"},
- "0261206043":{model:"ME7.5",source:"https://dieselfiles.com/search"},
- "0281013253":{model:"EDC16CP35",source:"https://dieselfiles.com/search"},
- "0261208374":{model:"ME7.9.3",source:"https://dieselfiles.com/search"},
- "0281014235":{model:"EDC17CP14",source:"https://dieselfiles.com/search"},
- "0281013924":{model:"EDC17CP02",source:"https://dieselfiles.com/search"},
- "0281012503":{model:"EDC16CP34",source:"https://dieselfiles.com/search"}
-};
+const exactModels=window.BOSCH_ECU_MODEL_CATALOG||Object.create(null);
+const catalogCount=Object.keys(exactModels).length;
+const fuelType=model=>/^(EDC|MD)/.test(model)?"Diesel":/^(ME|MG)/.test(model)?"Gasoline":"Unknown";
 const families=[
 [/^MEVD\d/i,"MEVD","Bosch petrol engine-control family; actual flash and EEPROM layout depend on the exact ECU hardware and software."],
 [/^MED\d/i,"MED","Bosch gasoline direct-injection engine management; actual memory and programming access depend on the exact hardware."],
@@ -153,28 +150,53 @@ function field(target,label,value){
  row.append(b,v);target.appendChild(row);
 }
 function decodeNumber(value){
- const raw=String(value||"").toUpperCase().trim();
- // Accept part numbers copied from labels with spaces, punctuation and "BOSCH" prefixes.
- const cleaned=raw.replace(/^(?:ROBERT\s+)?BOSCH\s*[:#-]?\s*/,"");
- const numeric=cleaned.replace(/[^0-9A-Z]/g,"");
- const s=/^0(?:261|280|281|265|285|986)[A-Z0-9]{6}$/.test(numeric)&&!/\b(?:ME|MED|EDC|MD|MG|MEVD)\d/i.test(raw)
-  ?numeric:raw.replace(/^(?:ROBERT\s+)?BOSCH\s*[:#-]?\s*/,"").replace(/[\s_-]/g,"");
- if(/^0(?:261|280|281|265|285|986)[A-Z0-9]{6}$/.test(s)){
-  const exact=exactModels[s]||null;
-  const prefix=s.slice(0,4);
-  return{title:s.slice(0,1)+" "+s.slice(1,4)+" "+s.slice(4,7)+" "+s.slice(7,10),
-   model:exact?exact.model:null,modelStatus:exact?"Documented part-number match":"Not verified — exact model requires a part-number reference",source:exact?exact.source:null,fields:[
-   ["Normalized number",s],
-   ["Decoded ECU model",exact?exact.model:"Not available in verified local lookup"],
-   ["Product range",group[prefix]?group[prefix][0]:"Unknown from offline prefix table"],
-   ["Interpretation",group[prefix]?group[prefix][1]:"This valid-length number is not in the limited offline classification table."],
-   ["Identification level",exact?"Documented Bosch part-number match; confirm hardware and software against unit":"Prefix classification only; exact ECU model not established"]
-  ]};
+ const original=String(value||"").trim();
+ const raw=original.toUpperCase().replace(/^(?:ROBERT\s+)?BOSCH\s*[:#-]?\s*/,"");
+ const packed=raw.replace(/[\s_:#/\\-]/g,"");
+ const normalized=packed.replace(/^(?:ECU|MODEL|TYPE|FAMILY|HW)/,"");
+ const words=raw.replace(/[^A-Z0-9]/g," ");
+ let key=Object.hasOwn(exactModels,packed)?packed:Object.hasOwn(exactModels,normalized)?normalized:null;
+ if(!key){
+  const boschPart=packed.match(/0(?:261|281|280|265|285|986)[A-Z0-9]{6}/);
+  if(boschPart&&Object.hasOwn(exactModels,boschPart[0]))key=boschPart[0];
  }
- for(const entry of families){
-  if(entry[0].test(s))return{title:s,model:s,modelStatus:"Model label supplied by user (not verified against Bosch number)",fields:[["Decoded ECU model",s],["Family label",entry[1]],["Interpretation",entry[2]],["Identification level","Family-string recognition only; verify against the ECU label and OEM data"]]};
+ if(!key){
+  for(const candidate of words.split(/\s+/)){
+   if(candidate.length>=10&&Object.hasOwn(exactModels,candidate)){key=candidate;break}
+  }
  }
- return{title:"No confirmed match",model:null,modelStatus:"Unrecognized input",fields:[["Input",value],["Try","A 10-digit Bosch number (for example 0 261 200 016) or a family name (for example ME7.5 or EDC17CP14)."],["Result","Unrecognized input. No ECU type was guessed."]]};
+ if(key){
+  const record=exactModels[key],model=record.model;
+  return{title:key,model,kind:"reference",modelStatus:"Hardware-to-model match in linked reference catalogue",source:record.source,
+   fields:[["Decoded ECU model",model],["Hardware identifier",key],["Identifier class",record.kind],
+     ["Fuel system",fuelType(model)],["Match level","Referenced exact hardware ID — confirm HW, SW and OEM number on the ECU before replacement or programming"]]};
+ }
+ const family=normalized.match(/^(MEVD|MED|ME|EDC|MG|MD)\d[A-Z0-9.]*$/);
+ if(family){
+  const desc=families.find(f=>f[0].test(normalized));
+  return{title:normalized,model:normalized,kind:"user-label",modelStatus:"Family supplied in your input — not decoded from hardware",
+   fields:[["ECU model name",normalized],["Fuel system",fuelType(normalized)],
+   ["Interpretation",desc?desc[2]:"Recognized Bosch engine-control designation; exact hardware revision not established"],
+   ["Identification level","Name recognition only. Enter the Bosch or OEM hardware number to cross-reference it."]]};
+ }
+ const foundPart=packed.match(/0(?:261|281|280|265|285|986)[A-Z0-9]{6}/);
+ if(foundPart){
+  const number=foundPart[0],prefix=number.slice(0,4);
+  return{title:number,model:null,kind:"unknown-hw",modelStatus:"Not in this offline catalogue",
+   fields:[["Hardware identifier",number],["Decoded ECU model","UNKNOWN — exact cross-reference needed"],
+   ["General part range",group[prefix]?group[prefix][0]:"Unclassified Bosch range"],
+   ["Interpretation","The Bosch prefix cannot establish the precise ECU model; no model has been guessed."]]};
+ }
+ const software=packed.match(/(?:1037\d{6}|1039[A-Z0-9]{6}|10SW[A-Z0-9]{6})/);
+ if(software){
+  return{title:software[0],model:null,kind:"software",modelStatus:"Software ID is not an ECU hardware-model identifier",
+   fields:[["Software identifier",software[0]],["Decoded ECU model","Not determined from software ID alone"],
+   ["Try","Enter Bosch HW number (0261… / 0281…) or OEM hardware number."]]};
+ }
+ return{title:"No confirmed match",model:null,kind:"unknown",modelStatus:"Input not recognized",
+  fields:[["Input",original],["Decoded ECU model","UNKNOWN"],
+   ["Try","Bosch 0261… / 0281… number, exact OEM hardware number, or a model like MED17.5, EDC17CP14, MG1CS201 or MD1CS003."],
+   ["Result","No model assigned; avoid relying on unsupported guesses."]]};
 }
 function showNumber(value){
  const r=decodeNumber(value),out=el("number-result");out.replaceChildren();
@@ -185,11 +207,15 @@ function showNumber(value){
  const sub=document.createElement("em");sub.textContent=r.modelStatus||"";
  hero.append(kicker,value,sub);out.appendChild(hero);
  r.fields.forEach(x=>field(out,x[0],x[1]));
- if(r.source){const a=document.createElement("a");a.href=r.source;a.target="_blank";a.rel="noopener noreferrer";a.textContent="View part-number reference ↗";a.style.color="#7ff9eb";out.appendChild(a)}
- else if(/^0(?:261|280|281|265|285|986)[A-Z0-9]{6}$/.test(r.title.replace(/\s/g,""))){
-  const a=document.createElement("a");a.href="https://www.bosch-repair-service.com/en/category/engine-control-unit/";a.target="_blank";a.rel="noopener noreferrer";a.textContent="Find Bosch number in the official Bosch service catalogue ↗";a.style.color="#7ff9eb";out.appendChild(a)
+ if(r.source){const a=document.createElement("a");a.href=r.source;a.target="_blank";a.rel="noopener noreferrer";a.textContent="View source for hardware-model match ↗";a.style.color="#7ff9eb";out.appendChild(a)}
+ else if(r.kind==="unknown-hw"){
+  const a=document.createElement("a");a.href="https://obdbdm.com/bosch/"+encodeURIComponent(r.title)+".html";
+  a.target="_blank";a.rel="noopener noreferrer";
+  a.textContent="Check this number in the larger online Bosch ECU library ↗";
+  a.style.color="#7ff9eb";out.appendChild(a);
  }
 }
+el("catalog-count").textContent=String(catalogCount);
 el("number-form").addEventListener("submit",ev=>{ev.preventDefault();showNumber(el("number-input").value.trim())});
 document.querySelectorAll("[data-example]").forEach(b=>b.addEventListener("click",()=>{el("number-input").value=b.dataset.example;showNumber(b.dataset.example)}));
 const sizeNames=new Map([[256,"24C02-size"],[512,"95040-size"],[1024,"95080-size"],[2048,"95160-size"],[4096,"95320-size"],[8192,"95640-size"]]);
