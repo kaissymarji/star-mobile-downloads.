@@ -303,6 +303,9 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .pc-download-link{display:flex;justify-content:center;align-items:center;min-height:47px;padding:11px 13px;background:linear-gradient(125deg,#39f3fa,#46aaff);color:#061526;border-radius:10px;text-align:center;font-size:14px;font-weight:950;box-shadow:0 3px 15px #10bfe836}
 .pc-download-link:hover,.pc-download-link:focus-visible{background:#b9ffff;box-shadow:0 0 0 2px #0b5f78,0 3px 16px #10bfe844}
 .pc-download-hint{text-align:center;color:#95becf;font-size:10px}
+.pc-download-stats{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:13px 12px;border:1px solid #337d9b;border-radius:11px;background:linear-gradient(145deg,#0b1b36,#0b3540);min-height:79px}
+.pc-download-number{font-size:clamp(28px,4vw,38px);line-height:1.1;color:#53f8f2;font-weight:950;font-variant-numeric:tabular-nums}
+.pc-download-label{font-size:10px;font-weight:900;letter-spacing:.12em;color:#cbecfa;text-align:center}
 @media(max-width:650px){.pc-release-panel{padding:15px 13px;flex-direction:column;align-items:stretch;gap:12px}.pc-release-actions{flex:auto}.pc-download-link{min-height:44px}.pc-release-panel h3{font-size:19px}}
 </style>
 </head>
@@ -395,7 +398,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <h3>V200 Diagnostic — Windows PC Software</h3>
 <p>Download the complete Windows application as a ZIP. Extract the package before launching the included Start V200 program. Separate from Android APK downloads.</p>
 <div class="pc-release-meta" id="windowsPcMeta" role="status" aria-live="polite">Checking GitHub for the latest Windows PC ZIP…</div></div>
-<div class="pc-release-actions"><a id="windowsPcButton" class="pc-download-link" href="https://github.com/kaissymarji/star-mobile-downloads./releases">↗ View Windows Releases</a>
+<div class="pc-release-actions"><div class="pc-download-stats" aria-label="Windows PC ZIP download count"><strong id="windowsPcDownloads" class="pc-download-number" aria-live="polite">—</strong><span class="pc-download-label">WINDOWS PC DOWNLOADS</span></div><a id="windowsPcButton" class="pc-download-link" href="https://github.com/kaissymarji/star-mobile-downloads./releases">↗ View Windows Releases</a>
 <span class="pc-download-hint">Windows PC · ZIP package · GitHub Releases</span></div></section>
 <div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, tools, or versions..." aria-label="Search download catalog"/></div>
 <div class="filters" role="group" aria-label="Software filters"><button class="filter" data-filter="all" aria-pressed="true" type="button">▦ All</button><button class="filter" data-filter="v200" aria-pressed="false" type="button">⌁ V200</button><button class="filter" data-filter="eeprom" aria-pressed="false" type="button">▣ EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false" type="button">◉ BMW</button></div>
@@ -527,7 +530,7 @@ const $=id=>document.getElementById(id);
  }
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
 const pacificTime=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-let apps=[],windowsPackage=null,filter="all",allVersions=false,loaded=false;
+let apps=[],windowsPackage=null,windowsPcTotalDownloads=null,filter="all",allVersions=false,loaded=false;
 const safe=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const format=n=>Number(n||0).toLocaleString("en-US");
 function family(n){const v=n.toLowerCase();return v.includes("v200")||v.includes("stardiagnostic")?"v200":v.includes("eeprom")||v.includes("xp400")?"eeprom":v.includes("bmw")?"bmw":"other";}
@@ -561,7 +564,8 @@ function isWindowsPcZip(asset,release){
         (tool.test(filename)&&pc.test(releaseText));
 }
 function renderWindowsPc(){
- const anchor=$("windowsPcButton"),meta=$("windowsPcMeta");
+ const anchor=$("windowsPcButton"),meta=$("windowsPcMeta"),count=$("windowsPcDownloads");
+ count.textContent=windowsPackage&&windowsPcTotalDownloads!==null?format(windowsPcTotalDownloads):"—";
  if(windowsPackage){
    const p=windowsPackage,when=p.asset.created_at||p.release.published_at||"";
    const whenLabel=when&&!Number.isNaN(Date.parse(when))?pacificTime.format(new Date(when)):"Date unavailable";
@@ -609,6 +613,7 @@ async function reload(){
    const pcPackages=releases.filter(r=>!r.draft).flatMap(release=>(release.assets||[]).filter(asset=>isWindowsPcZip(asset,release)).map(asset=>({asset,release})));
    pcPackages.sort((a,b)=>(Date.parse(b.asset.created_at||b.release.published_at)||0)-(Date.parse(a.asset.created_at||a.release.published_at)||0));
    windowsPackage=pcPackages[0]||null;
+   windowsPcTotalDownloads=pcPackages.reduce((sum,p)=>sum+Number(p.asset.download_count||0),0);
    apps=releases.filter(r=>!r.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded").map(asset=>({asset,release:r,family:family(asset.name),count:Number(asset.download_count||0),url:asset.browser_download_url})));
    apps.forEach(a=>a.title=title(a));
    apps.sort((a,b)=>(Date.parse(uploaded(b))||0)-(Date.parse(uploaded(a))||0));
