@@ -293,20 +293,6 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 @media(max-width:570px){.bosch-launch{padding:14px;flex-direction:column;align-items:stretch;gap:10px}.bosch-launch .boschtap{width:100%}}
 
 
-/* Windows ZIP download: independent from Android APK catalog. */
-.pc-release-panel{margin:14px 0 16px;border:1px solid #42c9e3;border-radius:15px;padding:20px 22px;background:linear-gradient(112deg,#0d2944,#092e3b 65%,#0b1c37);box-shadow:0 7px 24px #0005,inset 0 0 36px #20e5ed0a;display:flex;justify-content:space-between;align-items:center;gap:24px}
-.pc-release-copy{min-width:0}.pc-release-tag{font-size:11px;letter-spacing:.19em;color:#66efff;font-weight:900}
-.pc-release-panel h3{margin:5px 0 7px;font-size:clamp(19px,2.7vw,26px);font-weight:950;line-height:1.14;color:#f1feff}
-.pc-release-panel p{margin:0 0 8px;color:#c4ddeb;font-size:12px;line-height:1.55}
-.pc-release-meta{color:#93bfd1;font-size:11px;overflow-wrap:anywhere}
-.pc-release-actions{flex:0 0 245px;display:flex;flex-direction:column;gap:8px;align-items:stretch}
-.pc-download-link{display:flex;justify-content:center;align-items:center;min-height:47px;padding:11px 13px;background:linear-gradient(125deg,#39f3fa,#46aaff);color:#061526;border-radius:10px;text-align:center;font-size:14px;font-weight:950;box-shadow:0 3px 15px #10bfe836}
-.pc-download-link:hover,.pc-download-link:focus-visible{background:#b9ffff;box-shadow:0 0 0 2px #0b5f78,0 3px 16px #10bfe844}
-.pc-download-hint{text-align:center;color:#95becf;font-size:10px}
-.pc-download-stats{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:13px 12px;border:1px solid #337d9b;border-radius:11px;background:linear-gradient(145deg,#0b1b36,#0b3540);min-height:79px}
-.pc-download-number{font-size:clamp(28px,4vw,38px);line-height:1.1;color:#53f8f2;font-weight:950;font-variant-numeric:tabular-nums}
-.pc-download-label{font-size:10px;font-weight:900;letter-spacing:.12em;color:#cbecfa;text-align:center}
-@media(max-width:650px){.pc-release-panel{padding:15px 13px;flex-direction:column;align-items:stretch;gap:12px}.pc-release-actions{flex:auto}.pc-download-link{min-height:44px}.pc-release-panel h3{font-size:19px}}
 </style>
 </head>
 <body>
@@ -392,14 +378,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <a class="download-btn boschtap" href="bosch-decoder.html" aria-label="Open Bosch ECU Decoder">Open Bosch Decoder ↗</a>
 </section>
 <section id="software" aria-label="Official software releases">
-<div class="software-intro"><h2>⇩ SOFTWARE DOWNLOADS</h2><span>Android APKs and dedicated Windows PC downloads · Real GitHub counts</span></div>
-<section id="windowsPC" class="pc-release-panel" aria-label="V200 Diagnostic Windows PC download">
-<div class="pc-release-copy"><div class="pc-release-tag">▣ WINDOWS PC EDITION</div>
-<h3>V200 Diagnostic — Windows PC Software</h3>
-<p>Download the complete Windows application as a ZIP. Extract the package before launching the included Start V200 program. Separate from Android APK downloads.</p>
-<div class="pc-release-meta" id="windowsPcMeta" role="status" aria-live="polite">Checking GitHub for the latest Windows PC ZIP…</div></div>
-<div class="pc-release-actions"><div class="pc-download-stats" aria-label="Windows PC ZIP download count"><strong id="windowsPcDownloads" class="pc-download-number" aria-live="polite">—</strong><span class="pc-download-label">WINDOWS PC DOWNLOADS</span></div><a id="windowsPcButton" class="pc-download-link" href="https://github.com/kaissymarji/star-mobile-downloads./releases">↗ View Windows Releases</a>
-<span class="pc-download-hint">Windows PC · ZIP package · GitHub Releases</span></div></section>
+<div class="software-intro"><h2>⇩ SOFTWARE DOWNLOADS</h2><span>Android APKs · Real GitHub download counts</span></div>
 <div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, tools, or versions..." aria-label="Search download catalog"/></div>
 <div class="filters" role="group" aria-label="Software filters"><button class="filter" data-filter="all" aria-pressed="true" type="button">▦ All</button><button class="filter" data-filter="v200" aria-pressed="false" type="button">⌁ V200</button><button class="filter" data-filter="eeprom" aria-pressed="false" type="button">▣ EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false" type="button">◉ BMW</button></div>
 <div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
@@ -530,7 +509,7 @@ const $=id=>document.getElementById(id);
  }
 const pacificDay=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",weekday:"short",month:"short",day:"numeric",year:"numeric"});
 const pacificTime=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
-let apps=[],windowsPackage=null,windowsPcTotalDownloads=null,filter="all",allVersions=false,loaded=false;
+let apps=[],filter="all",allVersions=false,loaded=false;
 const safe=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const format=n=>Number(n||0).toLocaleString("en-US");
 function family(n){const v=n.toLowerCase();return v.includes("v200")||v.includes("stardiagnostic")?"v200":v.includes("eeprom")||v.includes("xp400")?"eeprom":v.includes("bmw")?"bmw":"other";}
@@ -551,35 +530,6 @@ function hardwareInfo(f){
  return ["Check this app's compatibility before use"];
 }
 
-function isWindowsPcZip(asset,release){
- if(!asset||!asset.name||!asset.name.toLowerCase().endsWith(".zip")||asset.state!=="uploaded")return false;
- const filename=asset.name.toLowerCase();
- const releaseText=((release.name||"")+" "+(release.tag_name||"")).toLowerCase();
- // Do not offer source archives, logs, or Android code as the Windows runtime.
- if(/(?:source|src|logs?|backup|android|apk)/i.test(filename))return false;
- const pc=/(?:^|[^a-z])(?:pc|windows|win32|win64|desktop|win-x64|win-x86)(?:[^a-z]|$)/i;
- const tool=/(?:v200|diagnostic)/i;
- return (tool.test(filename)&&pc.test(filename))||
-        (pc.test(filename)&&tool.test(releaseText))||
-        (tool.test(filename)&&pc.test(releaseText));
-}
-function renderWindowsPc(){
- const anchor=$("windowsPcButton"),meta=$("windowsPcMeta"),count=$("windowsPcDownloads");
- count.textContent=windowsPackage&&windowsPcTotalDownloads!==null?format(windowsPcTotalDownloads):"—";
- if(windowsPackage){
-   const p=windowsPackage,when=p.asset.created_at||p.release.published_at||"";
-   const whenLabel=when&&!Number.isNaN(Date.parse(when))?pacificTime.format(new Date(when)):"Date unavailable";
-   anchor.href=p.asset.browser_download_url;
-   anchor.textContent="⇩ Download Windows PC ZIP";
-   anchor.setAttribute("aria-label","Download "+p.asset.name+" for Windows PC");
-   meta.textContent=p.asset.name+" · Uploaded "+whenLabel+" · "+format(p.asset.download_count)+" downloads";
- }else{
-   anchor.href="https://github.com/"+REPO+"/releases";
-   anchor.textContent="↗ View Windows Releases";
-   anchor.setAttribute("aria-label","View published Windows PC software on GitHub");
-   meta.textContent=loaded?"No Windows PC ZIP found in published GitHub Releases. Attach a compiled ZIP to a published release with PC or Windows in the filename or release name.":"Could not verify the Windows PC ZIP yet. Open Releases to check the published files.";
- }
-}
 function render(){
  const query=$("search").value.toLowerCase().trim(),keys=latestIds();
  const selected=apps.filter(a=>(filter==="all"||a.family===filter)&&(a.title+" "+a.asset.name+" "+a.release.tag_name+" "+a.release.name).toLowerCase().includes(query));
@@ -610,10 +560,6 @@ async function reload(){
      releases=releases.concat(page);
      if(page.length<100)break;
    }
-   const pcPackages=releases.filter(r=>!r.draft).flatMap(release=>(release.assets||[]).filter(asset=>isWindowsPcZip(asset,release)).map(asset=>({asset,release})));
-   pcPackages.sort((a,b)=>(Date.parse(b.asset.created_at||b.release.published_at)||0)-(Date.parse(a.asset.created_at||a.release.published_at)||0));
-   windowsPackage=pcPackages[0]||null;
-   windowsPcTotalDownloads=pcPackages.reduce((sum,p)=>sum+Number(p.asset.download_count||0),0);
    apps=releases.filter(r=>!r.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded").map(asset=>({asset,release:r,family:family(asset.name),count:Number(asset.download_count||0),url:asset.browser_download_url})));
    apps.forEach(a=>a.title=title(a));
    apps.sort((a,b)=>(Date.parse(uploaded(b))||0)-(Date.parse(uploaded(a))||0));
@@ -624,7 +570,7 @@ async function reload(){
    $("statusText").textContent="Live GitHub counts · Pacific upload times";
  }catch(err){
    $("statusText").textContent=loaded?"Could not refresh — showing previously loaded releases.":"GitHub is temporarily unavailable. Please refresh.";
- }finally{$("refresh").disabled=false;renderWindowsPc();render();}
+ }finally{$("refresh").disabled=false;render();}
 }
 const guide=$("guide");
 $("guideButton").addEventListener("click",()=>{if(guide.showModal)guide.showModal();else guide.setAttribute("open","");});
