@@ -1,0 +1,46 @@
+name: Publish free Fiat alarm APK for download tracking
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apk/V200_Fiat500_BCM_FI3_v5_4.apk'
+      - '.github/workflows/publish-fiat-alarm.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-fiat-alarm-v5-4
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Publish the existing experimental APK as a counted release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="fiat-alarm-v5.4"
+          apk="apk/V200_Fiat500_BCM_FI3_v5_4.apk"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            gh release create "$tag" "$apk" \
+              --target "$GITHUB_SHA" \
+              --title "Fiat 500 BCM FI3 Alarm Active Disabler v5.4 — Experimental / Not Tested" \
+              --notes "Free Android APK. Experimental — Not Tested. Intended for Fiat 500 FI3 BCM alarm-active status. Operation and vehicle compatibility are unverified. For authorized service with an original BCM backup. Download totals cover this GitHub Release asset only; earlier direct-file downloads were not counted." \
+              --prerelease --latest=false
+          elif ! gh release view "$tag" --json assets --jq '.assets[].name' | grep -Fxq 'V200_Fiat500_BCM_FI3_v5_4.apk'; then
+            gh release upload "$tag" "$apk"
+          else
+            echo "Release asset already exists; preserving its download count."
+          fi
