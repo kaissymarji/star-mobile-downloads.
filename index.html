@@ -284,13 +284,6 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .bottom-links .owner-actions small{color:#8eabba;font-size:10px;line-height:1.4}
 
 
-/* Bosch Decoder landing card; independent from VIN, releases and upload widgets. */
-.bosch-launch{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:14px 0;padding:20px 22px}
-.bosch-launch h2{margin:4px 0;font-size:clamp(18px,2.6vw,24px);font-weight:950}
-.bosch-launch p{margin:4px 0;color:#bed8e5;font-size:12px;max-width:730px}
-.bosch-launch .kicker{color:#62f6e4;font-size:10px;font-weight:850;letter-spacing:.13em}
-.bosch-launch .boschtap{flex:none;min-width:176px;text-align:center}
-@media(max-width:570px){.bosch-launch{padding:14px;flex-direction:column;align-items:stretch;gap:10px}.bosch-launch .boschtap{width:100%}}
 
 
 </style>
@@ -371,19 +364,14 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 </svg></div></section>
 </div>
 
-<section class="panel bosch-launch" id="boschDecoder" aria-label="Bosch ECU decoder tool">
-<div><div class="kicker">FREE WORKSHOP TOOL · LOCAL BIN INSPECTION</div>
-<h2>⌘ BOSCH ECU DECODER</h2>
-<p>Identify common Bosch ECU numbers and ME / MED / EDC families. Inspect BIN and EEPROM dumps locally, including file size, SHA-256, readable strings and hex preview.</p></div>
-<a class="download-btn boschtap" href="bosch-decoder.html" aria-label="Open Bosch ECU Decoder">Open Bosch Decoder ↗</a>
-</section>
 <section class="panel" id="specialFreeTools" aria-labelledby="specialFreeTitle" style="margin:18px 0;padding:21px 22px;border-color:#37b8a3">
 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
 <div style="flex:1 1 350px">
 <div style="color:#6decc8;font-size:11px;letter-spacing:.16em;font-weight:900">SPECIAL TOOLS · FREE DOWNLOADS</div>
 <h2 id="specialFreeTitle" style="font-size:clamp(20px,2.8vw,28px);margin:6px 0;color:#f0feff">Fiat 500 BCM FI3 — Alarm Active Disabler</h2>
 <p style="color:#c2e0ec;font-size:13px;margin:0">Android APK v5.4 · <strong>Experimental — Not Tested.</strong> Intended for BCM alarm-active status. Operation is unverified; use with authorization and a backup.</p>
-</div><div style="flex:0 1 250px;width:100%"><a class="download-btn" href="km100-special-tools.html#freeDownloads" style="min-height:44px;text-align:center">View Free Download ↗</a></div>
+</div><div style="flex:0 1 250px;width:100%"><a class="download-btn" href="km100-special-tools.html#freeDownloads" style="min-height:44px;text-align:center">View Free Download ↗</a>
+<p style="margin:9px 0 0;color:#b7d3de;font-size:12px" role="status" aria-live="polite">⇩ <strong id="fiatAlarmDownloads">…</strong> <span id="fiatAlarmCountLabel">downloads</span></p></div>
 </div></section>
 <section class="panel" id="km100SpecialTools" aria-labelledby="km100Title" style="margin:18px 0;padding:21px 22px;border:1px solid #36b6ce;border-radius:14px;background:linear-gradient(120deg,#0b2f41,#0b1d33);">
 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
@@ -412,7 +400,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 </div>
 <p style="margin:10px 0 0;color:#9dbccc;font-size:11px">Only upload logs you have permission to share. Remove customer names, addresses, VINs and access tokens before uploading. ZIP files go privately to the Star Mobile Jotform inbox, not to the public GitHub repository. <a href="https://form.jotform.com/263136040649051" target="_blank" rel="noopener noreferrer" style="color:#63edf1">Open uploader separately</a> if the embedded upload is blocked.</p>
 </section>
-<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="bosch-decoder.html">Bosch Decoder</a><a href="km100-special-tools.html">KM100 Tools</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
+<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="km100-special-tools.html">KM100 Tools</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
 <p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Topology is an illustration, not a live vehicle connection.</p>
 </main>
 <dialog id="vinScanDialog" class="vin-scan-dialog" aria-labelledby="vinScanTitle">
@@ -577,7 +565,7 @@ async function reload(){
      releases=releases.concat(page);
      if(page.length<100)break;
    }
-   apps=releases.filter(r=>!r.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded").map(asset=>({asset,release:r,family:family(asset.name),count:Number(asset.download_count||0),url:asset.browser_download_url})));
+   apps=releases.filter(r=>!r.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded"&&a.name!=="V200_Fiat500_BCM_FI3_v5_4.apk").map(asset=>({asset,release:r,family:family(asset.name),count:Number(asset.download_count||0),url:asset.browser_download_url})));
    apps.forEach(a=>a.title=title(a));
    apps.sort((a,b)=>(Date.parse(uploaded(b))||0)-(Date.parse(uploaded(a))||0));
    loaded=true;
@@ -909,5 +897,6 @@ loadVisitorCounter();
 reload();
 })();
 </script>
+<script src="fiat-alarm-download.js?v=20261114" defer></script>
 </body>
 </html>
