@@ -279,6 +279,8 @@
     // Do not dismiss the intro just because Android briefly hides Chrome
     // while switching from a link or another app.
     addReplayButton();
+    const topReplay = document.getElementById("sm-portal-trigger");
+    if (topReplay) topReplay.addEventListener("click", () => start(true));
     start(false);
   }
 
