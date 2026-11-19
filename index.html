@@ -287,6 +287,9 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 
 
 
+/* The Command Center now shows only the functional VIN tool in this area. */
+.monitors{display:block}
+.monitors .vin-panel{width:100%}
 </style>
 </head>
 <body>
@@ -341,12 +344,11 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <div class="hero-copy"><p class="hero-kicker">AUTOMOTIVE SOFTWARE / ENGINEERING LAB</p><h1>ECU COMMAND <span>CENTER 2.0</span></h1><p class="hero-caption">J2534 • ECU FLASHING • IMMOBILIZER • CODING</p><a class="hero-link" href="#software">↓ EXPLORE DOWNLOADS</a></div>
 <span class="hero-signal">STAR MOBILE / BUILD LAB</span>
 </section>
-<div class="techstrip"><div class="ready">● DOWNLOAD CENTER READY</div><div class="protocols"><label>PROTOCOLS</label><b>CAN</b><b>K-LINE</b><b>UDS</b></div><div class="techstamp"><span class="levels"><i></i><i></i><i></i><i></i></span><span>SOFTWARE CATALOG <span class="mini-note">/ ONLINE</span></span></div></div>
 <section class="kpis" aria-label="Live GitHub statistics">
-<div class="kpi"><div class="k-label"><span class="k-icon">⇩</span>Total Downloads</div><strong id="totalDownloads">—</strong><small>Published APK assets</small><svg class="spark" viewBox="0 0 90 36" aria-hidden="true"><polyline points="0,30 13,24 23,27 37,15 49,20 64,7 76,12 88,2" fill="none" stroke="#1df7f9" stroke-width="2"/></svg></div>
-<div class="kpi"><div class="k-label"><span class="k-icon">▣</span>APK Versions</div><strong id="buildCount">—</strong><small>GitHub release assets</small></div>
-<div class="kpi"><div class="k-label"><span class="k-icon">▱</span>V200 Downloads</div><strong id="v200Downloads">—</strong><small>Recorded on GitHub</small><svg class="spark" viewBox="0 0 90 36" aria-hidden="true"><path d="M0 31V25H7V31M12 31V18H19V31M24 31V20H31V31M36 31V10H43V31M48 31V14H55V31M60 31V6H67V31M72 31V1H79V31" stroke="#24faff" stroke-width="7"/></svg></div>
-<div class="kpi" title="Approximate count of visits, limited to one count per browser per UTC day. Counting starts when this feature is enabled."><div class="k-label"><span class="k-icon" aria-hidden="true">◉</span>Site Visitors</div><strong id="siteVisitorCount" aria-live="polite">—</strong><small>One visit per browser/day</small></div>
+<div class="kpi"><div class="k-label">Total Downloads</div><strong id="totalDownloads">—</strong><small>Published APK assets</small></div>
+<div class="kpi"><div class="k-label">APK Versions</div><strong id="buildCount">—</strong><small>GitHub release assets</small></div>
+<div class="kpi"><div class="k-label">V200 Downloads</div><strong id="v200Downloads">—</strong><small>Recorded on GitHub</small></div>
+<div class="kpi" title="Approximate count of visits, limited to one count per browser per UTC day. Counting starts when this feature is enabled."><div class="k-label">Site Visitors</div><strong id="siteVisitorCount" aria-live="polite">—</strong><small>One visit per browser/day</small></div>
 </section>
 <div class="monitors" id="monitor">
 <section class="panel vin-panel" id="vinLookup" aria-label="Online VIN decoder"><div class="panel-heading"><span>⌗ VIN DECODER</span><a href="https://vpic.nhtsa.dot.gov/decoder/" target="_blank" rel="noopener noreferrer" class="vin-source">NHTSA vPIC ↗</a></div>
@@ -355,14 +357,6 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <div id="vinStatus" class="vin-status" role="status">Enter or scan a VIN to retrieve vehicle details.</div><p id="vinScanNotice" class="vin-scan-notice" hidden>VIN scanned from camera or photo. Check it against the vehicle before relying on the results.</p>
 <div id="vinResult" class="vin-results" hidden></div>
 <p class="vin-privacy">VIN is sent to the NHTSA decoding service only when you tap Decode.</p></div></section>
-<section class="panel" aria-label="Illustrative ECU topology"><div class="panel-heading"><span>♧ ECU NETWORK (TOPOLOGY)</span><span class="demo-chip">EXAMPLE</span></div><div class="topology-body"><svg class="topology-svg" viewBox="0 0 420 145" role="img" aria-label="Demonstration schematic connecting ECU to PCM, TCM, ABS, BCM, immobilizer and instrument cluster">
-<path d="M170 72H140L116 22H89M170 72H133L113 72H89M170 72H140L116 122H89M250 72H286L309 22H332M250 72H302H332M250 72H286L309 122H332"/>
-<rect class="hub" x="170" y="47" width="80" height="50" rx="8"/><text x="210" y="72">ECU</text>
-<rect class="module" x="17" y="7" width="72" height="30" rx="8"/><rect class="module" x="17" y="57" width="72" height="30" rx="8"/><rect class="module" x="17" y="107" width="72" height="30" rx="8"/>
-<rect class="module" x="332" y="7" width="74" height="30" rx="8"/><rect class="module" x="332" y="57" width="74" height="30" rx="8"/><rect class="module" x="332" y="107" width="74" height="30" rx="8"/>
-<text x="53" y="22">PCM</text><text x="53" y="72">TCM</text><text x="53" y="122">ABS</text>
-<text x="368" y="22">BCM</text><text x="368" y="72">IMMO</text><text x="368" y="122">IC</text>
-</svg></div></section>
 </div>
 
 <section class="panel" id="specialFreeTools" aria-labelledby="specialFreeTitle" style="margin:18px 0;padding:21px 22px;border-color:#37b8a3">
@@ -395,8 +389,6 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
 <div class="catalog-foot"><span id="statusText" role="status">Checking live GitHub Releases…</span><button id="showAll" aria-expanded="false" type="button" hidden>↓ Show previous versions</button><button id="refresh" type="button">↻ Refresh</button></div>
 </section>
-<div class="features-strip" aria-label="Automotive software specialties">
-<span>⌁ Diagnostics</span><span>▣ ECU Programming</span><span>⚿ Immobilizer</span><span>⌘ Coding</span><span>⚙ Service Functions</span></div>
 <section id="diagnosticLogs" aria-label="Send diagnostic logs to Star Mobile" style="margin:18px 0;padding:17px;border:1px solid #286178;border-radius:13px;background:linear-gradient(125deg,#06232c,#081b2d);">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
 <div><div style="color:#42eaf0;font-size:11px;font-weight:800;letter-spacing:.14em">TECHNICAL SUPPORT / LOGS</div><h2 style="margin:5px 0;color:#f5fbff;font-size:22px">⬆ UPLOAD DIAGNOSTIC ZIP</h2><p style="margin:5px 0;color:#b7d3e2;font-size:13px">Saved your logs in the V200 app? Select the ZIP file below and send it directly to Star Mobile. No name, email, or vehicle form required.</p></div>
@@ -407,7 +399,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <p style="margin:10px 0 0;color:#9dbccc;font-size:11px">Only upload logs you have permission to share. Remove customer names, addresses, VINs and access tokens before uploading. ZIP files go privately to the Star Mobile Jotform inbox, not to the public GitHub repository. <a href="https://form.jotform.com/263136040649051" target="_blank" rel="noopener noreferrer" style="color:#63edf1">Open uploader separately</a> if the embedded upload is blocked.</p>
 </section>
 <nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="km100-special-tools.html">KM100 Tools</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
-<p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Topology is an illustration, not a live vehicle connection.</p>
+<p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Download statistics reflect available GitHub release counts.</p>
 </main>
 <dialog id="vinScanDialog" class="vin-scan-dialog" aria-labelledby="vinScanTitle">
 <div class="vin-scan-head"><h2 id="vinScanTitle">📷 VIN Scanner</h2><button id="vinScanClose" type="button" class="vin-scan-close" aria-label="Close scanner">✕</button></div>
@@ -420,7 +412,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <input type="file" accept="image/*" id="vinUploadPhoto" hidden>
 <div id="vinScanFileReader" hidden></div>
 </dialog>
-<dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><p>The ECU network graphic is illustrative only; this website is not connected to any vehicle.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
+<dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
 <script>
 (function(){
 "use strict";
