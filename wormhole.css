@@ -50,7 +50,8 @@ html.sm-portal-lock,body.sm-portal-lock {overflow:hidden!important}
 .sm-portal-hud{width:min(450px,70vw)}
 .sm-portal-phase{font:700 12px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.17em;color:#c4faff;text-shadow:0 0 13px #36faff}
 .sm-portal-progress{height:4px;width:100%;border-radius:10px;overflow:hidden;background:#245268ab;box-shadow:0 0 12px #00dfff30;margin-top:12px}
-.sm-portal-progress span{display:block;width:0%;height:100%;background:linear-gradient(90deg,#36cfff,#86fff3);box-shadow:0 0 16px #24f2ff;animation:sm-progress-fill 4.1s linear forwards}
+.sm-portal-progress span{display:block;width:0%;height:100%;background:linear-gradient(90deg,#36cfff,#86fff3);box-shadow:0 0 16px #24f2ff}
+#sm-portal-overlay.sm-on .sm-portal-progress span{animation:sm-progress-fill 4.1s linear forwards}
 .sm-portal-indicator{font:800 11px/1.5 ui-monospace,Consolas,monospace;color:#6ff6d7;letter-spacing:.16em;text-align:right}
 .sm-portal-indicator::before{content:"● ";color:#6dfaf6;text-shadow:0 0 14px #00ffd9;animation:sm-vortex-pulse 1s infinite}
 .sm-portal-scanline{position:absolute;z-index:5;inset:0;background:repeating-linear-gradient(180deg,transparent 0 5px,#7afcff06 5px 6px);pointer-events:none;mix-blend-mode:screen}
