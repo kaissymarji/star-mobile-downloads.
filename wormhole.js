@@ -2,7 +2,6 @@
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "star-mobile-ecu-portal-seen-v1";
   const DURATION_MS = 4350;
   const overlayId = "sm-portal-overlay";
   let overlay, canvas, ctx, skipButton, phaseLabel;
@@ -13,20 +12,10 @@
   let stars = [];
   let width = 0, height = 0, pixelRatio = 1;
   let lastPaint = 0, begin = 0;
-  let previousFocus = null;
   let windowResizeListening = false;
   const TWO_PI = Math.PI * 2;
   const prefersReducedMotion = window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  function hasSeen() {
-    try { return localStorage.getItem(STORAGE_KEY) === "yes"; }
-    catch (_) { return false; }
-  }
-  function markSeen() {
-    try { localStorage.setItem(STORAGE_KEY, "yes"); }
-    catch (_) { /* Privacy settings may block storage; continue without tracking. */ }
-  }
 
   function makeOverlay() {
     const node = document.createElement("section");
@@ -200,7 +189,6 @@
   function finish() {
     if (!running) return;
     running = false;
-    markSeen();
     for (const timer of tasks) window.clearTimeout(timer);
     tasks = [];
     window.cancelAnimationFrame(rafId);
@@ -226,17 +214,17 @@
 
   function start(isReplay) {
     if (running) return;
-    // Respect deep links to a product or function; buyers should not be interrupted.
-    if (!isReplay && window.location.hash && window.location.hash !== "#home") return;
-    if (!isReplay && hasSeen()) return;
-    if (!isReplay && prefersReducedMotion) { markSeen(); return; }
+    // Play on every fresh homepage visit (previous visits no longer suppress it).
+    // Direct #section links skip it so buyers can still reach their requested tool.
+    // ?intro=1 explicitly forces the intro for testing or sharing.
+    const forceIntro = new URLSearchParams(window.location.search).get("intro") === "1";
+    if (!isReplay && !forceIntro && window.location.hash && window.location.hash !== "#home") return;
     if (!overlay) return;
 
     if (fadeTimer) { window.clearTimeout(fadeTimer); fadeTimer = 0; }
     for (const timer of tasks) window.clearTimeout(timer);
     tasks = [];
     running = true;
-    previousFocus = document.activeElement;
     overlay.classList.remove("sm-finished", "sm-opening", "sm-on");
     // Force the progress animation to restart when someone replays the portal.
     void overlay.offsetWidth;
@@ -245,7 +233,8 @@
     document.documentElement.classList.add("sm-portal-lock");
     document.body.classList.add("sm-portal-lock");
     setPhase("INITIALIZING ECU GATEWAY...");
-    skipButton.focus({ preventScroll: true });
+    try { skipButton.focus({ preventScroll: true }); }
+    catch (_) { skipButton.focus(); }
 
     begin = window.performance.now();
     lastPaint = 0;
@@ -258,7 +247,7 @@
 
     if (prefersReducedMotion) {
       setPhase("COMMAND CENTER READY");
-      schedule(finish, 700);
+      schedule(finish, 1400);
       return;
     }
 
@@ -287,9 +276,8 @@
       // Keep keyboard focus on the Skip button while the overlay is visible.
       if (event.key === "Tab" && running) { event.preventDefault(); skipButton.focus(); }
     });
-    document.addEventListener("visibilitychange", () => {
-      if (running && document.hidden) finish();
-    });
+    // Do not dismiss the intro just because Android briefly hides Chrome
+    // while switching from a link or another app.
     addReplayButton();
     start(false);
   }
