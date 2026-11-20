@@ -373,12 +373,12 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
 <div style="flex:1 1 330px;min-width:0">
 <div style="color:#9acaff;font-size:11px;letter-spacing:.13em;font-weight:900">FEATURED WINDOWS DOWNLOAD · BMW PROGRAMMING</div>
-<h2 id="winkfpTitle" style="font-size:clamp(21px,2.9vw,29px);margin:7px 0;color:#f0feff">WinKFP 2026 <span style="font-size:.65em;color:#9acaff">v0.3.7</span></h2>
+<h2 id="winkfpTitle" style="font-size:clamp(21px,2.9vw,29px);margin:7px 0;color:#f0feff">WinKFP 2026 <span id="winkfpVersion" style="font-size:.65em;color:#9acaff">v0.3.7</span></h2>
 <p style="color:#c8e2f3;font-size:13px;margin:0">Windows PC · BMW ECU flashing and programming · K+D-CAN USB cable</p>
 </div>
 <div style="flex:0 1 280px;width:100%">
-<a class="download-btn" href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/winkfp2026/winkfp2026-0.3.7-Ready.exe" style="min-height:44px;text-align:center">⇩ Download WinKFP 2026 (.exe)</a>
-<p style="margin:10px 0 0;color:#b7d8f0;font-size:12px" role="status" aria-live="polite">⇩ <strong id="winkfpDownloads">…</strong> GitHub downloads <span style="font-size:10px;color:#92abc0">· 327 MiB</span></p>
+<a id="winkfpDownloadLink" class="download-btn" href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/winkfp2026/winkfp2026-0.3.7-Ready.exe" style="min-height:44px;text-align:center">⇩ Download WinKFP 2026 (.exe)</a>
+<p style="margin:10px 0 0;color:#b7d8f0;font-size:12px" role="status" aria-live="polite">⇩ <strong id="winkfpDownloads">…</strong> GitHub downloads <span id="winkfpSize" style="font-size:10px;color:#92abc0">· 327 MiB</span></p>
 </div>
 </div></section>
 <section class="panel" id="km100SpecialTools" aria-labelledby="km100Title" style="margin:18px 0;padding:21px 22px;border:1px solid #36b6ce;border-radius:14px;background:linear-gradient(120deg,#0b2f41,#0b1d33);">
@@ -573,8 +573,15 @@ async function reload(){
    apps.forEach(a=>a.title=title(a));
    apps.sort((a,b)=>(b.family==="windows")-(a.family==="windows")||(Date.parse(uploaded(b))||0)-(Date.parse(uploaded(a))||0));
    // This is GitHub's actual release-asset download_count (never the site visitor count).
-   const winkfp=apps.find(a=>a.asset.name==="winkfp2026-0.3.7-Ready.exe");
-   if($("winkfpDownloads"))$("winkfpDownloads").textContent=winkfp?format(winkfp.count):"Unavailable";
+   // The featured Windows download follows the newest published GitHub Release EXE.
+   // Retain the working previous version until the replacement is uploaded.
+   const winkfp=apps.find(a=>a.family==="windows");
+   if(winkfp){
+     $("winkfpDownloads").textContent=format(winkfp.count);
+     $("winkfpVersion").textContent=version(winkfp);
+     $("winkfpDownloadLink").href=winkfp.url;
+     $("winkfpSize").textContent="· "+Math.round(Number(winkfp.asset.size||0)/1048576)+" MiB";
+   }else if($("winkfpDownloads"))$("winkfpDownloads").textContent="Unavailable";
    loaded=true;
    $("totalDownloads").textContent=format(apps.reduce((n,a)=>n+a.count,0));
    $("buildCount").textContent=format(apps.filter(a=>a.asset.name.toLowerCase().endsWith(".apk")).length);
