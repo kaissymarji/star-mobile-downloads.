@@ -91,7 +91,7 @@ main{padding-bottom:24px}
 .searchrow svg{width:18px;height:18px;stroke:#b4cfe2}
 .searchrow input{outline:none;border:0;background:transparent;width:100%;color:#fff;font-size:13px}
 .searchrow input::placeholder{color:#9cb5c8}
-.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:10px 0 13px}
+.filters{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:10px 0 13px}
 .filter{background:#0b2031;border:1px solid #587589;border-radius:11px;color:#deecf5;padding:9px 7px;font-size:13px;font-weight:850;min-height:40px}
 .filter[aria-pressed="true"]{background:linear-gradient(120deg,#2affed,#30d7e7);color:#001922;border-color:#59faff}
 .filter:hover{border-color:#20f8f9}
@@ -290,6 +290,15 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 /* The Command Center now shows only the functional VIN tool in this area. */
 .monitors{display:block}
 .monitors .vin-panel{width:100%}
+
+/* Highlight the newest Windows WinKFP executable above the Android catalog. */
+.appcard.windows-feature{grid-column:1/-1;min-height:0;display:flex;flex-flow:row wrap;align-items:center;gap:16px;border-color:#67acff;background:linear-gradient(115deg,#102842,#071725 72%,#14274a);box-shadow:inset 0 0 24px #2b82ef15,0 5px 24px #0005}
+.appcard.windows-feature .app-top{flex:1 1 240px}
+.appcard.windows-feature .hardware{flex:1 1 175px;border:0}
+.appcard.windows-feature .app-info{flex:1 1 155px}
+.appcard.windows-feature .app-actions{flex:0 1 180px;min-width:160px}
+.appcard.windows-feature .download-btn{min-height:43px}
+@media(max-width:510px){.appcard.windows-feature{gap:8px;flex-direction:column;align-items:stretch}.appcard.windows-feature .app-top,.appcard.windows-feature .hardware,.appcard.windows-feature .app-info,.appcard.windows-feature .app-actions{flex:initial;min-width:0}.filters{gap:4px}.filter{font-size:9px}}
 </style>
 </head>
 <body>
@@ -345,7 +354,7 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <span class="hero-signal">STAR MOBILE / BUILD LAB</span>
 </section>
 <section class="kpis" aria-label="Live GitHub statistics">
-<div class="kpi"><div class="k-label">Total Downloads</div><strong id="totalDownloads">—</strong><small>Published APK assets</small></div>
+<div class="kpi"><div class="k-label">Total Downloads</div><strong id="totalDownloads">—</strong><small>Published software assets</small></div>
 <div class="kpi"><div class="k-label">APK Versions</div><strong id="buildCount">—</strong><small>GitHub release assets</small></div>
 <div class="kpi"><div class="k-label">V200 Downloads</div><strong id="v200Downloads">—</strong><small>Recorded on GitHub</small></div>
 <div class="kpi" title="Approximate count of visits, limited to one count per browser per UTC day. Counting starts when this feature is enabled."><div class="k-label">Site Visitors</div><strong id="siteVisitorCount" aria-live="polite">—</strong><small>One visit per browser/day</small></div>
@@ -383,10 +392,10 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 </div>
 </div></section>
 <section id="software" aria-label="Official software releases">
-<div class="software-intro"><h2>⇩ SOFTWARE DOWNLOADS</h2><span>Android APKs · Real GitHub download counts</span></div>
+<div class="software-intro"><h2>⇩ SOFTWARE DOWNLOADS</h2><span>Windows EXE + Android APKs · Live GitHub download counts</span></div>
 <div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, tools, or versions..." aria-label="Search download catalog"/></div>
-<div class="filters" role="group" aria-label="Software filters"><button class="filter" data-filter="all" aria-pressed="true" type="button">▦ All</button><button class="filter" data-filter="v200" aria-pressed="false" type="button">⌁ V200</button><button class="filter" data-filter="eeprom" aria-pressed="false" type="button">▣ EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false" type="button">◉ BMW</button></div>
-<div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading published APKs from GitHub…</div></div>
+<div class="filters" role="group" aria-label="Software filters"><button class="filter" data-filter="all" aria-pressed="true" type="button">▦ All</button><button class="filter" data-filter="v200" aria-pressed="false" type="button">⌁ V200</button><button class="filter" data-filter="eeprom" aria-pressed="false" type="button">▣ EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false" type="button">◉ BMW</button><button class="filter" data-filter="windows" aria-pressed="false" type="button">▣ Windows</button></div>
+<div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading software releases from GitHub…</div></div>
 <div class="catalog-foot"><span id="statusText" role="status">Checking live GitHub Releases…</span><button id="showAll" aria-expanded="false" type="button" hidden>↓ Show previous versions</button><button id="refresh" type="button">↻ Refresh</button></div>
 </section>
 <nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="km100-special-tools.html">KM100 Tools</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
@@ -506,18 +515,20 @@ const pacificTime=new Intl.DateTimeFormat("en-US",{timeZone:"America/Los_Angeles
 let apps=[],filter="all",allVersions=false,loaded=false;
 const safe=x=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const format=n=>Number(n||0).toLocaleString("en-US");
-function family(n){const v=n.toLowerCase();return v.includes("v200")||v.includes("stardiagnostic")?"v200":v.includes("eeprom")||v.includes("xp400")?"eeprom":v.includes("bmw")?"bmw":"other";}
-function title(a){return a.family==="v200"?"V200 Diagnostic":a.family==="eeprom"?"EEPROM Studio":a.family==="bmw"?"BMW Standard Tools":a.asset.name.replace(/\.apk$/i,"").replace(/[_-]/g," ");}
+function family(n){const v=n.toLowerCase();return v.includes("winkfp2026")&&v.endsWith(".exe")?"windows":v.includes("v200")||v.includes("stardiagnostic")?"v200":v.includes("eeprom")||v.includes("xp400")?"eeprom":v.includes("bmw")?"bmw":"other";}
+function title(a){return a.family==="windows"?"WinKFP 2026":a.family==="v200"?"V200 Diagnostic":a.family==="eeprom"?"EEPROM Studio":a.family==="bmw"?"BMW Standard Tools":a.asset.name.replace(/\.apk$/i,"").replace(/[_-]/g," ");}
 function version(a){const match=a.asset.name.match(/(\d+(?:\.\d+){1,4})/);return match?"v"+match[1]:(a.release.tag_name||"Version");}
 function uploaded(a){return a.asset.created_at||a.release.published_at||a.release.created_at||"";}
 function latestIds(){const names=new Set(),keys=new Set();for(const a of apps){if(!names.has(a.title)){names.add(a.title);keys.add(a.asset.id||a.url);}}return keys;}
 const icons={
+windows:'<svg viewBox="0 0 32 32"><rect x="4" y="6" width="24" height="17" rx="2"/><path d="M12 28h8M16 23v5M10 13h12M10 17h8"/></svg><b>WIN</b>',
 v200:'<svg viewBox="0 0 32 32"><path d="M3 23V18L8 12H24L29 18V23H26L24 26H21V23H11V26H8L6 23Z"/><path d="M10 12L13 8H20L23 12M8 19H12M20 19H24"/></svg><b>V200</b>',
 eeprom:'<svg viewBox="0 0 32 32"><rect x="7" y="7" width="18" height="18" rx="2"/><path d="M11 3V7M17 3V7M23 3V7M11 25V29M17 25V29M23 25V29M3 11H7M3 17H7M3 23H7M25 11H29M25 17H29M25 23H29"/></svg><b>EEPROM</b>',
 bmw:'<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13"/><circle cx="16" cy="16" r="9"/><path d="M16 7V25M7 16H25"/></svg><b>BMW</b>',
 other:'<svg viewBox="0 0 32 32"><rect x="5" y="5" width="22" height="22" rx="4"/><path d="M11 17H21M16 12V22"/></svg><b>APP</b>'
 };
 function hardwareInfo(f){
+ if(f==="windows")return ["Windows PC","BMW K+D-CAN USB cable"];
  if(f==="v200")return ["Autel MaxiVCI V200","USB / Bluetooth connection"];
  if(f==="eeprom")return ["CH341A","XP400 Pro"];
  if(f==="bmw")return ["K+DCAN / ENET / ICOM","Interface varies by BMW function"];
@@ -533,14 +544,14 @@ function render(){
  toggle.hidden=!!query||(!allVersions&&hiddenCount===0);
  toggle.textContent=allVersions?"↑ Show latest only":"↓ Show "+hiddenCount+" previous versions";
  toggle.setAttribute("aria-expanded",String(allVersions));
- if(!shown.length){$("catalog").innerHTML='<div class="empty">'+(loaded?"No APKs match your search.":"Unable to load GitHub releases; tap Refresh.")+'</div>';return;}
+ if(!shown.length){$("catalog").innerHTML='<div class="empty">'+(loaded?"No downloads match your search.":"Unable to load GitHub releases; tap Refresh.")+'</div>';return;}
  $("catalog").innerHTML=shown.map(a=>{
   const latest=keys.has(a.asset.id||a.url),date=uploaded(a),valid=date&&!Number.isNaN(Date.parse(date));
   const dateLabel=valid?pacificTime.format(new Date(date)):"Date unavailable";
-  const subtitle=a.family==="v200"?"Android vehicle diagnostics and adapter testing":a.family==="eeprom"?"EEPROM read, backup and programming utilities":a.family==="bmw"?"BMW coding and diagnostic software":"Automotive Android utility";
-  const accent=a.family==="bmw"?"#62a8ff":a.family==="eeprom"?"#63fc95":"#22e6f4";
+  const subtitle=a.family==="windows"?"BMW ECU flashing and programming · K+D-CAN cable":a.family==="v200"?"Android vehicle diagnostics and adapter testing":a.family==="eeprom"?"EEPROM read, backup and programming utilities":a.family==="bmw"?"BMW coding and diagnostic software":"Automotive Android utility";
+  const accent=a.family==="windows"?"#70adff":a.family==="bmw"?"#62a8ff":a.family==="eeprom"?"#63fc95":"#22e6f4";
   const devices=hardwareInfo(a.family);
-  return '<article class="appcard" style="--accent:'+accent+'"><div class="app-top"><div class="app-icon">'+(icons[a.family]||icons.other)+'</div><div class="app-heading"><h3 class="app-name">'+safe(a.title)+'</h3><p class="app-desc">'+safe(subtitle)+'</p></div></div><div class="hardware"><strong>HARDWARE SUPPORTED</strong><div>'+devices.map(d=>'<span>✓ '+safe(d)+'</span>').join("")+'</div></div><div class="app-info"><span class="version-tag">'+safe(version(a))+' '+(latest?"· Latest":"· Archive")+'</span><span>◷ <time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></span><span>⇩ '+format(a.count)+' downloads</span></div><div class="app-actions"><a class="download-btn" href="'+safe(a.url)+'">⇩ Download APK</a></div></article>';
+  return '<article class="appcard'+(a.family==="windows"?" windows-feature":"")+'" style="--accent:'+accent+'"><div class="app-top"><div class="app-icon">'+(icons[a.family]||icons.other)+'</div><div class="app-heading"><h3 class="app-name">'+safe(a.title)+'</h3><p class="app-desc">'+safe(subtitle)+'</p></div></div><div class="hardware"><strong>HARDWARE SUPPORTED</strong><div>'+devices.map(d=>'<span>✓ '+safe(d)+'</span>').join("")+'</div></div><div class="app-info"><span class="version-tag">'+safe(version(a))+' '+(latest?"· Latest":"· Archive")+'</span><span>◷ <time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></span><span>⇩ '+format(a.count)+' downloads</span></div><div class="app-actions"><a class="download-btn" href="'+safe(a.url)+'">⇩ Download '+(a.family==="windows"?"Windows EXE":"APK")+'</a></div></article>';
  }).join("");
 }
 async function reload(){
@@ -554,12 +565,12 @@ async function reload(){
      releases=releases.concat(page);
      if(page.length<100)break;
    }
-   apps=releases.filter(r=>!r.draft).flatMap(r=>(r.assets||[]).filter(a=>/\.apk$/i.test(a.name)&&a.state==="uploaded"&&a.name!=="V200_Fiat500_BCM_FI3_v5_4.apk").map(asset=>({asset,release:r,family:family(asset.name),count:Number(asset.download_count||0),url:asset.browser_download_url})));
+   apps=releases.filter(r=>!r.draft).flatMap(r=>(r.assets||[]).filter(a=>(/\.apk$/i.test(a.name)||(a.name.toLowerCase().includes("winkfp2026")&&a.name.toLowerCase().endsWith(".exe")))&&a.state==="uploaded"&&a.name!=="V200_Fiat500_BCM_FI3_v5_4.apk").map(asset=>({asset,release:r,family:family(asset.name),count:Number(asset.download_count||0),url:asset.browser_download_url})));
    apps.forEach(a=>a.title=title(a));
-   apps.sort((a,b)=>(Date.parse(uploaded(b))||0)-(Date.parse(uploaded(a))||0));
+   apps.sort((a,b)=>(b.family==="windows")-(a.family==="windows")||(Date.parse(uploaded(b))||0)-(Date.parse(uploaded(a))||0));
    loaded=true;
    $("totalDownloads").textContent=format(apps.reduce((n,a)=>n+a.count,0));
-   $("buildCount").textContent=format(apps.length);
+   $("buildCount").textContent=format(apps.filter(a=>a.asset.name.toLowerCase().endsWith(".apk")).length);
    $("v200Downloads").textContent=format(apps.filter(a=>a.family==="v200").reduce((n,a)=>n+a.count,0));
    $("statusText").textContent="Live GitHub counts · Pacific upload times";
  }catch(err){
