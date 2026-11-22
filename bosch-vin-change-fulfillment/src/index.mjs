@@ -64,7 +64,8 @@ async function readEvent(request) {
       if (total > MAX_EVENT_BYTES) throw new RangeError("Event exceeds size limit");
       raw += decoder.decode(value, { stream: true });
     }
-    return JSON.parse(raw + decoder.decode());
+    raw += decoder.decode();
+    return { raw, event: JSON.parse(raw) };
   } finally {
     await reader.cancel();
   }
@@ -125,9 +126,9 @@ export async function handleWebhook(request, env, fetcher = fetch) {
     .map(([field, name]) => [field, request.headers.get(name)]));
   if (Object.values(signature).some(value => !value)) return reply({ error: "Signature required" }, 403);
 
-  let event;
+  let raw, event;
   try {
-    event = await readEvent(request);
+    ({ raw, event } = await readEvent(request));
     if (!event || typeof event !== "object" || Array.isArray(event)) throw new SyntaxError("Invalid event");
   } catch (error) {
     return reply({ error: "Invalid webhook body" }, error instanceof RangeError ? 413 : 400);
@@ -136,15 +137,18 @@ export async function handleWebhook(request, env, fetcher = fetch) {
     const base = paypalBase(env);
     const token = await paypalToken(fetcher, base, env);
     const headers = { authorization: "Bearer " + token, "content-type": "application/json" };
+    // PayPal verifies the original event serialization, including whitespace and escapes.
+    const verificationFields = JSON.stringify({ ...signature, webhook_id: env.PAYPAL_WEBHOOK_ID });
     const verification = await jsonResponse(fetcher, base + "/v1/notifications/verify-webhook-signature", {
       method: "POST",
       headers,
-      body: JSON.stringify({ ...signature, webhook_id: env.PAYPAL_WEBHOOK_ID, webhook_event: event }),
+      body: verificationFields.slice(0, -1) + ',"webhook_event":' + raw + "}",
     });
     if (verification.verification_status !== "SUCCESS") return reply({ error: "Invalid signature" }, 403);
     const eventCapture = event.resource;
     if (event.event_type !== CAPTURE_EVENT || !eventCapture || !id(eventCapture.id)
-        || eventCapture.status !== "COMPLETED" || !priceMatches(eventCapture.amount)) {
+        || eventCapture.status !== "COMPLETED"
+        || (Object.hasOwn(eventCapture, "amount") && !priceMatches(eventCapture.amount))) {
       return reply({ outcome: "ignored" });
     }
 

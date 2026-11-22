@@ -39,7 +39,7 @@ function webhook(event, headers = {
   "paypal-transmission-sig": "test-signature",
 }) {
   return new Request("https://example.test/webhooks/paypal", {
-    method: "POST", headers, body: JSON.stringify(event),
+    method: "POST", headers, body: typeof event === "string" ? event : JSON.stringify(event),
   });
 }
 
@@ -88,6 +88,39 @@ test("verify-only mode leaves Drive untouched", async () => {
     webhook(details.event), { ...env, DELIVERY_ENABLED: "false" }, fakePayPal(details),
   );
   assert.deepEqual(await response.json(), { outcome: "verified_dry_run" });
+});
+
+test("signature verification preserves the original event whitespace and escapes", async () => {
+  const details = payment();
+  const raw = " \r\n" + JSON.stringify(details.event, null, 2).replace("COMPLETED", "COMPL\\u0045TED") + "\r\n";
+  const upstream = fakePayPal(details);
+  const fetcher = async (url, options) => {
+    if (url.endsWith("/verify-webhook-signature")) {
+      assert.ok(options.body.endsWith(',"webhook_event":' + raw + "}"));
+      assert.deepEqual(JSON.parse(options.body).webhook_event, details.event);
+    }
+    return upstream(url, options);
+  };
+  const response = await handleWebhook(webhook(raw), { ...env, DELIVERY_ENABLED: "false" }, fetcher);
+  assert.deepEqual(await response.json(), { outcome: "verified_dry_run" });
+});
+
+test("a signed minimal capture uses the PayPal capture and order amounts", async () => {
+  const details = payment();
+  delete details.event.resource.amount;
+  const verifyOnly = { ...env, DELIVERY_ENABLED: "false" };
+  const valid = await handleWebhook(webhook(details.event), verifyOnly, fakePayPal(details));
+  assert.deepEqual(await valid.json(), { outcome: "verified_dry_run" });
+  details.capture.amount = { ...amount, value: "24.99" };
+  const invalid = await handleWebhook(webhook(details.event), verifyOnly, fakePayPal(details));
+  assert.deepEqual(await invalid.json(), { outcome: "unattributed" });
+});
+
+test("a conflicting amount in the signed event is rejected even if readback would match", async () => {
+  const details = payment();
+  details.event.resource.amount = { ...amount, value: "24.99" };
+  const response = await handleWebhook(webhook(details.event), env, fakePayPal(details));
+  assert.deepEqual(await response.json(), { outcome: "ignored" });
 });
 
 test("unsigned or forged webhook fails", async () => {
