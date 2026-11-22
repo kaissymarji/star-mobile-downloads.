@@ -60,13 +60,13 @@ function fakePayPal({ capture, order }, success = true) {
   };
 }
 
-function fakeQueue(attempts) {
+function fakeQueue(attempts, outcome = "delivered") {
   return {
     idFromName: name => name,
     get: () => ({
       fetch: async (_, request) => {
         attempts.push(JSON.parse(request.body));
-        return Response.json({ outcome: "delivered" });
+        return Response.json({ outcome });
       },
     }),
   };
@@ -292,7 +292,9 @@ test("checkout readiness requires live configuration and two distinct delivery f
   });
   const landing = await worker.fetch(new Request(checkoutOrigin + "/checkout"), checkoutEnv);
   assert.equal(landing.status, 200);
-  assert.match(await landing.text(), /Pay \$25 USD with PayPal/);
+  const storefront = await landing.text();
+  assert.match(storefront, /Pay \$25 USD with PayPal/);
+  assert.doesNotMatch(storefront, /drive\.google\.com\/file\/d\//);
   for (const configuration of [
     { PAYPAL_ENVIRONMENT: "sandbox" }, { DELIVERY_ENABLED: "false" }, { CHECKOUT_STATE_SECRET: "" },
     { DELIVERY_FILE_IDS: "WINDOWSFILE" }, { DELIVERY_FILE_IDS: "WINDOWSFILE,WINDOWSFILE" },
@@ -361,13 +363,31 @@ test("live checkout verifies a buyer-approved $25 order and delivers its authent
   mock.loseCaptureResponse = true;
   const completed = await handleCheckout(new Request(mock.returnUrl), ready, mock.fetcher);
   assert.equal(completed.status, 200);
-  assert.match(await completed.text(), /Payment complete/);
+  assert.equal(completed.headers.get("cache-control"), "no-store");
+  const receipt = await completed.text();
+  assert.match(receipt, /Payment complete/);
+  assert.match(receipt, /href="https:\/\/drive\.google\.com\/file\/d\/WINDOWSFILE\/view">Download for Windows \(EXE\)/);
+  assert.match(receipt, /href="https:\/\/drive\.google\.com\/file\/d\/ANDROIDFILE\/view">Download for Android \(APK\)/);
   assert.deepEqual(deliveries, [{ captureId: "TESTCAPTURE", buyer: email }]);
   assert.deepEqual(mock.captureRequests, ["bvc-capture-" + liveOrderId]);
 
-  const refreshed = await handleCheckout(new Request(mock.returnUrl), ready, mock.fetcher);
+  const refreshed = await handleCheckout(new Request(mock.returnUrl), {
+    ...ready, DELIVERY_QUEUE: fakeQueue(deliveries, "already_delivered"),
+  }, mock.fetcher);
   assert.equal(refreshed.status, 200);
+  assert.equal(await refreshed.text(), receipt);
   assert.equal(mock.captureRequests.length, 1);
+});
+
+test("a completed payment waiting on Drive delivery does not show download links", async () => {
+  const mock = mockCheckout();
+  const pending = { ...checkoutEnv, DELIVERY_QUEUE: fakeQueue([], "pending") };
+  assert.equal((await handleCheckout(checkoutStart(), pending, mock.fetcher)).status, 303);
+  const result = await handleCheckout(new Request(mock.returnUrl), pending, mock.fetcher);
+  assert.equal(result.status, 503);
+  const page = await result.text();
+  assert.match(page, /Download delivery is pending/);
+  assert.doesNotMatch(page, /drive\.google\.com\/file\/d\//);
 });
 
 test("live checkout rejects unrelated approved orders without attempting to capture", async () => {

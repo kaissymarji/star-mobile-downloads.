@@ -372,10 +372,14 @@ async function finishCheckout(orderId, reference, env, fetcher, base, headers) {
     return checkoutPage("Payment confirmation pending", "<p>Refresh this page to check the same PayPal order.</p>", 409);
   }
   const delivery = await queueDelivery(env, paidFor);
-  if (!delivery.ok) {
+  const outcome = delivery.ok && (await delivery.json()).outcome;
+  if (outcome !== "delivered" && outcome !== "already_delivered") {
     return checkoutPage("Payment received", "<p>Download delivery is pending. Refresh this page to retry delivery for this payment.</p>", 503);
   }
-  return checkoutPage("Payment complete", "<p>Google Drive shares both Bosch VIN Change downloads with your PayPal email address. Check your inbox for access to the Windows and Android files.</p>");
+  const [windowsFile, androidFile] = deliveryFileIds(env);
+  return checkoutPage("Payment complete", `<p>Both downloads are ready. Sign in to Google Drive with the email address you used to pay with PayPal. Google Drive emails an invitation when access is first granted.</p>
+<ul><li><a href="https://drive.google.com/file/d/${windowsFile}/view">Download for Windows (EXE)</a></li>
+<li><a href="https://drive.google.com/file/d/${androidFile}/view">Download for Android (APK)</a></li></ul>`);
 }
 
 export async function handleCheckout(request, env, fetcher = fetch) {
@@ -384,7 +388,7 @@ export async function handleCheckout(request, env, fetcher = fetch) {
     return checkoutPage("Checkout unavailable", "<p>Checkout is temporarily unavailable.</p>", 503);
   }
   if (url.pathname === "/checkout" && request.method === "GET") {
-    return checkoutPage(PRODUCT, `<p>Buy the Windows and Android downloads for $25 USD. Google Drive sends both downloads to your PayPal email address after payment.</p>
+    return checkoutPage(PRODUCT, `<p>Buy the Windows and Android downloads for $25 USD. Use a PayPal email address you can also use to sign in to Google Drive.</p>
 <form method="post" action="/checkout"><button type="submit">Pay $25 USD with PayPal</button></form>`);
   }
   const returning = url.pathname === "/checkout/return" && request.method === "GET";
