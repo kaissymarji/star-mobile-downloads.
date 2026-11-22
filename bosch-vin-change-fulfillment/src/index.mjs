@@ -13,6 +13,22 @@ const SIGNATURE_HEADERS = {
   auth_algo: "paypal-auth-algo",
   transmission_sig: "paypal-transmission-sig",
 };
+const PAYPAL_CHECKOUT_FAILURES = new Set([
+  "INVALID_CLIENT", "INVALID_REQUEST", "INVALID_PARAMETER_SYNTAX", "INVALID_PARAMETER_VALUE",
+  "INVALID_STRING_LENGTH", "MISSING_REQUIRED_PARAMETER", "INVALID_RESOURCE_ID", "NOT_AUTHORIZED",
+  "PERMISSION_DENIED", "PAYEE_ACCOUNT_INVALID", "PAYEE_ACCOUNT_RESTRICTED", "PAYEE_NOT_CONSENTED",
+  "PAYEE_NOT_ENABLED_FOR_CARD_PROCESSING", "CURRENCY_NOT_SUPPORTED_BY_PAYEE", "UNPROCESSABLE_ENTITY",
+  "PAYPAL_REQUEST_ID_REQUIRED", "INTERNAL_SERVER_ERROR", "SERVICE_UNAVAILABLE",
+]);
+
+class UpstreamRequestError extends Error {
+  constructor(response) {
+    super("Upstream request failed");
+    this.response = response;
+  }
+}
+
+class InvalidPayPalApproval extends Error {}
 
 function reply(body, status = 200) {
   return Response.json(body, {
@@ -102,7 +118,7 @@ async function readEvent(request) {
 
 async function jsonResponse(fetcher, url, options) {
   const response = await fetcher(url, { redirect: "error", ...options });
-  if (!response.ok) throw new Error("Upstream request failed");
+  if (!response.ok) throw new UpstreamRequestError(response);
   return response.json();
 }
 
@@ -275,13 +291,12 @@ async function startCheckout(env, fetcher, base, headers) {
   returnUrl.searchParams.set("state", await newCheckoutState(env, reference));
   const order = await jsonResponse(fetcher, base + "/v2/checkout/orders", {
     method: "POST",
-    headers: { ...headers, "paypal-request-id": "bvc-create-" + reference },
+    headers: { ...headers, "paypal-request-id": reference },
     body: JSON.stringify({
       intent: "CAPTURE",
       purchase_units: [{
         reference_id: reference,
         custom_id: env.PAYPAL_PRODUCT_CUSTOM_ID,
-        payee: { merchant_id: env.PAYPAL_MERCHANT_ID },
         description: PRODUCT,
         amount: PRODUCT_AMOUNT,
       }],
@@ -294,13 +309,33 @@ async function startCheckout(env, fetcher, base, headers) {
     }),
   });
   const approval = order.links?.find(link => link.rel === "payer-action" || link.rel === "approve");
-  const redirect = new URL(approval?.href);
+  if (!approval?.href || !URL.canParse(approval.href)) throw new InvalidPayPalApproval();
+  const redirect = new URL(approval.href);
   if (!id(order.id) || redirect.origin !== PAYPAL_CHECKOUT_ORIGIN || redirect.username || redirect.password
       || redirect.pathname !== "/checkoutnow" || redirect.searchParams.getAll("token").length !== 1
-      || redirect.searchParams.get("token") !== order.id) throw new Error("Invalid PayPal approval URL");
+      || redirect.searchParams.get("token") !== order.id) throw new InvalidPayPalApproval();
   return new Response(null, { status: 303, headers: {
     location: redirect.href, "cache-control": "no-store", "referrer-policy": "no-referrer",
   } });
+}
+
+async function unavailableCheckout(stage, error) {
+  const page = checkoutPage("Checkout unavailable",
+    "<p>Return to checkout and try again.</p><p><a href=\"/checkout\">Back to checkout</a></p>", 503);
+  if (error instanceof InvalidPayPalApproval) {
+    page.headers.set("x-checkout-failure", "approval-link");
+  } else if (error instanceof UpstreamRequestError) {
+    const payload = await error.response.json().catch(() => null);
+    const issues = Array.isArray(payload?.details) ? payload.details.map(detail => detail?.issue) : [];
+    const code = [...issues, payload?.name, payload?.error].find(
+      value => typeof value === "string" && PAYPAL_CHECKOUT_FAILURES.has(value.toUpperCase()),
+    );
+    const label = [stage, error.response.status, code?.toUpperCase()].filter(Boolean).join(":");
+    page.headers.set("x-checkout-failure", label);
+  } else {
+    page.headers.set("x-checkout-failure", stage);
+  }
+  return page;
 }
 
 function invalidCheckout() {
@@ -355,6 +390,7 @@ export async function handleCheckout(request, env, fetcher = fetch) {
   const starting = url.pathname === "/checkout" && request.method === "POST"
     && request.headers.get("origin") === env.CHECKOUT_ORIGIN;
   if (!returning && !starting) return invalidCheckout();
+  let stage = "sign-in";
   try {
     const orderId = url.searchParams.get("token");
     const reference = returning && await checkoutReference(env, url.searchParams.get("state"));
@@ -363,12 +399,15 @@ export async function handleCheckout(request, env, fetcher = fetch) {
     const base = paypalBase(env);
     const token = await paypalToken(fetcher, base, env);
     const headers = { authorization: "Bearer " + token, "content-type": "application/json" };
-    if (starting) return await startCheckout(env, fetcher, base, headers);
+    if (starting) {
+      stage = "create-order";
+      return await startCheckout(env, fetcher, base, headers);
+    }
     return await finishCheckout(orderId, reference, env, fetcher, base, headers);
-  } catch {
+  } catch (error) {
     return returning
       ? checkoutPage("Payment status unavailable", "<p>Refresh this page to check the same PayPal order.</p>", 503)
-      : checkoutPage("Checkout unavailable", "<p>Return to checkout and try again.</p><p><a href=\"/checkout\">Back to checkout</a></p>", 503);
+      : unavailableCheckout(stage, error);
   }
 }
 

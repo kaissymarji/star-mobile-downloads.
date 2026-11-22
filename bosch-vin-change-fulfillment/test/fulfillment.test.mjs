@@ -243,11 +243,11 @@ function mockCheckout() {
       const payload = JSON.parse(options.body);
       const [unit] = payload.purchase_units;
       const context = payload.payment_source.paypal.experience_context;
-      assert.equal(options.headers["paypal-request-id"], "bvc-create-" + unit.reference_id);
+      assert.equal(options.headers["paypal-request-id"], unit.reference_id);
       assert.equal(payload.intent, "CAPTURE");
       assert.equal(payload.purchase_units.length, 1);
       assert.equal(unit.custom_id, productId);
-      assert.equal(unit.payee.merchant_id, checkoutEnv.PAYPAL_MERCHANT_ID);
+      assert.equal(unit.payee, undefined);
       assert.deepEqual(unit.amount, amount);
       assert.equal(context.shipping_preference, "NO_SHIPPING");
       assert.equal(context.user_action, "PAY_NOW");
@@ -257,7 +257,8 @@ function mockCheckout() {
       assert.equal(mock.returnUrl.pathname, "/checkout/return");
       mock.returnUrl.searchParams.set("token", liveOrderId);
       mock.order = {
-        id: liveOrderId, intent: payload.intent, status: "APPROVED", purchase_units: [unit],
+        id: liveOrderId, intent: payload.intent, status: "APPROVED",
+        purchase_units: [{ ...unit, payee: { merchant_id: checkoutEnv.PAYPAL_MERCHANT_ID } }],
         payment_source: { paypal: { email_address: email } },
       };
       return Response.json({ id: liveOrderId, links: [{ rel: "payer-action", href: mock.approvalUrl }] });
@@ -311,10 +312,24 @@ test("live checkout only accepts its same-origin form and a PayPal approval redi
   const wrongHost = await handleCheckout(checkoutStart(), checkoutEnv, mock.fetcher);
   assert.equal(wrongHost.status, 503);
   assert.equal(wrongHost.headers.get("location"), null);
+  assert.equal(wrongHost.headers.get("x-checkout-failure"), "approval-link");
   mock.approvalUrl = "https://www.paypal.com/checkoutnow?token=UNRELATEDORDER";
   const wrongOrder = await handleCheckout(checkoutStart(), checkoutEnv, mock.fetcher);
   assert.equal(wrongOrder.status, 503);
   assert.equal(wrongOrder.headers.get("location"), null);
+});
+
+test("checkout diagnostics report the PayPal failure stage without echoing response details", async () => {
+  const response = await handleCheckout(checkoutStart(), checkoutEnv, async url => {
+    if (url.endsWith("/v1/oauth2/token")) return Response.json({ access_token: "checkout-token" });
+    return Response.json({
+      name: "UNPROCESSABLE_ENTITY",
+      details: [{ issue: "PAYEE_ACCOUNT_RESTRICTED", description: "private provider details" }],
+    }, { status: 422 });
+  });
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get("x-checkout-failure"), "create-order:422:PAYEE_ACCOUNT_RESTRICTED");
+  assert.doesNotMatch(await response.text(), /private provider details/);
 });
 
 test("live checkout verifies a buyer-approved $25 order and delivers its authenticated capture", async () => {
