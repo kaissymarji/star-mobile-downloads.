@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { generateKeyPairSync } from "node:crypto";
 import { test } from "node:test";
-import { DeliveryQueue, handleWebhook } from "../src/index.mjs";
+import worker, { DeliveryQueue, handleCheckout, handleWebhook } from "../src/index.mjs";
 
 const hostedId = "HOSTED_TEST_ITEM";
 const email = "buyer@example.test";
@@ -203,6 +203,175 @@ test("SKU fallback requires a configured product ID", async () => {
   const details = paymentWithSku();
   const response = await handleWebhook(webhook(details.event), env, fakePayPal(details));
   assert.deepEqual(await response.json(), { outcome: "unattributed" });
+});
+
+const checkoutOrigin = "https://checkout.example.test";
+const liveOrderId = "TESTLIVEORDER";
+const checkoutEnv = {
+  ...env,
+  PAYPAL_ENVIRONMENT: "live",
+  PAYPAL_LINK_ID: undefined,
+  PAYPAL_PRODUCT_CUSTOM_ID: productId,
+  CHECKOUT_ORIGIN: checkoutOrigin,
+  CHECKOUT_STATE_SECRET: "test-secret-for-checkout-state-with-more-than-forty-three-characters",
+  DELIVERY_FILE_IDS: "WINDOWSFILE,ANDROIDFILE",
+  GOOGLE_SERVICE_ACCOUNT_JSON: JSON.stringify({
+    client_email: "fulfillment@example.test", private_key: "-----BEGIN PRIVATE KEY-----\ntest",
+  }),
+  DELIVERY_QUEUE: fakeQueue([]),
+};
+
+function checkoutStart(origin = checkoutOrigin) {
+  return new Request(checkoutOrigin + "/checkout", { method: "POST", headers: { origin } });
+}
+
+function mockCheckout() {
+  const mock = {
+    returnUrl: null,
+    order: null,
+    captureRequests: [],
+    approvalUrl: "https://www.paypal.com/checkoutnow?token=" + liveOrderId,
+    failBeforeCapture: false,
+    loseCaptureResponse: false,
+  };
+  mock.fetcher = async (url, options) => {
+    assert.equal(new URL(url).origin, "https://api-m.paypal.com");
+    if (url.endsWith("/v1/oauth2/token")) return Response.json({ access_token: "checkout-token" });
+    assert.equal(options.headers.authorization, "Bearer checkout-token");
+    if (url.endsWith("/v2/checkout/orders")) {
+      assert.equal(options.method, "POST");
+      const payload = JSON.parse(options.body);
+      const [unit] = payload.purchase_units;
+      const context = payload.payment_source.paypal.experience_context;
+      assert.equal(options.headers["paypal-request-id"], "bvc-create-" + unit.reference_id);
+      assert.equal(payload.intent, "CAPTURE");
+      assert.equal(payload.purchase_units.length, 1);
+      assert.equal(unit.custom_id, productId);
+      assert.equal(unit.payee.merchant_id, checkoutEnv.PAYPAL_MERCHANT_ID);
+      assert.deepEqual(unit.amount, amount);
+      assert.equal(context.shipping_preference, "NO_SHIPPING");
+      assert.equal(context.user_action, "PAY_NOW");
+      assert.equal(context.cancel_url, checkoutOrigin + "/checkout");
+      mock.returnUrl = new URL(context.return_url);
+      assert.equal(mock.returnUrl.origin, checkoutOrigin);
+      assert.equal(mock.returnUrl.pathname, "/checkout/return");
+      mock.returnUrl.searchParams.set("token", liveOrderId);
+      mock.order = {
+        id: liveOrderId, intent: payload.intent, status: "APPROVED", purchase_units: [unit],
+        payment_source: { paypal: { email_address: email } },
+      };
+      return Response.json({ id: liveOrderId, links: [{ rel: "payer-action", href: mock.approvalUrl }] });
+    }
+    if (url.endsWith("/v2/checkout/orders/" + liveOrderId)) return Response.json(mock.order);
+    if (url.endsWith("/v2/checkout/orders/" + liveOrderId + "/capture")) {
+      assert.equal(options.method, "POST");
+      assert.equal(options.body, "{}");
+      mock.captureRequests.push(options.headers["paypal-request-id"]);
+      if (mock.failBeforeCapture) return new Response(null, { status: 503 });
+      mock.order.status = "COMPLETED";
+      mock.order.purchase_units[0].payments = { captures: [{ id: "TESTCAPTURE" }] };
+      if (mock.loseCaptureResponse) throw new Error("Payment response lost after capture");
+      return Response.json(mock.order);
+    }
+    if (url.endsWith("/v2/payments/captures/TESTCAPTURE")) {
+      return Response.json({
+        id: "TESTCAPTURE", status: "COMPLETED", amount,
+        supplementary_data: { related_ids: { order_id: liveOrderId } },
+      });
+    }
+    assert.fail("Unexpected PayPal endpoint " + url);
+  };
+  return mock;
+}
+
+test("checkout readiness requires live configuration and two distinct delivery files", async () => {
+  const health = new Request(checkoutOrigin + "/health");
+  assert.deepEqual(await (await worker.fetch(health, checkoutEnv)).json(), {
+    configured: true, deliveryEnabled: true, checkoutReady: true,
+  });
+  const landing = await worker.fetch(new Request(checkoutOrigin + "/checkout"), checkoutEnv);
+  assert.equal(landing.status, 200);
+  assert.match(await landing.text(), /Pay \$25 USD with PayPal/);
+  for (const configuration of [
+    { PAYPAL_ENVIRONMENT: "sandbox" }, { DELIVERY_ENABLED: "false" }, { CHECKOUT_STATE_SECRET: "" },
+    { DELIVERY_FILE_IDS: "WINDOWSFILE" }, { DELIVERY_FILE_IDS: "WINDOWSFILE,WINDOWSFILE" },
+  ]) {
+    const incomplete = { ...checkoutEnv, ...configuration };
+    assert.equal((await worker.fetch(new Request(checkoutOrigin + "/checkout"), incomplete)).status, 503);
+    assert.equal((await (await worker.fetch(health, incomplete)).json()).checkoutReady, false);
+  }
+});
+
+test("live checkout only accepts its same-origin form and a PayPal approval redirect", async () => {
+  const mock = mockCheckout();
+  const crossOrigin = await handleCheckout(checkoutStart("https://elsewhere.example"), checkoutEnv, mock.fetcher);
+  assert.equal(crossOrigin.status, 400);
+  assert.equal(mock.order, null);
+  mock.approvalUrl = "https://www.paypal.com.evil.example/checkoutnow?token=" + liveOrderId;
+  const wrongHost = await handleCheckout(checkoutStart(), checkoutEnv, mock.fetcher);
+  assert.equal(wrongHost.status, 503);
+  assert.equal(wrongHost.headers.get("location"), null);
+  mock.approvalUrl = "https://www.paypal.com/checkoutnow?token=UNRELATEDORDER";
+  const wrongOrder = await handleCheckout(checkoutStart(), checkoutEnv, mock.fetcher);
+  assert.equal(wrongOrder.status, 503);
+  assert.equal(wrongOrder.headers.get("location"), null);
+});
+
+test("live checkout verifies a buyer-approved $25 order and delivers its authenticated capture", async () => {
+  const mock = mockCheckout();
+  const deliveries = [];
+  const ready = { ...checkoutEnv, DELIVERY_QUEUE: fakeQueue(deliveries) };
+  const start = await handleCheckout(checkoutStart(), ready, mock.fetcher);
+  assert.equal(start.status, 303);
+  assert.equal(start.headers.get("location"), mock.approvalUrl);
+
+  const tampered = new URL(mock.returnUrl);
+  const state = tampered.searchParams.get("state");
+  tampered.searchParams.set("state", (state[0] === "0" ? "1" : "0") + state.slice(1));
+  const rejected = await handleCheckout(new Request(tampered), ready, () => assert.fail("Invalid state reached PayPal"));
+  assert.equal(rejected.status, 400);
+
+  mock.loseCaptureResponse = true;
+  const completed = await handleCheckout(new Request(mock.returnUrl), ready, mock.fetcher);
+  assert.equal(completed.status, 200);
+  assert.match(await completed.text(), /Payment complete/);
+  assert.deepEqual(deliveries, [{ captureId: "TESTCAPTURE", buyer: email }]);
+  assert.deepEqual(mock.captureRequests, ["bvc-capture-" + liveOrderId]);
+
+  const refreshed = await handleCheckout(new Request(mock.returnUrl), ready, mock.fetcher);
+  assert.equal(refreshed.status, 200);
+  assert.equal(mock.captureRequests.length, 1);
+});
+
+test("live checkout rejects unrelated approved orders without attempting to capture", async () => {
+  const mock = mockCheckout();
+  const start = await handleCheckout(checkoutStart(), checkoutEnv, mock.fetcher);
+  assert.equal(start.status, 303);
+  const unit = mock.order.purchase_units[0];
+  for (const [field, invalid] of [
+    ["reference_id", "unrelated-ref"], ["custom_id", "OTHER"], ["payee", { merchant_id: "OTHER" }],
+    ["amount", { ...amount, value: "24.99" }],
+  ]) {
+    const original = unit[field];
+    unit[field] = invalid;
+    const result = await handleCheckout(new Request(mock.returnUrl), checkoutEnv, mock.fetcher);
+    assert.equal(result.status, 400);
+    unit[field] = original;
+  }
+  mock.order.payment_source.paypal.email_address = "";
+  assert.equal((await handleCheckout(new Request(mock.returnUrl), checkoutEnv, mock.fetcher)).status, 400);
+  assert.deepEqual(mock.captureRequests, []);
+});
+
+test("retrying a failed capture uses the same PayPal idempotency key", async () => {
+  const mock = mockCheckout();
+  const start = await handleCheckout(checkoutStart(), checkoutEnv, mock.fetcher);
+  assert.equal(start.status, 303);
+  mock.failBeforeCapture = true;
+  assert.equal((await handleCheckout(new Request(mock.returnUrl), checkoutEnv, mock.fetcher)).status, 409);
+  mock.failBeforeCapture = false;
+  assert.equal((await handleCheckout(new Request(mock.returnUrl), checkoutEnv, mock.fetcher)).status, 200);
+  assert.deepEqual(mock.captureRequests, ["bvc-capture-" + liveOrderId, "bvc-capture-" + liveOrderId]);
 });
 
 function deliveryRequest(captureId = "TESTCAPTURE") {
