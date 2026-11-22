@@ -112,9 +112,12 @@ export function entitlement(eventCapture, capture, order, env) {
       || unit.payments.captures[0]?.id !== capture.id) return null;
 
   const directLinks = [eventCapture, capture, order, unit].flatMap(hostedLink);
-  const customMatches = Boolean(env.PAYPAL_PRODUCT_CUSTOM_ID)
-    && (capture.custom_id === env.PAYPAL_PRODUCT_CUSTOM_ID || unit.custom_id === env.PAYPAL_PRODUCT_CUSTOM_ID);
-  if (directLinks.length ? directLinks.some(value => value !== env.PAYPAL_LINK_ID) : !customMatches) return null;
+  const productId = env.PAYPAL_PRODUCT_CUSTOM_ID;
+  const item = Array.isArray(unit.items) && unit.items.length === 1 ? unit.items[0] : null;
+  const productMatches = Boolean(productId)
+    && (capture.custom_id === productId || unit.custom_id === productId
+      || (item?.sku === productId && item.quantity === "1" && priceMatches(item.unit_amount)));
+  if (directLinks.length ? directLinks.some(value => value !== env.PAYPAL_LINK_ID) : !productMatches) return null;
 
   const buyer = order.payer?.email_address || order.payment_source?.paypal?.email_address;
   return email(buyer) ? { captureId: capture.id, buyer } : null;

@@ -151,7 +151,7 @@ for (const [name, change] of rejected) {
   });
 }
 
-test("if hosted ID is absent, only the configured merchant custom ID can attribute the payment", async () => {
+test("if the hosted ID is absent, a configured merchant custom ID can attribute the payment", async () => {
   const details = payment();
   delete details.order.purchase_units[0].payment_link_id;
   details.capture.custom_id = "BOSCH_VIN_CHANGE_TEST";
@@ -159,6 +159,50 @@ test("if hosted ID is absent, only the configured merchant custom ID can attribu
     ...env, DELIVERY_ENABLED: "false", PAYPAL_PRODUCT_CUSTOM_ID: "BOSCH_VIN_CHANGE_TEST",
   }, fakePayPal(details));
   assert.deepEqual(await response.json(), { outcome: "verified_dry_run" });
+});
+
+const productId = "BOSCH_VIN_CHANGE_TEST";
+const skuEnv = { ...env, DELIVERY_ENABLED: "false", PAYPAL_PRODUCT_CUSTOM_ID: productId };
+
+function paymentWithSku() {
+  const details = payment();
+  const unit = details.order.purchase_units[0];
+  delete unit.payment_link_id;
+  unit.items = [{ sku: productId, quantity: "1", unit_amount: amount }];
+  return details;
+}
+
+test("if the hosted ID is absent, the exact SKU on the single $25 item can attribute the payment", async () => {
+  const details = paymentWithSku();
+  const response = await handleWebhook(webhook(details.event), skuEnv, fakePayPal(details));
+  assert.deepEqual(await response.json(), { outcome: "verified_dry_run" });
+});
+
+const rejectedSku = [
+  ["a different SKU", unit => { unit.items[0].sku = "OTHER"; }],
+  ["a description matching the product ID", unit => {
+    delete unit.items[0].sku;
+    unit.items[0].description = productId;
+  }],
+  ["multiple items", unit => { unit.items.push({ ...unit.items[0] }); }],
+  ["multiple copies", unit => { unit.items[0].quantity = "2"; }],
+  ["a mismatched unit price", unit => { unit.items[0].unit_amount = { ...amount, value: "24.99" }; }],
+  ["a mismatched unit currency", unit => { unit.items[0].unit_amount = { ...amount, currency_code: "EUR" }; }],
+  ["a conflicting hosted ID", unit => { unit.payment_link_id = "OTHER"; }],
+];
+for (const [name, change] of rejectedSku) {
+  test("SKU fallback rejects " + name, async () => {
+    const details = paymentWithSku();
+    change(details.order.purchase_units[0]);
+    const response = await handleWebhook(webhook(details.event), skuEnv, fakePayPal(details));
+    assert.deepEqual(await response.json(), { outcome: "unattributed" });
+  });
+}
+
+test("SKU fallback requires a configured product ID", async () => {
+  const details = paymentWithSku();
+  const response = await handleWebhook(webhook(details.event), env, fakePayPal(details));
+  assert.deepEqual(await response.json(), { outcome: "unattributed" });
 });
 
 function deliveryRequest(captureId = "TESTCAPTURE") {
