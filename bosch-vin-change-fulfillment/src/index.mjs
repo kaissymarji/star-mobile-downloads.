@@ -117,7 +117,8 @@ async function readEvent(request) {
 }
 
 async function jsonResponse(fetcher, url, options) {
-  const response = await fetcher(url, { redirect: "error", ...options });
+  // Workers supports manual redirects. A non-2xx response never forwards credentials.
+  const response = await fetcher(url, { ...options, redirect: "manual" });
   if (!response.ok) throw new UpstreamRequestError(response);
   return response.json();
 }

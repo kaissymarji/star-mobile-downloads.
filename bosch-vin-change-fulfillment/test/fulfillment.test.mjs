@@ -332,6 +332,18 @@ test("checkout diagnostics report the PayPal failure stage without echoing respo
   assert.doesNotMatch(await response.text(), /private provider details/);
 });
 
+test("checkout rejects an upstream redirect without forwarding PayPal credentials", async () => {
+  const requests = [];
+  const response = await handleCheckout(checkoutStart(), checkoutEnv, async (url, options) => {
+    requests.push({ url, redirect: options.redirect });
+    return new Response(null, { status: 302, headers: { location: "https://unexpected.example/" } });
+  });
+  assert.deepEqual(requests, [{ url: "https://api-m.paypal.com/v1/oauth2/token", redirect: "manual" }]);
+  assert.equal(response.status, 503);
+  assert.equal(response.headers.get("x-checkout-failure"), "sign-in:302");
+  assert.equal(response.headers.get("location"), null);
+});
+
 test("live checkout verifies a buyer-approved $25 order and delivers its authenticated capture", async () => {
   const mock = mockCheckout();
   const deliveries = [];
