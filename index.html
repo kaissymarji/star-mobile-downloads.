@@ -408,8 +408,15 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 </div>
 <div style="flex:0 1 220px">
 <strong style="color:#e8faff">$25.00 USD</strong>
-<a class="download-btn" href="https://bosch-vin-change-fulfillment.kaissymarji.workers.dev/checkout" style="min-height:44px;text-align:center;margin-top:8px" aria-describedby="boschVinChangePurchaseNote">Pay with PayPal — $25</a>
+<a id="boschCheckoutLink" class="download-btn" href="https://bosch-vin-change-fulfillment.kaissymarji.workers.dev/checkout" style="min-height:44px;text-align:center;margin-top:8px" aria-describedby="boschVinChangePurchaseNote">Pay with PayPal — $25</a>
 <p id="boschVinChangePurchaseNote" style="color:#c2e0ec;font-size:12px;margin:6px 0 0">One $25 payment includes both Windows and Android. Google Drive sends both download links to your PayPal email address.</p>
+<div style="margin-top:12px;padding:12px 13px;border:1px solid #24647d;background:#041e2c;border-radius:10px" aria-label="Bosch VIN Change checkout activity">
+  <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;font-variant-numeric:tabular-nums">
+    <strong id="boschCheckoutClicks" style="font-size:25px;line-height:1.1;color:#48f5ef" aria-live="polite">—</strong>
+    <span style="color:#e0faff;font-weight:750;font-size:13px">Checkout clicks</span>
+  </div>
+  <small style="display:block;margin-top:6px;color:#a4c5d3;font-size:11px;line-height:1.4">Tracked here from Nov 22, 2026. Counts clicks on Pay with PayPal, not completed purchases or Google Drive downloads.</small>
+</div>
 </div>
 </div>
 </section>
@@ -439,6 +446,35 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 const REPO="kaissymarji/star-mobile-downloads.";
 const API="https://api.github.com/repos/"+REPO+"/releases?per_page=100&page=";
 const $=id=>document.getElementById(id);
+
+// Bosch VIN Change is delivered by PayPal/Google Drive, outside GitHub Releases.
+// Track only clicks on its checkout button. Never label these as file downloads
+// or completed payments, and never seed the counter with an invented number.
+const BOSCH_CHECKOUT_COUNTER_BASE="https://countapi.mileshilliard.com/api/v1/";
+const BOSCH_CHECKOUT_COUNTER_KEY="kaissymarji_bosch_vin_change_checkout_clicks_20261122";
+async function loadBoschCheckoutCounter(){
+ const output=$("boschCheckoutClicks");
+ if(!output)return;
+ try{
+  const response=await fetch(BOSCH_CHECKOUT_COUNTER_BASE+"get/"+BOSCH_CHECKOUT_COUNTER_KEY,{cache:"no-store"});
+  if(response.status===404){output.textContent="0";return;} // Uninitialized key: no tracked clicks yet.
+  if(!response.ok)throw new Error("Checkout counter HTTP "+response.status);
+  const payload=await response.json(),value=Number(payload&&payload.value);
+  if(!Number.isSafeInteger(value)||value<0)throw new Error("Invalid checkout count");
+  output.textContent=value.toLocaleString("en-US");
+ }catch(error){
+  output.textContent="Unavailable";
+  console.warn("Bosch checkout-click count unavailable",error);
+ }
+}
+const boschCheckoutLink=$("boschCheckoutLink");
+if(boschCheckoutLink)boschCheckoutLink.addEventListener("click",()=>{
+ // The original PayPal checkout navigation is preserved. keepalive allows
+ // this anonymous GET to finish when the browser navigates away.
+ try{fetch(BOSCH_CHECKOUT_COUNTER_BASE+"hit/"+BOSCH_CHECKOUT_COUNTER_KEY,
+  {method:"GET",mode:"no-cors",cache:"no-store",keepalive:true}).catch(()=>{});}catch(_){}
+});
+loadBoschCheckoutCounter();
 
  // Visitor counts come from a public service; never display made-up values.
  // This counts approximate daily browser visits, not verified unique people.
