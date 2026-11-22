@@ -1,0 +1,31 @@
+name: Deploy Bosch VIN Change verification worker
+on:
+  push:
+    branches: [bosch-vin-change-deploy]
+    paths:
+      - bosch-vin-change-fulfillment/**
+      - .github/workflows/deploy-bosch-vin-change.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/bosch-vin-change-deploy'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test verification and private delivery
+        working-directory: bosch-vin-change-fulfillment
+        run: node --test test/fulfillment.test.mjs
+      - name: Deploy sandbox webhook with delivery disabled
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: bosch-vin-change-fulfillment
+          wranglerVersion: '4'
+          command: deploy --config wrangler.toml
