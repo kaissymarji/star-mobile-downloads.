@@ -5,6 +5,8 @@
   const form = $('resetForm');
   const status = $('status');
   const save = $('savePassword');
+  const account = $('resetAccount');
+  const emailLabel = $('resetEmail');
   const query = new URLSearchParams(window.location.search);
   const fragment = new URLSearchParams(window.location.hash.slice(1));
   const isRecovery = query.get('type') === 'recovery'
@@ -18,6 +20,26 @@
     status.textContent = text;
     status.className = 'status' + (kind ? ' ' + kind : '');
   }
+
+  function setupPasswordToggle(fieldId, buttonId, label) {
+    const input = $(fieldId);
+    const button = $(buttonId);
+    button.addEventListener('click', () => {
+      const reveal = input.type === 'password';
+      input.type = reveal ? 'text' : 'password';
+      button.setAttribute('aria-pressed', String(reveal));
+      button.setAttribute('aria-label', (reveal ? 'Hide ' : 'Show ') + label);
+      button.title = (reveal ? 'Hide ' : 'Show ') + label;
+    });
+    return () => {
+      input.type = 'password';
+      button.setAttribute('aria-pressed', 'false');
+      button.setAttribute('aria-label', 'Show ' + label);
+      button.title = 'Show ' + label;
+    };
+  }
+  const resetNewToggle = setupPasswordToggle('newPassword','toggleNewPassword','new password');
+  const resetConfirmToggle = setupPasswordToggle('confirmPassword','toggleConfirmPassword','confirmation password');
 
   async function start() {
     if (!isRecovery) {
@@ -50,12 +72,17 @@
         throw new Error('Your recovery link is expired or invalid. Request a new password-reset email in the app.');
       }
       verified = true;
+      // Always derive the account email from the verified Supabase session, never from URL parameters.
+      emailLabel.textContent = session.user.email || 'Verified technician account';
+      account.hidden = false;
       // Remove session tokens and recovery codes from the browser address bar/history.
       window.history.replaceState(null, document.title, window.location.pathname);
       form.hidden = false;
       message('Link verified. Enter and confirm your new password.');
       $('newPassword').focus();
     } catch (e) {
+      account.hidden = true;
+      emailLabel.textContent = '';
       form.hidden = true;
       window.history.replaceState(null, document.title, window.location.pathname);
       message(e?.message || 'Could not verify the reset link. Please request a new one.', 'error');
@@ -82,6 +109,8 @@
       if (result.error) throw result.error;
       verified = false;
       form.reset();
+      resetNewToggle();
+      resetConfirmToggle();
       form.hidden = true;
       message('Password updated successfully. Return to V200 Diagnostic and sign in using your new password. Your existing purchases are preserved.', 'success');
       try { await auth.signOut({ scope: 'local' }); } catch (_) {}
