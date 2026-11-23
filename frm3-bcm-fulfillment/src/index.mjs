@@ -21,6 +21,22 @@ function reply(value, status) {
   return new Response(value, { status, headers: BASE_HEADERS });
 }
 
+function paymentConfirmation() {
+  return new Response(`<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PayPal payment confirmation</title>
+<main>
+  <h1>Check your PayPal receipt</h1>
+  <p>If your payment completed, PayPal will email a receipt. You can also sign in to PayPal to view the transaction.</p>
+  <p><a href="https://kaissymarji.github.io/star-mobile-downloads./">Return to Star Mobile Service</a></p>
+</main>
+</html>`, {
+    headers: { ...BASE_HEADERS, "content-type": "text/html; charset=utf-8" },
+  });
+}
+
 function serviceAccount(value) {
   const account = JSON.parse(value);
   if (typeof account?.client_email !== "string" || !account.client_email.includes("@")
@@ -221,6 +237,7 @@ export async function handleRequest(request, env, fetcher = fetch) {
   if (url.pathname === "/health") {
     return Response.json({ deliveryReady: ready(env) }, { headers: BASE_HEADERS });
   }
+  if (url.pathname === "/paypal/confirmation") return paymentConfirmation();
   if (url.pathname !== "/paypal/return" && url.pathname !== "/download") return reply("Not found", 404);
   if (!ready(env)) return reply("Automatic delivery is not configured.", 503);
   try {
