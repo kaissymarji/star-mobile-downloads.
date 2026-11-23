@@ -191,3 +191,14 @@ test("missing transaction ID or deployment configuration stays closed", async ()
   assert.deepEqual(await (await run("/health")).json(), { deliveryReady: false });
   assert.deepEqual(calls, []);
 });
+
+test("the general PayPal return provides receipt guidance without authorizing a download", async () => {
+  const { env, run, calls } = fixture();
+  env.DELIVERY_ENABLED = "false";
+  const result = await run("/paypal/confirmation?tx=EXAMPLE");
+  assert.equal(result.status, 200);
+  assert.match(await result.text(), /PayPal will email a receipt/);
+  assert.equal(result.headers.get("set-cookie"), null);
+  assert.equal(result.headers.get("referrer-policy"), "no-referrer");
+  assert.deepEqual(calls, []);
+});
