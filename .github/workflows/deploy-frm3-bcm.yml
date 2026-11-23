@@ -3,7 +3,9 @@ on:
   push:
     branches: [frm3-bcm-deploy]
     paths:
+      - frm3-bcm-fulfillment/src/**
       - frm3-bcm-fulfillment/wrangler.toml
+      - .github/workflows/deploy-frm3-bcm.yml
 permissions:
   contents: read
 jobs:
