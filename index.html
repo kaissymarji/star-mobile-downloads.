@@ -1,14 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#030e19">
+<meta name="theme-color" content="#f3f6fa">
 <meta name="description" content="Star Mobile Service — ECU Command Center. Official V200 Diagnostic, EEPROM Studio and BMW Standard Tools APK downloads, upload dates and live GitHub counts.">
 <meta property="og:title" content="Star Mobile Service | ECU Command Center 2.0">
 <meta property="og:description" content="Official automotive software downloads — J2534, ECU flashing, coding and immobilizer tools.">
 <title>Star Mobile Service | ECU Command Center</title>
 <link rel="stylesheet" href="wormhole.css?v=20261118" media="all">
+<script>
+/* Local theme preference only; no account or payment data is touched. */
+(function(){
+  const key="star-mobile-download-theme-v1";
+  const root=document.documentElement;
+  let current="light";
+  try{if(localStorage.getItem(key)==="dark")current="dark";}catch(_){}
+  function apply(theme){
+    current=theme==="dark"?"dark":"light";
+    root.dataset.theme=current;
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.content=current==="dark"?"#0c1725":"#f3f6fa";
+  }
+  apply(current);
+  document.addEventListener("DOMContentLoaded",function(){
+    const select=document.getElementById("themeSelector");
+    if(!select)return;
+    select.value=current;
+    select.addEventListener("change",function(){
+      apply(select.value);
+      try{localStorage.setItem(key,current);}catch(_){}
+    });
+  },{once:true});
+})();
+</script>
 <style>
 :root{color-scheme:dark;--bg:#020c17;--pane:#081f30;--pane2:#0c2439;--line:#246078;--line-soft:#183d56;--cyan:#25e6eb;--mint:#49ffd0;--white:#f5fbff;--muted:#a0b8c9;--green:#58f5a8}
 *{box-sizing:border-box}
@@ -371,13 +396,90 @@ a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{o
 @media(max-width:510px){.header{gap:6px;justify-content:space-between;min-height:0}.identity{flex:1 0 auto}.brandname{font-size:12px}.brandsub{font-size:7px}.head-actions{gap:4px}.navbtn{font-size:11px;padding:7px 8px}.dashboard-title{margin:12px 0 8px}.dashboard-title p{font-size:11px}.kpis{gap:4px;margin-bottom:8px}.kpi{padding:6px}.kpi .k-label{font-size:10px;line-height:1.2}.kpi strong{font-size:16px}.kpi small{display:none}.filter{min-height:34px;font-size:11px;padding:5px 8px}.software-grid{gap:6px}#software .appcard{padding:10px;gap:5px}#software .app-name{font-size:14px}#software .app-desc{font-size:11px}.card-label{font-size:9px}.card-meta,.product-details{font-size:10px}#software .download-btn{min-height:40px;font-size:11px}.catalog-foot{font-size:10px}.bottom-links{gap:10px}}
 @media(max-width:340px){.software-grid{grid-template-columns:1fr}.head-actions{flex:1 1 100%}.navbtn{flex:1;text-align:center}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+
+/* Workshop Light — restrained OEM-inspired diagnostic workspace. */
+.theme-control{display:inline-flex;align-items:center;gap:4px;flex:none}
+.theme-control label{font-size:10px;color:#b0c5d7;font-weight:650}
+#themeSelector{font:inherit;font-size:12px;font-weight:650;min-height:33px;padding:6px 4px 6px 7px;border-radius:7px;border:1px solid #38506a;background:#17283a;color:#edf5ff;cursor:pointer;max-width:80px}
+#themeSelector:focus-visible{outline:2px solid #5ce1dc;outline-offset:2px}
+html[data-theme="light"]{color-scheme:light;--bg:#f3f6fa;--pane:#fff;--white:#172b42;--muted:#50667c;--line:#cbd6e3;--cyan:#125bb2;--mint:#125bb2;--green:#166448}
+html[data-theme="light"] body{background:#f3f6fa;color:#172b42}
+html[data-theme="light"] .topline{background:#fff;border-color:#d5dfea}
+html[data-theme="light"] .brandicon{background:#edf4ff;border-color:#b8cce7}
+html[data-theme="light"] .brandicon svg path:first-child{stroke:#165ba4}
+html[data-theme="light"] .brandicon svg path:nth-child(2){stroke:#457bb7}
+html[data-theme="light"] .brandname{color:#193651}
+html[data-theme="light"] .brandsub{color:#526b84}
+html[data-theme="light"] .brandsub em{color:#185caa}
+html[data-theme="light"] .navbtn,html[data-theme="light"] #themeSelector{background:#fff;color:#284761;border-color:#c8d6e6}
+html[data-theme="light"] .navbtn.donate{background:#f1f9f5;color:#176245;border-color:#b5d7c5}
+html[data-theme="light"] .navbtn:hover{background:#eaf2ff;box-shadow:none;border-color:#6695c7}
+html[data-theme="light"] .theme-control label{color:#536b82}
+html[data-theme="light"] .dashboard-title h1{color:#172b42}
+html[data-theme="light"] .utility-link{color:#165aa8}
+html[data-theme="light"] .kpi{background:#fff;border-color:#d2deeb;box-shadow:0 1px 2px #243b5510}
+html[data-theme="light"] .kpi .k-label{color:#496279}
+html[data-theme="light"] .kpi strong{color:#165aa8}
+html[data-theme="light"] .kpi small{color:#536b82}
+html[data-theme="light"] .searchrow{background:#fff;border-color:#b9c9dc}
+html[data-theme="light"] .searchrow svg{stroke:#5c7894}
+html[data-theme="light"] .searchrow input{color:#172b42}
+html[data-theme="light"] .searchrow input::placeholder{color:#60758b}
+html[data-theme="light"] .filter{background:#fff;color:#38546f;border-color:#c6d3e3}
+html[data-theme="light"] .filter:hover{border-color:#457fc1;background:#edf4ff}
+html[data-theme="light"] .filter[aria-pressed="true"]{background:#1859a7;color:#fff;border-color:#1859a7}
+html[data-theme="light"] #software .appcard{background:#fff;border-color:#d2dce7;box-shadow:0 2px 5px #2847660b}
+html[data-theme="light"] #software #windowsFeatured{border-color:#77a1d2}
+html[data-theme="light"] .card-label{color:#245f9e}
+html[data-theme="light"] .paid-card .card-label{color:#83591c}
+html[data-theme="light"] #software .app-name{color:#19314b}
+html[data-theme="light"] #software .app-desc,html[data-theme="light"] .card-meta{color:#50677f}
+html[data-theme="light"] .card-meta strong{color:#203a54}
+html[data-theme="light"] #software .download-btn{background:#1859a7;color:#fff}
+html[data-theme="light"] #software .download-btn:hover{background:#134986}
+html[data-theme="light"] #software .paid-card .download-btn{background:#edf4ff;color:#174f94;border-color:#abc4e4}
+html[data-theme="light"] #software .paid-card .download-btn:hover{background:#dceaff}
+html[data-theme="light"] .product-details{color:#526a80}
+html[data-theme="light"] .product-details summary,html[data-theme="light"] .product-details a{color:#175da9}
+html[data-theme="light"] #software .empty{color:#526a80;background:#f8fafc;border-color:#b9cada}
+html[data-theme="light"] .catalog-foot,html[data-theme="light"] .footertext{color:#526a80}
+html[data-theme="light"] .catalog-foot button{background:#fff;color:#244c75;border-color:#b9cde3}
+html[data-theme="light"] .vin-drawer{background:#fff;border-color:#cedbe9}
+html[data-theme="light"] .vin-drawer>summary{color:#244360}
+html[data-theme="light"] .vin-drawer>summary span{color:#526c85}
+html[data-theme="light"] .vin-drawer .vin-panel{background:#f8fafc;border-color:#d1dfeb}
+html[data-theme="light"] .panel-heading{border-color:#d2dce7}
+html[data-theme="light"] .panel-heading span:first-child{color:#203a54}
+html[data-theme="light"] .vin-intro,html[data-theme="light"] .vin-status,html[data-theme="light"] .vin-privacy{color:#50677f}
+html[data-theme="light"] .vin-source{color:#155aa8}
+html[data-theme="light"] .vin-form input{background:#fff;color:#172b42;border-color:#a9bed5}
+html[data-theme="light"] .vin-form button,html[data-theme="light"] .close-guide{background:#1859a7;color:#fff}
+html[data-theme="light"] .vin-form .vin-scan-launch{background:#edf4ff!important;color:#174f94!important;border-color:#abc4e4!important}
+html[data-theme="light"] .vin-scan-notice{color:#176245}
+html[data-theme="light"] .vin-pair{background:#fff;border-color:#d2dce7}
+html[data-theme="light"] .vin-pair span{color:#526a80}
+html[data-theme="light"] .vin-pair strong{color:#19314b}
+html[data-theme="light"] .bottom-links a,html[data-theme="light"] .bottom-links button,html[data-theme="light"] .bottom-links .owner-dropdown summary{color:#3e648b}
+html[data-theme="light"] .bottom-links a:hover,html[data-theme="light"] .bottom-links button:hover,html[data-theme="light"] .bottom-links .owner-dropdown summary:hover{color:#124a88}
+html[data-theme="light"] .bottom-links .owner-actions{background:#fff;border-color:#c2d2e5;box-shadow:0 8px 25px #18395b22}
+html[data-theme="light"] .bottom-links .owner-actions a{background:#edf4ff;color:#174f94}
+html[data-theme="light"] .bottom-links .owner-actions small{color:#526a80}
+html[data-theme="light"] dialog{background:#fff;color:#172b42;border-color:#b9cce1;box-shadow:0 20px 60px #182e4a44}
+html[data-theme="light"] dialog::backdrop{background:#132c4880}
+html[data-theme="light"] dialog p,html[data-theme="light"] .vin-scan-feedback{color:#405c77}
+html[data-theme="light"] .vin-scan-alt,html[data-theme="light"] .vin-scan-close{background:#edf4ff;color:#174f94;border-color:#abc4e4}
+html[data-theme="light"] .vin-scanner-view{border-color:#b9cce1}
+html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-visible,html[data-theme="light"] summary:focus-visible,html[data-theme="light"] input:focus-visible,html[data-theme="light"] #themeSelector:focus-visible{outline-color:#1859a7}
+@media(max-width:760px){.theme-control label{display:none}#themeSelector{min-height:32px;font-size:11px}}
+@media(max-width:510px){#themeSelector{min-height:30px;padding:4px;font-size:11px;max-width:62px}}
+
 </style>
 <script src="recovery-redirect.js?v=20261121"></script>
 </head>
 <body>
 <header class="topline" id="home"><div class="wrap header">
 <a class="identity" href="#home" aria-label="Star Mobile Service home"><span class="brandicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3L29 19L44 21L32 30L35 46L24 37L10 43L15 28L4 19L20 18Z" fill="none" stroke="#4efff1" stroke-width="2.7"/><path d="M13 31L34 13" stroke="#b9faff" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><span class="brandname">STAR MOBILE SERVICE</span><span class="brandsub">SOFTWARE <em>LAB</em> / COMMAND CENTER</span></span></a>
-<nav class="head-actions"><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a></nav>
+<nav class="head-actions"><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><span class="theme-control"><label for="themeSelector">Theme</label><select id="themeSelector" aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option></select></span></nav>
 </div></header>
 <main class="wrap">
 <div class="dashboard-title"><div><h1>ECU Command Center</h1><p>Official automotive software downloads</p></div><a class="utility-link" href="#vinLookup">VIN decoder ↗</a></div>
