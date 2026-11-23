@@ -281,7 +281,8 @@
     addReplayButton();
     const topReplay = document.getElementById("sm-portal-trigger");
     if (topReplay) topReplay.addEventListener("click", () => start(true));
-    start(false);
+    // Keep the catalog immediately accessible. The intro is opt-in or explicitly shared.
+    if (new URLSearchParams(window.location.search).get("intro") === "1") start(false);
   }
 
   if (document.readyState === "loading") {
