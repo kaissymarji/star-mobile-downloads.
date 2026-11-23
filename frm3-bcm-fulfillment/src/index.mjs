@@ -224,7 +224,8 @@ function checkoutCookieName(orderId) {
   return "__Host-frm3-checkout-" + orderId;
 }
 
-function checkoutPage(title, content, status = 200) {
+function checkoutPage(title, content, status = 200, approvalOrigin = null) {
+  const formAction = approvalOrigin ? "'self' " + approvalOrigin : "'none'";
   return new Response(`<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
@@ -236,7 +237,8 @@ function checkoutPage(title, content, status = 200) {
     status,
     headers: {
       ...BASE_HEADERS, "content-type": "text/html; charset=utf-8",
-      "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'",
+      "referrer-policy": approvalOrigin ? "same-origin" : BASE_HEADERS["referrer-policy"],
+      "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'; form-action " + formAction,
     },
   });
 }
@@ -395,7 +397,8 @@ async function handleCheckout(request, url, env, fetcher) {
     const sandbox = env.PAYPAL_ENVIRONMENT === "sandbox" ? "<p>PayPal sandbox test. No real payment will be collected.</p>" : "";
     return checkoutPage(PRODUCT_NAME, sandbox +
       '<p>The Windows download starts in this browser after PayPal confirms your $100 USD payment.</p>' +
-      '<form action="/checkout" method="post"><button type="submit">Pay $100 USD with PayPal</button></form>');
+      '<form action="/checkout" method="post"><button type="submit">Pay $100 USD with PayPal</button></form>',
+    200, PAYPAL_ORDERS[env.PAYPAL_ENVIRONMENT].wallet);
   }
   const returning = !checkoutPath && request.method === "GET";
   const starting = checkoutPath && request.method === "POST" && request.headers.get("origin") === env.CHECKOUT_ORIGIN;
