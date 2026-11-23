@@ -1,0 +1,29 @@
+name: Deploy FRM3 and JLR BCM download handler
+on:
+  push:
+    branches: [frm3-bcm-deploy]
+    paths:
+      - frm3-bcm-fulfillment/wrangler.toml
+permissions:
+  contents: read
+jobs:
+  deploy:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/frm3-bcm-deploy'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test isolated fulfillment
+        working-directory: frm3-bcm-fulfillment
+        run: node --test test/fulfillment.test.mjs
+      - name: Deploy with delivery disabled
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: frm3-bcm-fulfillment
+          wranglerVersion: '4'
+          command: deploy --config wrangler.toml
