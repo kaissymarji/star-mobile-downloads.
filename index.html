@@ -299,6 +299,78 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 .appcard.windows-feature .app-actions{flex:0 1 180px;min-width:160px}
 .appcard.windows-feature .download-btn{min-height:43px}
 @media(max-width:510px){.appcard.windows-feature{gap:8px;flex-direction:column;align-items:stretch}.appcard.windows-feature .app-top,.appcard.windows-feature .hardware,.appcard.windows-feature .app-info,.appcard.windows-feature .app-actions{flex:initial;min-width:0}.filters{gap:4px}.filter{font-size:9px}}
+
+/* Compact, responsive software catalog. Functional panels and counters are preserved. */
+:root{--bg:#08111e;--pane:#111f2e;--white:#edf5ff;--muted:#a7b9ce;--line:#304359;--cyan:#5ce1dc}
+body{background:#08111e;color:var(--white);font-size:14px;line-height:1.4}
+body:before{display:none}
+.wrap{width:min(100%,1440px);padding:0 20px}
+.topline{background:#0c1725;box-shadow:none;border-color:#24364b}
+.header{min-height:56px;gap:12px;flex-wrap:wrap;padding-top:7px;padding-bottom:7px}
+.brandicon{height:34px;width:34px;border:1px solid #3b6877;box-shadow:none;background:#112635;border-radius:8px}
+.brandicon svg{height:27px;width:27px}
+.identity{gap:8px}
+.brandname{display:block;font-size:14px;letter-spacing:.02em}
+.brandsub{display:block;font-size:8px;letter-spacing:.08em;margin-top:3px}
+.head-actions{gap:5px;flex-wrap:wrap}
+.navbtn{background:#17283a;border:1px solid #38506a;font-size:12px;padding:8px 10px;border-radius:7px;color:#edf5ff}
+main.wrap{padding-bottom:16px}
+.dashboard-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 0 10px}
+.dashboard-title h1{font-size:clamp(21px,2.3vw,28px);line-height:1.15;margin:0;font-weight:800;letter-spacing:-.025em}
+.dashboard-title p{margin:3px 0 0;font-size:12px;color:var(--muted)}
+.utility-link{font-size:12px;font-weight:700;color:var(--cyan);white-space:nowrap;padding:8px 0}
+.kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 12px}
+.kpi{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;column-gap:6px;min-height:0;padding:8px 10px;background:#111e2d;border:1px solid #2c4054;border-radius:8px;box-shadow:none}
+.kpi:after{display:none}
+.kpi .k-label{font-size:11px;font-weight:600;color:#b9cbdd}
+.kpi strong{font-size:18px;color:#edfaff;letter-spacing:0;font-weight:800;overflow-wrap:anywhere}
+.kpi small{display:block;flex:0 0 100%;font-size:9px;color:#8fa5ba}
+.catalog-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.searchrow{flex:1 1 250px;height:40px;background:#111f2e;border:1px solid #3b5069;border-radius:8px;margin:0;padding:0 10px}
+.searchrow input{font-size:14px}
+.filters{display:flex;flex:0 1 auto;flex-wrap:wrap;gap:5px;margin:0}
+.filter{min-height:36px;font-size:12px;font-weight:650;padding:7px 12px;background:#142335;border:1px solid #324960;border-radius:7px}
+.filter[aria-pressed="true"]{background:#5ce1dc;color:#06252a;border-color:#5ce1dc}
+.software-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;align-items:stretch}
+#catalog{display:contents}
+#software [hidden]{display:none!important}
+#software .appcard{min-height:0;min-width:0;display:flex;flex-direction:column;align-items:stretch;gap:5px;padding:12px;border:1px solid #30455a;border-radius:10px;background:#111e2d;box-shadow:none;overflow:visible}
+#software .appcard:before{display:none}
+#software .product-card{order:0}
+#software .paid-card{order:2}
+#software #catalog .appcard{order:1}
+#software #windowsFeatured{border-color:#5488b5}
+.card-label{font-size:10px;color:#9fc8e7;font-weight:750;letter-spacing:.045em;line-height:1.25}
+.paid-card .card-label{color:#d6b98e}
+#software .app-name{font-size:15px;line-height:1.22;font-weight:800;margin:0;overflow-wrap:anywhere}
+#software .app-desc{font-size:12px;line-height:1.35;color:#b9cadc;margin:0}
+.card-meta{font-size:11px;color:#b1c4d7;line-height:1.35;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.card-meta strong{font-weight:750;color:#eff9ff}
+#software .download-btn{margin-top:auto;min-height:36px;padding:8px 7px;border-radius:7px;background:#5ce1dc;color:#062229;font-size:12px;font-weight:800;text-align:center;line-height:1.2}
+#software .download-btn:hover{background:#9ff7ef}
+#software .paid-card .download-btn{background:#1b3851;color:#f1f9ff;border:1px solid #4f7897}
+#software .paid-card .download-btn:hover{background:#274d6a}
+.product-details{font-size:11px;color:#aabed0;line-height:1.4;margin:1px 0 3px}
+.product-details summary{cursor:pointer;color:#a8d8f3;min-height:22px}
+.product-details p{margin:4px 0}
+.product-details a{color:#86dfed;text-decoration:underline}
+#software .empty{grid-column:1/-1;order:3;padding:10px;font-size:12px}
+.catalog-foot{font-size:11px;margin-top:9px;gap:6px}
+.catalog-controls{display:flex;gap:6px;flex-wrap:wrap}
+.catalog-foot button{padding:6px 9px;background:#17283a;border-color:#38506a}
+.vin-drawer{margin:12px 0 0;border:1px solid #30455a;background:#111e2d;border-radius:9px}
+.vin-drawer>summary{padding:10px 12px;font-weight:700;cursor:pointer;font-size:13px;color:#d8e9f9}
+.vin-drawer>summary span{float:right;color:#92acc1;font-size:11px;font-weight:500}
+.vin-drawer .vin-panel{border:0;border-top:1px solid #30455a;box-shadow:none;border-radius:0 0 9px 9px;background:#0e1b29}
+.vin-drawer .monitors{margin:0}
+.bottom-links{margin:10px 0 5px;gap:15px}
+.footertext{margin:5px 0 0}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid #6ce6ed;outline-offset:2px}
+@media(max-width:1100px){.software-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.wrap{padding-left:12px;padding-right:12px}.software-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.catalog-toolbar{gap:6px}.searchrow{flex-basis:100%}.filters{flex:1 1 100%;gap:4px}.filter{padding:7px 9px;flex:1 0 auto}.kpi{display:block;padding:7px 8px}.kpi strong{display:block;font-size:17px}.kpi small{font-size:9px}}
+@media(max-width:510px){.header{gap:6px;justify-content:space-between;min-height:0}.identity{flex:1 0 auto}.brandname{font-size:12px}.brandsub{font-size:7px}.head-actions{gap:4px}.navbtn{font-size:11px;padding:7px 8px}.dashboard-title{margin:12px 0 8px}.dashboard-title p{font-size:11px}.kpis{gap:4px;margin-bottom:8px}.kpi{padding:6px}.kpi .k-label{font-size:10px;line-height:1.2}.kpi strong{font-size:16px}.kpi small{display:none}.filter{min-height:34px;font-size:11px;padding:5px 8px}.software-grid{gap:6px}#software .appcard{padding:10px;gap:5px}#software .app-name{font-size:14px}#software .app-desc{font-size:11px}.card-label{font-size:9px}.card-meta,.product-details{font-size:10px}#software .download-btn{min-height:40px;font-size:11px}.catalog-foot{font-size:10px}.bottom-links{gap:10px}}
+@media(max-width:340px){.software-grid{grid-template-columns:1fr}.head-actions{flex:1 1 100%}.navbtn{flex:1;text-align:center}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 <script src="recovery-redirect.js?v=20261121"></script>
 </head>
@@ -308,139 +380,86 @@ dialog h2{font-size:20px;margin:0 0 12px}dialog p{color:#a9c7d9;font-size:12px;l
 <nav class="head-actions"><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a></nav>
 </div></header>
 <main class="wrap">
-<section class="hero" aria-label="ECU Command Center 2.0">
-<svg class="hero-art" viewBox="0 0 780 280" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Stylized sports car, diagnostic tablet and J2534 programming interface illustration">
-<defs>
-<linearGradient id="carpaint" x1=".1" x2=".9" y1="0" y2="1"><stop stop-color="#1a5f7c"/><stop offset=".3" stop-color="#071826"/><stop offset=".7" stop-color="#05101a"/><stop offset="1" stop-color="#2d728e"/></linearGradient>
-<linearGradient id="glow" x1="0" x2="1"><stop stop-color="#15e6ff" stop-opacity="0"/><stop offset=".5" stop-color="#2cffff"/><stop offset="1" stop-color="#14a9ff" stop-opacity="0"/></linearGradient>
-<linearGradient id="screen" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#103a51"/><stop offset="1" stop-color="#020911"/></linearGradient>
-<filter id="blur"><feGaussianBlur stdDeviation="8"/></filter>
-</defs>
-<path d="M40 200L750 200M150 243H780M90 45H780" stroke="#1ce4ff" stroke-opacity=".18"/>
-<path d="M20 70L280 70L342 23L780 23M175 272L320 215H780" stroke="#12bcd0" stroke-width="2" opacity=".25"/>
-<ellipse cx="490" cy="209" rx="254" ry="20" fill="#00d4ff" opacity=".28" filter="url(#blur)"/>
-<!-- Premium car front, perspective vector artwork -->
-<path d="M212 140C253 106 292 92 369 87L558 78C626 81 687 109 726 153L745 199L726 227L231 228L195 205Z" fill="url(#carpaint)" stroke="#347893" stroke-width="3"/>
-<path d="M306 91C358 61 496 52 588 77L647 119L268 126Z" fill="#04111c" stroke="#295b75" stroke-width="3"/>
-<path d="M320 91C378 76 505 70 561 78" stroke="#9adafc" stroke-opacity=".45" stroke-width="2"/>
-<path d="M229 151L312 139L339 160L307 175L225 170Z" fill="#b8faff" stroke="#24efff" stroke-width="4"/>
-<path d="M612 139L702 155L699 174L631 174L601 159Z" fill="#aefaff" stroke="#29edff" stroke-width="4"/>
-<path d="M238 156L310 148M625 147L696 163" stroke="#fff" stroke-width="4"/>
-<path d="M326 156Q468 138 601 153L580 208H344Z" fill="#06151f" stroke="#2a728f" stroke-width="4"/>
-<path d="M346 168H580M340 183H582M354 195H576" stroke="#26c6ed" stroke-opacity=".4" stroke-width="2"/>
-<path d="M449 151L469 181L490 151M450 151H489M450 151L470 177L490 151" stroke="#cefaff" stroke-width="3" fill="none"/>
-<path d="M250 210L334 214M601 214L706 206" stroke="#2bd1e8" stroke-width="5"/>
-<!-- J2534 pass-through device -->
-<path d="M215 227L330 208L377 227L365 253L261 271L215 253Z" fill="#030b13" stroke="#49a8c4" stroke-width="3"/>
-<path d="M261 271L365 253L374 235L264 249Z" fill="#0b2a3b"/>
-<path d="M252 242L330 224L349 236L276 253Z" fill="#173d54"/>
-<text x="285" y="244" fill="#d3ffff" font-family="system-ui" font-weight="bold" font-size="17" transform="rotate(-10 285 244)">J2534</text>
-<path d="M214 244C170 236 173 268 138 263" stroke="#132d3e" stroke-width="10" fill="none"/>
-<path d="M214 244C170 236 173 268 138 263" stroke="#5dcfe7" stroke-width="2" fill="none"/>
-<!-- Rugged engineering diagnostic tablet -->
-<g transform="translate(570 103) rotate(2)">
-<rect x="-8" y="-12" width="204" height="146" rx="13" fill="#020a11" stroke="#557b93" stroke-width="8"/>
-<rect x="1" y="-2" width="186" height="126" rx="4" fill="url(#screen)" stroke="#11d6ec" stroke-opacity=".65"/>
-<rect x="7" y="6" width="173" height="14" fill="#072b42"/>
-<text x="14" y="17" font-size="10" fill="#62faff" font-weight="bold">ECU / J2534 WORKBENCH</text>
-<path d="M38 60L60 47L104 46L123 64L142 73L155 88H44Z" stroke="#20daee" stroke-width="2" fill="none"/>
-<circle cx="60" cy="87" r="10" stroke="#20f8f9" stroke-width="2" fill="#061724"/><circle cx="132" cy="87" r="10" stroke="#20f8f9" stroke-width="2" fill="#061724"/>
-<path d="M14 37H27M14 49H27M14 61H27M14 73H27M14 85H27M14 97H27" stroke="#2ef0ea" stroke-width="3"/>
-<rect x="6" y="-9" width="14" height="11" fill="#202d3c"/><rect x="165" y="-9" width="14" height="11" fill="#202d3c"/>
-<rect x="6" y="119" width="14" height="11" fill="#202d3c"/><rect x="165" y="119" width="14" height="11" fill="#202d3c"/>
-</g>
-<path d="M270 257H770" stroke="url(#glow)" stroke-width="4"/>
-</svg>
-<div class="hero-copy"><p class="hero-kicker">AUTOMOTIVE SOFTWARE / ENGINEERING LAB</p><h1>ECU COMMAND <span>CENTER 2.0</span></h1><p class="hero-caption">J2534 • ECU FLASHING • IMMOBILIZER • CODING</p><a class="hero-link" href="#software">↓ EXPLORE DOWNLOADS</a> <button class="hero-link" id="sm-portal-trigger" type="button" aria-label="Replay the wormhole entrance">↻ REPLAY WORMHOLE</button></div>
-<span class="hero-signal">STAR MOBILE / BUILD LAB</span>
-</section>
-
+<div class="dashboard-title"><div><h1>ECU Command Center</h1><p>Official automotive software downloads</p></div><a class="utility-link" href="#vinLookup">VIN decoder ↗</a></div>
 <section class="kpis" aria-label="Live GitHub statistics">
 <div class="kpi"><div class="k-label">Total Downloads</div><strong id="totalDownloads">—</strong><small>Published software assets</small></div>
 <div class="kpi"><div class="k-label">APK Versions</div><strong id="buildCount">—</strong><small>GitHub release assets</small></div>
 <div class="kpi"><div class="k-label">V200 Downloads</div><strong id="v200Downloads">—</strong><small>Recorded on GitHub</small></div>
 <div class="kpi" title="Approximate count of visits, limited to one count per browser per UTC day. Counting starts when this feature is enabled."><div class="k-label">Site Visitors</div><strong id="siteVisitorCount" aria-live="polite">—</strong><small>One visit per browser/day</small></div>
 </section>
+
+<section id="software" aria-label="Official software releases">
+<div class="catalog-toolbar">
+<div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, versions, hardware…" aria-label="Search all software"/></div>
+<div class="filters" role="group" aria-label="Software filters">
+<button class="filter" data-filter="all" aria-pressed="true" type="button">All</button>
+<button class="filter" data-filter="windows" aria-pressed="false" type="button">Windows</button>
+<button class="filter" data-filter="android" aria-pressed="false" type="button">Android</button>
+<button class="filter" data-filter="paid" aria-pressed="false" type="button">Paid</button>
+<button class="filter" data-filter="v200" aria-pressed="false" type="button">V200</button>
+<button class="filter" data-filter="eeprom" aria-pressed="false" type="button">EEPROM</button>
+<button class="filter" data-filter="bmw" aria-pressed="false" type="button">BMW</button>
+</div></div>
+<div class="software-grid">
+<article class="appcard product-card" id="windowsFeatured" data-platform="windows" data-family="bmw windows" data-paid="false" data-search="winkfp bmw k+d-can kdcan programming ecu flashing exe" aria-labelledby="winkfpTitle">
+<div class="card-label">WINDOWS · FREE</div>
+<h2 class="app-name" id="winkfpTitle">WinKFP 2026</h2>
+<p class="app-desc">BMW ECU programming · K+D-CAN USB</p>
+<div class="card-meta"><strong id="winkfpVersion">v0.4.1</strong> <span id="winkfpSize">· 327 MiB</span></div>
+<div class="card-meta"><strong id="winkfpDownloads" aria-live="polite">…</strong> GitHub downloads</div>
+<a id="winkfpDownloadLink" class="download-btn" href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/winkfp2026/winkfp2026-0.4.1-Ready.exe">Download EXE</a>
+</article>
+<div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading GitHub releases…</div></div>
+<article class="appcard product-card paid-card" id="frm3-jlr-bcm" data-platform="windows" data-family="bmw eeprom" data-paid="true" data-search="frm3 jlr jaguar land rover bcm recovery sdd d-flash eeprom repair windows zip" aria-labelledby="frm3JlrBcmTitle">
+<div class="card-label">WINDOWS · PAID</div>
+<h2 class="app-name" id="frm3JlrBcmTitle">FRM3 &amp; JLR BCM Repair</h2>
+<p class="app-desc">Two tools · BMW FRM3 / Jaguar BCM recovery</p>
+<div class="card-meta"><strong>$100.00</strong> · <span id="frm3JlrBcmDownloadCount" aria-live="polite">—</span> verified downloads</div>
+<details class="product-details"><summary>Details &amp; delivery</summary><p>Windows 64-bit ZIP: reconstructs supported EEPROM images from 32 KB D-Flash; Jaguar BCM Recovery adds SDD preparation for supported Jaguar BCMs.</p><p id="frm3JlrBcmPurchaseNote">After PayPal confirms payment, the ZIP downloads in the same browser. Executables are unsigned; Chrome may flag the ZIP.</p></details>
+<a class="download-btn" href="https://frm3-bcm-fulfillment.kaissymarji.workers.dev/checkout">PayPal · $100</a>
+</article>
+<article class="appcard product-card paid-card" id="bosch-vin-change" data-platform="windows android" data-family="eeprom" data-paid="true" data-search="bosch vin change bmw edc17cp09 med17.5 med17.8.31 med17.9.7 me17.5.6 mev17.2.2 mevd17.2.g windows android exe apk checksum" aria-labelledby="boschVinChangeTitle">
+<div class="card-label">WINDOWS + ANDROID · PAID</div>
+<h2 class="app-name" id="boschVinChangeTitle">Bosch VIN Change</h2>
+<p class="app-desc">Offline VIN editor · supported Bosch ECU records</p>
+<div class="card-meta"><strong>$25.00</strong> · Windows v1.6 / Android v1.0</div>
+<div class="card-meta"><strong id="boschCheckoutClicks" aria-live="polite">—</strong> checkout clicks <span title="Clicks only, not sales or downloads">ⓘ</span></div>
+<details class="product-details"><summary>Compatibility &amp; delivery</summary><p>Windows 64-bit and Android 8+. Hex/ASCII previews and CS1/CS2 updates on supported records: BMW EDC17CP09, MED17.5, MED17.8.31, MED17.9.7, ME17.5.6, MEV17.2.2, MEVD17.2.G.</p><p id="boschVinChangePurchaseNote">One $25 payment includes both platforms. Google Drive sends both download links to your PayPal email address.</p><p>Checkout clicks tracked since November 22, 2026; not completed purchases or file downloads.</p></details>
+<a id="boschCheckoutLink" class="download-btn" href="https://bosch-vin-change-fulfillment.kaissymarji.workers.dev/checkout">PayPal · $25</a>
+</article>
+<article class="appcard product-card paid-card" id="km100SpecialTools" data-platform="windows" data-family="flasher" data-paid="true" data-search="med9.1 ecu flasher windows pc vag paypal" aria-labelledby="km100Title">
+<div class="card-label">WINDOWS · PAID</div>
+<h2 class="app-name" id="km100Title">MED9.1 PC Flasher</h2>
+<p class="app-desc">ECU flashing software</p>
+<div class="card-meta"><strong>$25.00</strong> · PayPal checkout</div>
+<details class="product-details"><summary>Details &amp; delivery</summary><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
+<a class="download-btn" href="https://www.paypal.com/ncp/payment/MPWUNM58GEEV8" target="_blank" rel="noopener noreferrer">PayPal · $25 ↗</a>
+</article>
+<article class="appcard product-card paid-card" data-platform="windows" data-family="flasher" data-paid="true" data-search="me7.1 me7.1.1 me7.5 ecu flasher windows pc vag paypal" aria-labelledby="me7Title">
+<div class="card-label">WINDOWS · PAID</div>
+<h2 class="app-name" id="me7Title">ME7.1 / 7.1.1 / 7.5 Flasher</h2>
+<p class="app-desc">ECU flashing software · ME7 family</p>
+<div class="card-meta">Price shown at PayPal checkout</div>
+<details class="product-details"><summary>Details &amp; delivery</summary><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
+<a class="download-btn" href="https://www.paypal.com/ncp/payment/GZAVP89LSPZB8" target="_blank" rel="noopener noreferrer">PayPal checkout ↗</a>
+</article>
+<div id="noResults" class="empty" hidden>No software matches this filter or search.</div>
+</div>
+<div class="catalog-foot"><span id="statusText" role="status">Checking live GitHub Releases…</span><div class="catalog-controls"><button id="showAll" aria-expanded="false" type="button" hidden>Show previous versions</button><button id="refresh" type="button">Refresh ↻</button></div></div>
+</section>
+<details id="vinLookup" class="vin-drawer"><summary>VIN decoder &amp; camera scanner <span>NHTSA vPIC</span></summary>
 <div class="monitors" id="monitor">
-<section class="panel vin-panel" id="vinLookup" aria-label="Online VIN decoder"><div class="panel-heading"><span>⌗ VIN DECODER</span><a href="https://vpic.nhtsa.dot.gov/decoder/" target="_blank" rel="noopener noreferrer" class="vin-source">NHTSA vPIC ↗</a></div>
+<section class="panel vin-panel" id="vinPanel" aria-label="Online VIN decoder"><div class="panel-heading"><span>⌗ VIN DECODER</span><a href="https://vpic.nhtsa.dot.gov/decoder/" target="_blank" rel="noopener noreferrer" class="vin-source">NHTSA vPIC ↗</a></div>
 <div class="vin-body"><p class="vin-intro">Decode year, make, model, engine and vehicle information using official NHTSA data.</p>
 <form id="vinForm" class="vin-form"><label for="vinInput" class="sr-only">17-character vehicle identification number</label><input id="vinInput" maxlength="17" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter 17-character VIN" required aria-describedby="vinStatus"/><button id="scanVIN" type="button" class="vin-scan-launch" aria-label="Scan VIN with camera">📷 Scan VIN</button><button id="decodeVIN" type="submit">⌕ Decode VIN</button></form>
 <div id="vinStatus" class="vin-status" role="status">Enter or scan a VIN to retrieve vehicle details.</div><p id="vinScanNotice" class="vin-scan-notice" hidden>VIN scanned from camera or photo. Check it against the vehicle before relying on the results.</p>
 <div id="vinResult" class="vin-results" hidden></div>
 <p class="vin-privacy">VIN is sent to the NHTSA decoding service only when you tap Decode.</p></div></section>
 </div>
+</details>
+<nav class="bottom-links" aria-label="Useful website links"><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
+<p class="footertext">STAR MOBILE SERVICE · VIN data: NHTSA vPIC · Download statistics reflect available GitHub release counts.</p>
 
-<section class="panel" id="windowsFeatured" aria-labelledby="winkfpTitle" style="margin:18px 0;padding:21px 22px;border:1px solid #68aeff;border-radius:14px;background:linear-gradient(120deg,#0b2b48,#08192e 73%,#10263c)">
-<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-<div style="flex:1 1 330px;min-width:0">
-<div style="color:#9acaff;font-size:11px;letter-spacing:.13em;font-weight:900">FEATURED WINDOWS DOWNLOAD · BMW PROGRAMMING</div>
-<h2 id="winkfpTitle" style="font-size:clamp(21px,2.9vw,29px);margin:7px 0;color:#f0feff">WinKFP 2026 <span id="winkfpVersion" style="font-size:.65em;color:#9acaff">v0.4.1</span></h2>
-<p style="color:#c8e2f3;font-size:13px;margin:0">Windows PC · BMW ECU flashing and programming · K+D-CAN USB cable</p>
-</div>
-<div style="flex:0 1 280px;width:100%">
-<a id="winkfpDownloadLink" class="download-btn" href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/winkfp2026/winkfp2026-0.4.1-Ready.exe" style="min-height:44px;text-align:center">⇩ Download WinKFP 2026 (.exe)</a>
-<p style="margin:10px 0 0;color:#b7d8f0;font-size:12px" role="status" aria-live="polite">⇩ <strong id="winkfpDownloads">…</strong> GitHub downloads <span id="winkfpSize" style="font-size:10px;color:#92abc0">· 327 MiB</span></p>
-</div>
-</div></section>
-<section class="panel" id="km100SpecialTools" aria-labelledby="km100Title" style="margin:18px 0;padding:21px 22px;border:1px solid #36b6ce;border-radius:14px;background:linear-gradient(120deg,#0b2f41,#0b1d33);">
-<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-<div style="flex:1 1 350px">
-<div style="color:#5debf4;font-size:11px;letter-spacing:.16em;font-weight:900">PAID ECU FLASHERS · DIRECT PAYPAL CHECKOUT</div>
-<h2 id="km100Title" style="font-size:clamp(22px,3vw,30px);margin:5px 0 7px;color:#f0feff">ECU Flashers — Buy with PayPal</h2>
-<p style="color:#c2e0ec;font-size:13px;margin:0 0 7px">MED9.1 PC Flasher — $25.00 USD · ME7.1 / ME7.1.1 / ME7.5 Flasher — price shown at PayPal checkout.</p>
-<p style="color:#e9cea0;font-size:12px;margin:0">PayPal handles checkout. Please keep your receipt; the after-payment download redirects still need a completed purchase test.</p>
-</div>
-<div style="display:flex;gap:10px;flex-wrap:wrap;flex:0 1 300px">
-<a class="download-btn" href="https://www.paypal.com/ncp/payment/MPWUNM58GEEV8" target="_blank" rel="noopener noreferrer" style="flex:1 1 160px;min-height:44px;text-align:center">PayPal · MED9.1 — $25 ↗</a>
-<a class="download-btn" href="https://www.paypal.com/ncp/payment/GZAVP89LSPZB8" target="_blank" rel="noopener noreferrer" style="flex:1 1 160px;min-height:44px;text-align:center">PayPal · ME7.1 Family ↗</a>
-<a class="download-btn" href="km100-special-tools.html" style="flex:1 1 160px;min-height:44px;text-align:center">View Flasher Details ↗</a>
-</div>
-</div></section>
-<section id="software" aria-label="Official software releases">
-<div class="software-intro"><h2>⇩ SOFTWARE DOWNLOADS</h2><span>Windows EXE + Android APKs · Live GitHub download counts</span></div>
-<section class="panel" id="frm3-jlr-bcm" aria-labelledby="frm3JlrBcmTitle" style="margin:18px 0;padding:21px 22px">
-<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
-<div style="flex:1 1 440px">
-<h3 id="frm3JlrBcmTitle" style="font-size:clamp(22px,3vw,30px);margin:0 0 7px;color:#f0feff">FRM3 and JLR BCM Repair</h3>
-<p style="color:#c2e0ec;font-size:13px;margin:0 0 7px">Windows 64-bit ZIP with two tools. FRM3 and JLR BCM Repair reconstructs BMW FRM3 and Jaguar Land Rover BCM EEPROM images from 32 KB D-Flash files. Jaguar BCM Recovery adds SDD preparation for supported Jaguar BCMs.</p>
-<p style="color:#c2e0ec;font-size:13px;margin:0 0 7px">Verified downloads <strong id="frm3JlrBcmDownloadCount" style="color:#48f5ef" aria-live="polite">—</strong></p>
-<p id="frm3JlrBcmPurchaseNote" style="color:#c2e0ec;font-size:13px;margin:0">After PayPal confirms your payment, the ZIP downloads in the same browser. The executables are unsigned, and Chrome may flag the ZIP as suspicious.</p>
-</div>
-<div style="display:grid;justify-items:end">
-<strong style="color:#f0feff">$100.00 USD</strong>
-<a class="download-btn" href="https://frm3-bcm-fulfillment.kaissymarji.workers.dev/checkout" style="min-height:44px;text-align:center;margin-top:8px" aria-describedby="frm3JlrBcmPurchaseNote">Pay with PayPal</a>
-</div>
-</div>
-</section>
-<section class="panel" id="bosch-vin-change" aria-labelledby="boschVinChangeTitle" style="margin:18px 0;padding:21px 22px">
-<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
-<div style="flex:1 1 440px">
-<h3 id="boschVinChangeTitle" style="font-size:clamp(22px,3vw,30px);margin:0 0 7px;color:#f0feff">Bosch VIN Change</h3>
-<p style="color:#c2e0ec;font-size:13px;margin:0 0 7px">Windows 1.6 (64-bit EXE) and Android 1.0 (APK for Android 8+)</p>
-<p style="color:#c2e0ec;font-size:13px;margin:0 0 7px">Edit VINs offline, preview changes in hex and ASCII, and update CS1/CS2 checksums on supported records.</p>
-<p style="color:#a4c5d3;font-size:12px;margin:0">BMW EDC17CP09, MED17.5, MED17.8.31, MED17.9.7, ME17.5.6, MEV17.2.2, and MEVD17.2.G</p>
-</div>
-<div style="flex:0 1 220px">
-<strong style="color:#e8faff">$25.00 USD</strong>
-<a id="boschCheckoutLink" class="download-btn" href="https://bosch-vin-change-fulfillment.kaissymarji.workers.dev/checkout" style="min-height:44px;text-align:center;margin-top:8px" aria-describedby="boschVinChangePurchaseNote">Pay with PayPal — $25</a>
-<p id="boschVinChangePurchaseNote" style="color:#c2e0ec;font-size:12px;margin:6px 0 0">One $25 payment includes both Windows and Android. Google Drive sends both download links to your PayPal email address.</p>
-<div style="margin-top:12px;padding:12px 13px;border:1px solid #24647d;background:#041e2c;border-radius:10px" aria-label="Bosch VIN Change checkout activity">
-  <div style="display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;font-variant-numeric:tabular-nums">
-    <strong id="boschCheckoutClicks" style="font-size:25px;line-height:1.1;color:#48f5ef" aria-live="polite">—</strong>
-    <span style="color:#e0faff;font-weight:750;font-size:13px">Checkout clicks</span>
-  </div>
-  <small style="display:block;margin-top:6px;color:#a4c5d3;font-size:11px;line-height:1.4">Tracked here from Nov 22, 2026. Counts clicks on Pay with PayPal, not completed purchases or Google Drive downloads.</small>
-</div>
-</div>
-</div>
-</section>
-<div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, tools, or versions..." aria-label="Search download catalog"/></div>
-<div class="filters" role="group" aria-label="Software filters"><button class="filter" data-filter="all" aria-pressed="true" type="button">▦ All</button><button class="filter" data-filter="v200" aria-pressed="false" type="button">⌁ V200</button><button class="filter" data-filter="eeprom" aria-pressed="false" type="button">▣ EEPROM</button><button class="filter" data-filter="bmw" aria-pressed="false" type="button">◉ BMW</button><button class="filter" data-filter="windows" aria-pressed="false" type="button">▣ Windows</button></div>
-<div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading software releases from GitHub…</div></div>
-<div class="catalog-foot"><span id="statusText" role="status">Checking live GitHub Releases…</span><button id="showAll" aria-expanded="false" type="button" hidden>↓ Show previous versions</button><button id="refresh" type="button">↻ Refresh</button></div>
-</section>
-<nav class="bottom-links" aria-label="Useful website links"><a href="#home">Home</a><a href="#software">Downloads</a><a href="#vinLookup">VIN Decoder</a><a href="km100-special-tools.html">KM100 Tools</a><a href="community.html#account">Activation</a><a href="donate.html">Donate</a><button id="guideButton" type="button">About / Help</button><details class="owner-dropdown"><summary>Owner</summary><div class="owner-actions"><a href="https://github.com/kaissymarji/star-mobile-downloads./releases/new" target="_blank" rel="noopener noreferrer">+ Upload new APK ↗</a><a href="https://github.com/kaissymarji/star-mobile-downloads./releases" target="_blank" rel="noopener noreferrer">Manage / Delete APKs ↗</a><small>Sign in to your GitHub account to publish or delete releases.</small></div></details></nav>
-<p class="footertext">STAR MOBILE SERVICE · Automotive Software Lab · ECU Command Center 2.0<br>VIN data: NHTSA vPIC · Download statistics reflect available GitHub release counts.</p>
 </main>
 <dialog id="vinScanDialog" class="vin-scan-dialog" aria-labelledby="vinScanTitle">
 <div class="vin-scan-head"><h2 id="vinScanTitle">📷 VIN Scanner</h2><button id="vinScanClose" type="button" class="vin-scan-close" aria-label="Close scanner">✕</button></div>
@@ -623,21 +642,36 @@ function hardwareInfo(f){
 
 function render(){
  const query=$("search").value.toLowerCase().trim(),keys=latestIds();
- const selected=apps.filter(a=>(filter==="all"||a.family===filter)&&(a.title+" "+a.asset.name+" "+a.release.tag_name+" "+a.release.name).toLowerCase().includes(query));
- const shown=selected.filter(a=>query||allVersions||keys.has(a.asset.id||a.url));
- const hiddenCount=selected.length-shown.length;
+ const tokens=query.split(/\s+/).filter(Boolean);
+ const matches=text=>tokens.every(token=>text.toLowerCase().includes(token));
+ let staticCount=0;
+ for(const card of document.querySelectorAll(".product-card")){
+  const platform=card.dataset.platform.split(" "),families=card.dataset.family.split(" ");
+  const eligible=filter==="all"||(filter==="paid"&&card.dataset.paid==="true")||platform.includes(filter)||families.includes(filter);
+  const extra=card.querySelector("a.download-btn")?.getAttribute("href")||"";
+  card.hidden=!(eligible&&matches(card.textContent+" "+card.dataset.search+" "+extra));
+  if(!card.hidden)staticCount++;
+ }
+ const featuredVisible=!$("windowsFeatured").hidden;
+ const selected=apps.filter(a=>(filter==="all"||(filter==="android"&&a.family!=="windows")||(filter==="bmw"&&a.family==="windows")||a.family===filter)&&matches([a.title,a.asset.name,a.release.tag_name,a.release.name,version(a),a.family==="windows"?"Windows EXE":"Android APK",...hardwareInfo(a.family)].join(" ")));
+ const unique=selected.filter(a=>!(featuredVisible&&a.family==="windows"&&keys.has(a.asset.id||a.url)));
+ const shown=unique.filter(a=>query||allVersions||keys.has(a.asset.id||a.url));
+ const hiddenCount=unique.length-shown.length;
  const toggle=$("showAll");
- toggle.hidden=!!query||(!allVersions&&hiddenCount===0);
- toggle.textContent=allVersions?"↑ Show latest only":"↓ Show "+hiddenCount+" previous versions";
+ toggle.hidden=!!query||(!allVersions&&hiddenCount===0)||unique.length===0;
+ toggle.textContent=allVersions?"Show latest only":"Show "+hiddenCount+" previous versions";
  toggle.setAttribute("aria-expanded",String(allVersions));
- if(!shown.length){$("catalog").innerHTML='<div class="empty">'+(loaded?"No downloads match your search.":"Unable to load GitHub releases; tap Refresh.")+'</div>';return;}
+ $("noResults").hidden=staticCount+shown.length>0||!loaded;
+ if(!shown.length){
+  $("catalog").innerHTML=!loaded&&filter!=="paid"?'<div class="empty">GitHub releases could not load. Tap Refresh.</div>':"";
+  return;
+ }
  $("catalog").innerHTML=shown.map(a=>{
   const latest=keys.has(a.asset.id||a.url),date=uploaded(a),valid=date&&!Number.isNaN(Date.parse(date));
   const dateLabel=valid?pacificTime.format(new Date(date)):"Date unavailable";
-  const subtitle=a.family==="windows"?"BMW ECU flashing and programming · K+D-CAN cable":a.family==="v200"?"Android vehicle diagnostics and adapter testing":a.family==="eeprom"?"EEPROM read, backup and programming utilities":a.family==="bmw"?"BMW coding and diagnostic software":"Automotive Android utility";
-  const accent=a.family==="windows"?"#70adff":a.family==="bmw"?"#62a8ff":a.family==="eeprom"?"#63fc95":"#22e6f4";
+  const subtitle=a.family==="windows"?"BMW ECU programming":a.family==="v200"?"Vehicle diagnostics and adapter testing":a.family==="eeprom"?"EEPROM read and backup utilities":a.family==="bmw"?"BMW coding and diagnostics":"Automotive Android utility";
   const devices=hardwareInfo(a.family);
-  return '<article class="appcard'+(a.family==="windows"?" windows-feature":"")+'" style="--accent:'+accent+'"><div class="app-top"><div class="app-icon">'+(icons[a.family]||icons.other)+'</div><div class="app-heading"><h3 class="app-name">'+safe(a.title)+'</h3><p class="app-desc">'+safe(subtitle)+'</p></div></div><div class="hardware"><strong>HARDWARE SUPPORTED</strong><div>'+devices.map(d=>'<span>✓ '+safe(d)+'</span>').join("")+'</div></div><div class="app-info"><span class="version-tag">'+safe(version(a))+' '+(latest?"· Latest":"· Archive")+'</span><span>◷ <time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></span><span>⇩ '+format(a.count)+' downloads</span></div><div class="app-actions"><a class="download-btn" href="'+safe(a.url)+'">⇩ Download '+(a.family==="windows"?"Windows EXE":"APK")+'</a></div></article>';
+  return '<article class="appcard release-card"><div class="card-label">'+(a.family==="windows"?"WINDOWS":"ANDROID")+' · FREE'+(latest?"":" · ARCHIVE")+'</div><h3 class="app-name">'+safe(a.title)+'</h3><p class="app-desc">'+safe(subtitle)+'</p><div class="card-meta"><strong>'+safe(version(a))+'</strong> · '+format(a.count)+' downloads</div><details class="product-details"><summary>Hardware &amp; upload date</summary><p>'+devices.map(safe).join(" · ")+'</p><p><time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></p></details><a class="download-btn" href="'+safe(a.url)+'">Download '+(a.family==="windows"?"EXE":"APK")+'</a></article>';
  }).join("");
 }
 async function reload(){
@@ -990,10 +1024,12 @@ $("refresh").addEventListener("click",reload);
 $("search").addEventListener("input",render);
 $("showAll").addEventListener("click",()=>{allVersions=!allVersions;render();});
 document.querySelectorAll(".filter").forEach(button=>button.addEventListener("click",()=>{filter=button.dataset.filter;document.querySelectorAll(".filter").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));render();}));
+function openVinAnchor(){if(location.hash==="#vinLookup"||location.hash==="#monitor"){ $("vinLookup").open=true; }}
+window.addEventListener("hashchange",openVinAnchor);openVinAnchor();
 loadVisitorCounter();
 reload();
 })();
 </script>
-<script src="wormhole.js?v=20261118v2" defer></script>
+<script src="wormhole.js?v=20261123compact" defer></script>
 </body>
 </html>
