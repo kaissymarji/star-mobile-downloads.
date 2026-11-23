@@ -307,6 +307,8 @@ test("Orders checkout verifies an idempotent $100 capture and streams the privat
   assert.deepEqual(await (await run("/health")).json(), { deliveryReady: true, checkoutReady: true });
   const checkoutPage = await run("/checkout");
   assert.match(await checkoutPage.text(), /Pay \$100 USD with PayPal/);
+  assert.equal(checkoutPage.headers.get("referrer-policy"), "same-origin");
+  assert.match(checkoutPage.headers.get("content-security-policy"), /form-action 'self' https:\/\/www\.sandbox\.paypal\.com$/);
   assert.equal((await run("/paypal/return?tx=" + tx)).status, 503);
   assert.equal((await run("/download")).status, 403);
   order.loseCaptureResponse = true;
