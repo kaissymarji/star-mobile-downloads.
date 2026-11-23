@@ -2,12 +2,14 @@ name = "frm3-bcm-fulfillment"
 main = "src/index.mjs"
 compatibility_date = "2025-09-01"
 preview_urls = false
+keep_vars = true
 
 [vars]
 PAYPAL_ENVIRONMENT = "live"
 PAYPAL_MERCHANT_ID = "JVVE276Z3W8A2"
 PAYPAL_LINK_ID = "Z64WWV95SSXHQ"
 PAYPAL_PRODUCT_ITEM_NUMBER = ""
+PAYPAL_ORDERS_ENABLED = "false"
 DELIVERY_ENABLED = "false"
 
 [[durable_objects.bindings]]
