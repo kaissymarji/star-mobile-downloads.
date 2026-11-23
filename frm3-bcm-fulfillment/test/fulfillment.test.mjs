@@ -342,6 +342,18 @@ test("Orders checkout rejects a forged or cross-browser return before contacting
   assert.equal(calls.length, callCount);
 });
 
+test("production checkout uses a separate pair of live PayPal credentials", async () => {
+  const { env, run } = orderFixture();
+  env.PAYPAL_ENVIRONMENT = "live";
+  assert.deepEqual(await (await run("/health")).json(), { deliveryReady: false, checkoutReady: false });
+  env.PAYPAL_LIVE_CLIENT_ID = "live-merchant-app-id-fixture";
+  env.PAYPAL_LIVE_CLIENT_SECRET = "live-merchant-app-secret-fixture";
+  assert.deepEqual(await (await run("/health")).json(), { deliveryReady: true, checkoutReady: true });
+  const page = await run("/checkout");
+  assert.doesNotMatch(await page.text(), /sandbox test/);
+  assert.match(page.headers.get("content-security-policy"), /form-action 'self' https:\/\/www\.paypal\.com$/);
+});
+
 test("Orders checkout never captures the wrong merchant, amount, product, or quantity", async () => {
   const mutations = [
     unit => ({ ...unit, payee: { merchant_id: "WRONG" } }),
