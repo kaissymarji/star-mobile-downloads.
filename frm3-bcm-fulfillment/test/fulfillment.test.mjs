@@ -25,7 +25,8 @@ const validPayment = {
 function fixture(payment = validPayment, orders) {
   const objects = new Map();
   const calls = [];
-  const upstream = { driveStatus: 200 };
+  const bytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0, 255]);
+  const upstream = { driveStatus: 200, driveType: "application/zip", driveBytes: bytes };
   const env = {
     DELIVERY_ENABLED: "true",
     PAYPAL_ENVIRONMENT: "sandbox",
@@ -49,7 +50,6 @@ function fixture(payment = validPayment, orders) {
       },
     },
   };
-  const bytes = new Uint8Array([77, 90, 0, 255]);
   const fetcher = async (url, options) => {
     calls.push(url);
     assert.equal(options.redirect, "manual");
@@ -74,7 +74,13 @@ function fixture(payment = validPayment, orders) {
       }
       case "https://www.googleapis.com/drive/v3/files/private_drive_file?alt=media":
         assert.equal(options.headers.authorization, "Bearer temporary_google_token");
-        return new Response(bytes, { status: upstream.driveStatus });
+        return new Response(new ReadableStream({
+          start(controller) {
+            controller.enqueue(upstream.driveBytes.subarray(0, 2));
+            controller.enqueue(upstream.driveBytes.subarray(2));
+            controller.close();
+          },
+        }), { status: upstream.driveStatus, headers: { "content-type": upstream.driveType } });
       default:
         throw new Error("Unexpected request to " + url);
     }
@@ -97,7 +103,8 @@ test("a verified sale starts the private attachment and grants a short retry win
 
   const download = await run("/download", { cookie });
   assert.equal(download.status, 200);
-  assert.equal(download.headers.get("content-disposition"), 'attachment; filename="FRM3 and JLR BCM Repair.exe"');
+  assert.equal(download.headers.get("content-disposition"), 'attachment; filename="FRM3 and JLR BCM Repair.zip"');
+  assert.equal(download.headers.get("content-type"), "application/zip");
   assert.equal(download.headers.get("cache-control"), "no-store");
   assert.deepEqual(new Uint8Array(await download.arrayBuffer()), bytes);
   assert.equal((await run("/download", { cookie })).status, 200);
@@ -130,6 +137,21 @@ test("a transient Drive failure leaves the verified browser able to retry", asyn
   const download = await run("/download", { cookie });
   assert.equal(download.status, 200);
   assert.deepEqual(new Uint8Array(await download.arrayBuffer()), bytes);
+});
+
+test("a verified browser never receives an executable or incomplete ZIP labeled as the ZIP", async () => {
+  const { run, upstream, bytes } = fixture();
+  const checkout = await run(returnPath);
+  const cookie = checkout.headers.get("set-cookie").split(";")[0];
+  upstream.driveType = "application/x-msdownload";
+  assert.equal((await run("/download", { cookie })).status, 503);
+  upstream.driveType = "application/zip";
+  upstream.driveBytes = new Uint8Array([77, 90, 0, 255]);
+  assert.equal((await run("/download", { cookie })).status, 503);
+  upstream.driveBytes = bytes.subarray(0, 3);
+  assert.equal((await run("/download", { cookie })).status, 503);
+  upstream.driveBytes = bytes;
+  assert.equal((await run("/download", { cookie })).status, 200);
 });
 
 test("unverified, mismatched, or ambiguous transactions do not contact Drive", async () => {
