@@ -5,12 +5,13 @@ preview_urls = false
 keep_vars = true
 
 [vars]
-PAYPAL_ENVIRONMENT = "live"
-PAYPAL_MERCHANT_ID = "JVVE276Z3W8A2"
+PAYPAL_ENVIRONMENT = "sandbox"
+PAYPAL_MERCHANT_ID = "D78H2WB3B2UM4"
 PAYPAL_LINK_ID = "Z64WWV95SSXHQ"
 PAYPAL_PRODUCT_ITEM_NUMBER = ""
-PAYPAL_ORDERS_ENABLED = "false"
-DELIVERY_ENABLED = "false"
+PAYPAL_ORDERS_ENABLED = "true"
+CHECKOUT_ORIGIN = "https://frm3-bcm-fulfillment.kaissymarji.workers.dev"
+DELIVERY_ENABLED = "true"
 
 [[durable_objects.bindings]]
 name = "DOWNLOAD_CLAIMS"
