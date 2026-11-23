@@ -16,6 +16,7 @@ const FILENAME = "FRM3 and JLR BCM Repair.zip";
 const ZIP_HEADER = [0x50, 0x4b, 0x03, 0x04];
 const ZIP_TYPE = "application/zip";
 const COOKIE_NAME = "__Host-frm3-download";
+const DOWNLOAD_COUNTER_NAME = "frm3-verified-download-counter";
 const LIFETIME_SECONDS = 10 * 60;
 const ENCODE = new TextEncoder();
 const ID = /^[A-Za-z0-9_-]{1,127}$/;
@@ -36,6 +37,29 @@ class PayPalRequestError extends Error {
 
 function reply(value, status) {
   return new Response(value, { status, headers: BASE_HEADERS });
+}
+
+function downloadCounter(env) {
+  return env.DOWNLOAD_CLAIMS.get(env.DOWNLOAD_CLAIMS.idFromName(DOWNLOAD_COUNTER_NAME));
+}
+
+async function downloadStats(env) {
+  const headers = { ...BASE_HEADERS, "access-control-allow-origin": "*" };
+  try {
+    const result = await downloadCounter(env).fetch("https://internal/stats");
+    if (!result.ok) throw new Error("Download count unavailable");
+    return Response.json(await result.json(), { headers });
+  } catch {
+    return Response.json({ error: "Download count unavailable" }, { status: 503, headers });
+  }
+}
+
+async function recordVerifiedDownload(env, purchase) {
+  await downloadCounter(env).fetch("https://internal/record-download", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ purchase }),
+  });
 }
 
 function paymentConfirmation() {
@@ -174,13 +198,17 @@ async function claimState(env, purchase, action, payload) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify(payload),
   });
-  if (response.status === 204) return true;
-  if (response.status === 403) return false;
+  if (response.status === 204) return { allowed: true, live: response.headers.get("x-live-purchase") === "true" };
+  if (response.status === 403) return { allowed: false };
   throw new Error("Download state unavailable");
 }
 
 async function issueDownload(env, purchase, token) {
-  if (!await claimState(env, purchase, "claim", { hash: await digest(token) })) {
+  const claim = await claimState(env, purchase, "claim", {
+    hash: await digest(token),
+    live: env.PAYPAL_ENVIRONMENT === "live",
+  });
+  if (!claim.allowed) {
     return reply("The download window for this transaction has expired or was opened in another browser. Please contact support with your PayPal receipt.", 403);
   }
   return new Response(null, {
@@ -493,9 +521,10 @@ async function verifiedZipBody(body) {
   });
 }
 
-async function handleDownload(request, env, fetcher) {
+async function handleDownload(request, env, fetcher, context) {
   const browser = browserClaim(request);
-  if (!browser || !await claimState(env, browser.purchase, "verify", { hash: await digest(browser.token) })) {
+  const claim = browser && await claimState(env, browser.purchase, "verify", { hash: await digest(browser.token) });
+  if (!claim?.allowed) {
     return reply("Open the download in the browser used for your completed PayPal purchase.", 403);
   }
   const token = await driveToken(fetcher, env.GOOGLE_SERVICE_ACCOUNT_JSON);
@@ -508,7 +537,13 @@ async function handleDownload(request, env, fetcher) {
     await response.body?.cancel();
     throw new Error("Drive ZIP download unavailable");
   }
-  return new Response(await verifiedZipBody(response.body), {
+  const body = await verifiedZipBody(response.body);
+  if (claim.live && env.PAYPAL_ENVIRONMENT === "live") {
+    const accounting = recordVerifiedDownload(env, browser.purchase).catch(() => {});
+    if (context) context.waitUntil(accounting);
+    else await accounting;
+  }
+  return new Response(body, {
     headers: {
       ...BASE_HEADERS,
       "content-type": ZIP_TYPE,
@@ -524,27 +559,47 @@ export class DownloadClaim {
 
   async fetch(request) {
     const path = new URL(request.url).pathname;
+    if (path === "/stats" && request.method === "GET") {
+      return Response.json({ downloads: this.storage.kv.get("downloads") ?? 0 });
+    }
+    if (path === "/record-download" && request.method === "POST") {
+      const { purchase } = await request.json();
+      if (typeof purchase !== "string" || !KEY.test(purchase)) return reply("Invalid purchase", 400);
+      this.storage.transactionSync(() => {
+        const key = "download:" + purchase;
+        if (this.storage.kv.get(key)) return;
+        this.storage.kv.put(key, true);
+        this.storage.kv.put("downloads", (this.storage.kv.get("downloads") ?? 0) + 1);
+      });
+      return reply(null, 204);
+    }
     if (request.method !== "POST" || (path !== "/claim" && path !== "/verify")) return reply("Not found", 404);
-    const { hash } = await request.json();
+    const { hash, live } = await request.json();
     if (typeof hash !== "string" || !KEY.test(hash)) return reply("Invalid claim", 400);
-    const allowed = this.storage.transactionSync(() => {
+    const claim = this.storage.transactionSync(() => {
       const current = this.storage.kv.get("claim");
       const now = Date.now();
-      if (current) return current.expires > now && current.hash === hash;
-      if (path !== "/claim") return false;
-      this.storage.kv.put("claim", { hash, expires: now + LIFETIME_SECONDS * 1000 });
-      return true;
+      if (current) return current.expires > now && current.hash === hash ? current : null;
+      if (path !== "/claim") return null;
+      const created = { hash, expires: now + LIFETIME_SECONDS * 1000, live: live === true };
+      this.storage.kv.put("claim", created);
+      return created;
     });
-    return reply(null, allowed ? 204 : 403);
+    if (!claim) return reply(null, 403);
+    return new Response(null, {
+      status: 204,
+      headers: { ...BASE_HEADERS, "x-live-purchase": String(claim.live === true) },
+    });
   }
 }
 
-export async function handleRequest(request, env, fetcher = fetch) {
+export async function handleRequest(request, env, fetcher = fetch, context) {
   const url = new URL(request.url);
   if (url.pathname === "/checkout" || url.pathname === "/checkout/return") {
     return handleCheckout(request, url, env, fetcher);
   }
   if (request.method !== "GET") return reply("Not found", 404);
+  if (url.pathname === "/stats") return downloadStats(env);
   if (url.pathname === "/health") {
     const checkoutReady = ordersReady(env);
     return Response.json({ deliveryReady: pdtReady(env) || checkoutReady, checkoutReady }, { headers: BASE_HEADERS });
@@ -556,10 +611,10 @@ export async function handleRequest(request, env, fetcher = fetch) {
   try {
     return url.pathname === "/paypal/return"
       ? await handleReturn(url, request, env, fetcher)
-      : await handleDownload(request, env, fetcher);
+      : await handleDownload(request, env, fetcher, context);
   } catch {
     return reply("Automatic delivery is temporarily unavailable. Please retry in the same browser or contact support with your PayPal receipt.", 503);
   }
 }
 
-export default { fetch: (request, env) => handleRequest(request, env) };
+export default { fetch: (request, env, context) => handleRequest(request, env, fetch, context) };
