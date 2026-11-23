@@ -57,6 +57,7 @@ function fixture(payment = validPayment, orders) {
       return orders.fetch(url, options, env);
     }
     switch (url) {
+      case "https://www.paypal.com/cgi-bin/webscr":
       case "https://www.sandbox.paypal.com/cgi-bin/webscr":
         assert.equal(options.method, "POST");
         assert.deepEqual(Object.fromEntries(options.body), {
@@ -152,6 +153,53 @@ test("a verified browser never receives an executable or incomplete ZIP labeled 
   assert.equal((await run("/download", { cookie })).status, 503);
   upstream.driveBytes = bytes;
   assert.equal((await run("/download", { cookie })).status, 200);
+});
+
+test("the public counter includes each verified live purchase once when its ZIP is ready", async () => {
+  const { env, handle, run, upstream } = fixture();
+  env.PAYPAL_ENVIRONMENT = "live";
+  const stats = await run("/stats");
+  assert.equal(stats.headers.get("access-control-allow-origin"), "*");
+  assert.deepEqual(await stats.json(), { downloads: 0 });
+  assert.equal((await handle("/stats", { method: "POST" })).status, 404);
+  assert.equal((await handle("/record-download", { method: "POST" })).status, 404);
+  assert.equal((await run("/download")).status, 403);
+
+  const checkout = await run(returnPath);
+  const cookie = checkout.headers.get("set-cookie").split(";")[0];
+  upstream.driveStatus = 503;
+  assert.equal((await run("/download", { cookie })).status, 503);
+  assert.deepEqual(await (await run("/stats")).json(), { downloads: 0 });
+  upstream.driveStatus = 200;
+  const downloads = await Promise.all([run("/download", { cookie }), run("/download", { cookie })]);
+  assert.deepEqual(downloads.map(response => response.status), [200, 200]);
+  assert.deepEqual(await (await run("/stats")).json(), { downloads: 1 });
+});
+
+test("sandbox purchases never affect the live counter, including downloads after an environment switch", async () => {
+  const { env, run } = fixture();
+  const checkout = await run(returnPath);
+  const cookie = checkout.headers.get("set-cookie").split(";")[0];
+  assert.equal((await run("/download", { cookie })).status, 200);
+  env.PAYPAL_ENVIRONMENT = "live";
+  assert.equal((await run("/download", { cookie })).status, 200);
+  assert.deepEqual(await (await run("/stats")).json(), { downloads: 0 });
+});
+
+test("download counter failures leave the validated ZIP available", async () => {
+  const { env, run, bytes } = fixture();
+  env.PAYPAL_ENVIRONMENT = "live";
+  const stub = env.DOWNLOAD_CLAIMS.get;
+  env.DOWNLOAD_CLAIMS.get = name => {
+    if (name === "frm3-verified-download-counter") throw new Error("Counter unavailable");
+    return stub(name);
+  };
+  const checkout = await run(returnPath);
+  const cookie = checkout.headers.get("set-cookie").split(";")[0];
+  const download = await run("/download", { cookie });
+  assert.equal(download.status, 200);
+  assert.deepEqual(new Uint8Array(await download.arrayBuffer()), bytes);
+  assert.equal((await run("/stats")).status, 503);
 });
 
 test("unverified, mismatched, or ambiguous transactions do not contact Drive", async () => {
