@@ -79,10 +79,15 @@ function pdtReady(env) {
     && /^[^\s]{20,1024}$/.test(env.PAYPAL_PDT_IDENTITY_TOKEN || "");
 }
 
+function ordersCredentials(env) {
+  return env.PAYPAL_ENVIRONMENT === "live"
+    ? [env.PAYPAL_LIVE_CLIENT_ID, env.PAYPAL_LIVE_CLIENT_SECRET]
+    : [env.PAYPAL_CLIENT_ID, env.PAYPAL_CLIENT_SECRET];
+}
+
 function ordersReady(env) {
   if (env.PAYPAL_ORDERS_ENABLED !== "true" || !driveReady(env)
-      || !/^[A-Za-z0-9_-]{20,160}$/.test(env.PAYPAL_CLIENT_ID || "")
-      || !/^[A-Za-z0-9_-]{20,160}$/.test(env.PAYPAL_CLIENT_SECRET || "")
+      || !ordersCredentials(env).every(credential => /^[A-Za-z0-9_-]{20,160}$/.test(credential || ""))
       || !KEY.test(env.CHECKOUT_STATE_SECRET || "")) return false;
   try {
     const origin = new URL(env.CHECKOUT_ORIGIN);
@@ -250,10 +255,11 @@ async function paypalJson(fetcher, url, options) {
 }
 
 async function paypalHeaders(env, api, fetcher) {
+  const [clientId, clientSecret] = ordersCredentials(env);
   const token = await paypalJson(fetcher, api + "/v1/oauth2/token", {
     method: "POST",
     headers: {
-      authorization: "Basic " + btoa(env.PAYPAL_CLIENT_ID + ":" + env.PAYPAL_CLIENT_SECRET),
+      authorization: "Basic " + btoa(clientId + ":" + clientSecret),
       "content-type": "application/x-www-form-urlencoded",
     },
     body: "grant_type=client_credentials",
