@@ -12,7 +12,9 @@ const PRODUCT_AMOUNT = { currency_code: "USD", value: "100.00" };
 const CHECKOUT_SECONDS = 45 * 60;
 const DRIVE_FILES = "https://www.googleapis.com/drive/v3/files";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-const FILENAME = "FRM3 and JLR BCM Repair.exe";
+const FILENAME = "FRM3 and JLR BCM Repair.zip";
+const ZIP_HEADER = [0x50, 0x4b, 0x03, 0x04];
+const ZIP_TYPE = "application/zip";
 const COOKIE_NAME = "__Host-frm3-download";
 const LIFETIME_SECONDS = 10 * 60;
 const ENCODE = new TextEncoder();
@@ -402,7 +404,7 @@ async function handleCheckout(request, url, env, fetcher) {
   if (checkoutPath && request.method === "GET") {
     const sandbox = env.PAYPAL_ENVIRONMENT === "sandbox" ? "<p>PayPal sandbox test. No real payment will be collected.</p>" : "";
     return checkoutPage(PRODUCT_NAME, sandbox +
-      '<p>The Windows download starts in this browser after PayPal confirms your $100 USD payment.</p>' +
+      '<p>The ZIP download starts in this browser after PayPal confirms your $100 USD payment. Extract the ZIP to access the Windows executable.</p>' +
       '<form action="/checkout" method="post"><button type="submit">Pay $100 USD with PayPal</button></form>',
     200, PAYPAL_ORDERS[env.PAYPAL_ENVIRONMENT].wallet);
   }
@@ -462,6 +464,35 @@ async function driveToken(fetcher, credentials) {
   return data.access_token;
 }
 
+async function verifiedZipBody(body) {
+  const reader = body.getReader();
+  const buffered = [];
+  let checked = 0;
+  while (checked < ZIP_HEADER.length) {
+    const { value, done } = await reader.read();
+    if (done) throw new Error("Drive ZIP is incomplete");
+    for (const byte of value.subarray(0, ZIP_HEADER.length - checked)) {
+      if (byte !== ZIP_HEADER[checked]) {
+        await reader.cancel();
+        throw new Error("Drive file is not a ZIP");
+      }
+      checked += 1;
+    }
+    buffered.push(value);
+  }
+  return new ReadableStream({
+    start(controller) {
+      for (const chunk of buffered) controller.enqueue(chunk);
+    },
+    async pull(controller) {
+      const { value, done } = await reader.read();
+      if (done) controller.close();
+      else controller.enqueue(value);
+    },
+    cancel: reason => reader.cancel(reason),
+  });
+}
+
 async function handleDownload(request, env, fetcher) {
   const browser = browserClaim(request);
   if (!browser || !await claimState(env, browser.purchase, "verify", { hash: await digest(browser.token) })) {
@@ -472,11 +503,15 @@ async function handleDownload(request, env, fetcher) {
     headers: { authorization: "Bearer " + token },
     redirect: "manual",
   });
-  if (response.status !== 200 || !response.body) throw new Error("Drive download unavailable");
-  return new Response(response.body, {
+  const contentType = response.headers.get("content-type")?.split(";", 1)[0].trim().toLowerCase();
+  if (response.status !== 200 || !response.body || contentType !== ZIP_TYPE) {
+    await response.body?.cancel();
+    throw new Error("Drive ZIP download unavailable");
+  }
+  return new Response(await verifiedZipBody(response.body), {
     headers: {
       ...BASE_HEADERS,
-      "content-type": "application/octet-stream",
+      "content-type": ZIP_TYPE,
       "content-disposition": `attachment; filename="${FILENAME}"`,
     },
   });
