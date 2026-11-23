@@ -473,6 +473,12 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 @media(max-width:760px){.theme-control label{display:none}#themeSelector{min-height:32px;font-size:11px}}
 @media(max-width:510px){#themeSelector{min-height:30px;padding:4px;font-size:11px;max-width:62px}}
 
+
+/* Short compatibility summaries, visible on every card without expansion. */
+#software .card-spec{display:flex;flex-direction:column;gap:3px;min-width:0;margin:1px 0 3px}
+#software .card-spec .app-desc{line-height:1.3;overflow-wrap:anywhere}
+#software .card-spec b{color:var(--white);font-weight:750}
+html[data-theme="light"] #software .card-spec b{color:#203a54}
 </style>
 <script src="recovery-redirect.js?v=20261121"></script>
 </head>
@@ -492,7 +498,7 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 
 <section id="software" aria-label="Official software releases">
 <div class="catalog-toolbar">
-<div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, versions, hardware…" aria-label="Search all software"/></div>
+<div class="searchrow"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></svg><input id="search" type="search" placeholder="Search software, cables, versions…" aria-label="Search all software"/></div>
 <div class="filters" role="group" aria-label="Software filters">
 <button class="filter" data-filter="all" aria-pressed="true" type="button">All</button>
 <button class="filter" data-filter="windows" aria-pressed="false" type="button">Windows</button>
@@ -506,7 +512,7 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 <article class="appcard product-card" id="windowsFeatured" data-platform="windows" data-family="bmw windows" data-paid="false" data-search="winkfp bmw k+d-can kdcan programming ecu flashing exe" aria-labelledby="winkfpTitle">
 <div class="card-label">WINDOWS · FREE</div>
 <h2 class="app-name" id="winkfpTitle">WinKFP 2026</h2>
-<p class="app-desc">BMW ECU programming · K+D-CAN USB</p>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> BMW ECU flashing &amp; programming</p><p class="app-desc"><b>Cable:</b> K+D-CAN USB</p></div>
 <div class="card-meta"><strong id="winkfpVersion">v0.4.1</strong> <span id="winkfpSize">· 327 MiB</span></div>
 <div class="card-meta"><strong id="winkfpDownloads" aria-live="polite">…</strong> GitHub downloads</div>
 <a id="winkfpDownloadLink" class="download-btn" href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/winkfp2026/winkfp2026-0.4.1-Ready.exe">Download EXE</a>
@@ -515,7 +521,7 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 <article class="appcard product-card paid-card" id="frm3-jlr-bcm" data-platform="windows" data-family="bmw eeprom" data-paid="true" data-search="frm3 jlr jaguar land rover bcm recovery sdd d-flash eeprom repair windows zip" aria-labelledby="frm3JlrBcmTitle">
 <div class="card-label">WINDOWS · PAID</div>
 <h2 class="app-name" id="frm3JlrBcmTitle">FRM3 &amp; JLR BCM Repair</h2>
-<p class="app-desc">Two tools · BMW FRM3 / Jaguar BCM recovery</p>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> FRM3 &amp; Jaguar BCM EEPROM repair</p><p class="app-desc"><b>Input:</b> 32 KB D-Flash dump · offline</p></div>
 <div class="card-meta"><strong>$100.00</strong> · <span id="frm3JlrBcmDownloadCount" aria-live="polite">—</span> verified downloads</div>
 <details class="product-details"><summary>Details &amp; delivery</summary><p>Windows 64-bit ZIP: reconstructs supported EEPROM images from 32 KB D-Flash; Jaguar BCM Recovery adds SDD preparation for supported Jaguar BCMs.</p><p id="frm3JlrBcmPurchaseNote">After PayPal confirms payment, the ZIP downloads in the same browser. Executables are unsigned; Chrome may flag the ZIP.</p></details>
 <a class="download-btn" href="https://frm3-bcm-fulfillment.kaissymarji.workers.dev/checkout">PayPal · $100</a>
@@ -523,7 +529,7 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 <article class="appcard product-card paid-card" id="bosch-vin-change" data-platform="windows android" data-family="eeprom" data-paid="true" data-search="bosch vin change bmw edc17cp09 med17.5 med17.8.31 med17.9.7 me17.5.6 mev17.2.2 mevd17.2.g windows android exe apk checksum" aria-labelledby="boschVinChangeTitle">
 <div class="card-label">WINDOWS + ANDROID · PAID</div>
 <h2 class="app-name" id="boschVinChangeTitle">Bosch VIN Change</h2>
-<p class="app-desc">Offline VIN editor · supported Bosch ECU records</p>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> Edit VIN in supported Bosch ECU files</p><p class="app-desc"><b>Input:</b> ECU dump file · offline</p></div>
 <div class="card-meta"><strong>$25.00</strong> · Windows v1.6 / Android v1.0</div>
 <div class="card-meta"><strong id="boschCheckoutClicks" aria-live="polite">—</strong> checkout clicks <span title="Clicks only, not sales or downloads">ⓘ</span></div>
 <details class="product-details"><summary>Compatibility &amp; delivery</summary><p>Windows 64-bit and Android 8+. Hex/ASCII previews and CS1/CS2 updates on supported records: BMW EDC17CP09, MED17.5, MED17.8.31, MED17.9.7, ME17.5.6, MEV17.2.2, MEVD17.2.G.</p><p id="boschVinChangePurchaseNote">One $25 payment includes both platforms. Google Drive sends both download links to your PayPal email address.</p><p>Checkout clicks tracked since November 22, 2026; not completed purchases or file downloads.</p></details>
@@ -532,7 +538,7 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 <article class="appcard product-card paid-card" id="km100SpecialTools" data-platform="windows" data-family="flasher" data-paid="true" data-search="med9.1 ecu flasher windows pc vag paypal" aria-labelledby="km100Title">
 <div class="card-label">WINDOWS · PAID</div>
 <h2 class="app-name" id="km100Title">MED9.1 PC Flasher</h2>
-<p class="app-desc">ECU flashing software</p>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> MED9.1 ECU flashing · preview build</p><p class="app-desc"><b>Interface:</b> J2534 intended · verify compatibility</p></div>
 <div class="card-meta"><strong>$25.00</strong> · PayPal checkout</div>
 <details class="product-details"><summary>Details &amp; delivery</summary><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
 <a class="download-btn" href="https://www.paypal.com/ncp/payment/MPWUNM58GEEV8" target="_blank" rel="noopener noreferrer">PayPal · $25 ↗</a>
@@ -540,7 +546,7 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 <article class="appcard product-card paid-card" data-platform="windows" data-family="flasher" data-paid="true" data-search="me7.1 me7.1.1 me7.5 ecu flasher windows pc vag paypal" aria-labelledby="me7Title">
 <div class="card-label">WINDOWS · PAID</div>
 <h2 class="app-name" id="me7Title">ME7.1 / 7.1.1 / 7.5 Flasher</h2>
-<p class="app-desc">ECU flashing software · ME7 family</p>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> Bosch ME7.1 / 7.1.1 / 7.5 flashing</p><p class="app-desc"><b>Interface:</b> J2534 intended · verify compatibility</p></div>
 <div class="card-meta">Price shown at PayPal checkout</div>
 <details class="product-details"><summary>Details &amp; delivery</summary><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
 <a class="download-btn" href="https://www.paypal.com/ncp/payment/GZAVP89LSPZB8" target="_blank" rel="noopener noreferrer">PayPal checkout ↗</a>
@@ -771,9 +777,11 @@ function render(){
  $("catalog").innerHTML=shown.map(a=>{
   const latest=keys.has(a.asset.id||a.url),date=uploaded(a),valid=date&&!Number.isNaN(Date.parse(date));
   const dateLabel=valid?pacificTime.format(new Date(date)):"Date unavailable";
-  const subtitle=a.family==="windows"?"BMW ECU programming":a.family==="v200"?"Vehicle diagnostics and adapter testing":a.family==="eeprom"?"EEPROM read and backup utilities":a.family==="bmw"?"BMW coding and diagnostics":"Automotive Android utility";
+  const subtitle=a.family==="windows"?"BMW ECU flashing & programming":a.family==="v200"?"Vehicle diagnostics & active tests":a.family==="eeprom"?"EEPROM read, write & backup":a.family==="bmw"?"BMW coding & diagnostics":"Automotive utility";
+  const hardware=a.family==="windows"?"K+D-CAN USB":a.family==="v200"?"Autel MaxiVCI V200 · USB / Bluetooth":a.family==="eeprom"?"CH341A / XP400 Pro":a.family==="bmw"?"K+DCAN / ENET / ICOM (varies)":"Check app compatibility";
+  const hardwareLabel=a.family==="eeprom"?"Programmer":a.family==="v200"||a.family==="bmw"?"Adapter":a.family==="windows"?"Cable":"Hardware";
   const devices=hardwareInfo(a.family);
-  return '<article class="appcard release-card"><div class="card-label">'+(a.family==="windows"?"WINDOWS":"ANDROID")+' · FREE'+(latest?"":" · ARCHIVE")+'</div><h3 class="app-name">'+safe(a.title)+'</h3><p class="app-desc">'+safe(subtitle)+'</p><div class="card-meta"><strong>'+safe(version(a))+'</strong> · '+format(a.count)+' downloads</div><details class="product-details"><summary>Hardware &amp; upload date</summary><p>'+devices.map(safe).join(" · ")+'</p><p><time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></p></details><a class="download-btn" href="'+safe(a.url)+'">Download '+(a.family==="windows"?"EXE":"APK")+'</a></article>';
+  return '<article class="appcard release-card"><div class="card-label">'+(a.family==="windows"?"WINDOWS":"ANDROID")+' · FREE'+(latest?"":" · ARCHIVE")+'</div><h3 class="app-name">'+safe(a.title)+'</h3><div class="card-spec"><p class="app-desc"><b>Does:</b> '+safe(subtitle)+'</p><p class="app-desc"><b>'+safe(hardwareLabel)+':</b> '+safe(hardware)+'</p></div><div class="card-meta"><strong>'+safe(version(a))+'</strong> · '+format(a.count)+' downloads</div><details class="product-details"><summary>Hardware &amp; upload date</summary><p>'+devices.map(safe).join(" · ")+'</p><p><time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></p></details><a class="download-btn" href="'+safe(a.url)+'">Download '+(a.family==="windows"?"EXE":"APK")+'</a></article>';
  }).join("");
 }
 async function reload(){
