@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { generateKeyPairSync } from "node:crypto";
 import { test } from "node:test";
-import worker, { DeliveryQueue, handleCheckout, handleWebhook } from "../src/index.mjs";
+import worker, { DeliveryQueue, handleCheckout, handleWebhook, handleRecovery, canonicalBuyerEmail } from "../src/index.mjs";
 
 const hostedId = "HOSTED_TEST_ITEM";
 const email = "buyer@example.test";
@@ -472,4 +472,132 @@ test("Drive delivery grants individual access to both files and deduplicates a r
   const duplicate = await queue.fetch(deliveryRequest());
   assert.deepEqual(await duplicate.json(), { outcome: "already_delivered" });
   assert.deepEqual(grants, ["WINDOWSFILE", "ANDROIDFILE"]);
+});
+
+function recoveryRequest(purchaseEmail = email, extra = {}) {
+  return new Request(checkoutOrigin + "/recover", {
+    method: "POST", headers: { origin: checkoutOrigin },
+    body: new URLSearchParams({ captureId: "TESTCAPTURE", purchaseEmail, ...extra }),
+  });
+}
+
+function recoveryPayment() {
+  const details = payment();
+  delete details.order.purchase_units[0].payment_link_id;
+  details.order.purchase_units[0].custom_id = productId;
+  return details;
+}
+
+function recoveryPayPal(details, requests = []) {
+  return async (url, options = {}) => {
+    requests.push({ url, method: options.method || "GET" });
+    assert.equal(new URL(url).hostname, "api-m.paypal.com");
+    if (url.endsWith("/v1/oauth2/token")) return Response.json({ access_token: "test-token" });
+    assert.equal(options.method || "GET", "GET", "Recovery must not capture or create PayPal orders");
+    if (url.endsWith("/v2/payments/captures/TESTCAPTURE")) return Response.json(details.capture);
+    if (url.endsWith("/v2/checkout/orders/TESTORDER")) return Response.json(details.order);
+    assert.fail("Unexpected payment endpoint");
+  };
+}
+
+test("Gmail and Google Mail aliases match, without changing plus tags or non-Google addresses", () => {
+  assert.equal(canonicalBuyerEmail("Ben.Service24@googlemail.com"), "benservice24@gmail.com");
+  assert.equal(canonicalBuyerEmail("ben.service24@gmail.com"), "benservice24@gmail.com");
+  assert.notEqual(canonicalBuyerEmail("buyer+tag@gmail.com"), canonicalBuyerEmail("buyer@gmail.com"));
+  assert.notEqual(canonicalBuyerEmail("benservice24@googlemail.example"), canonicalBuyerEmail("benservice24@gmail.com"));
+  assert.equal(canonicalBuyerEmail("First.Last@example.test"), "first.last@example.test");
+});
+
+test("recovery shows a form and requires same-origin bounded form submissions", async () => {
+  const page = await worker.fetch(new Request(checkoutOrigin + "/recover"), checkoutEnv);
+  assert.equal(page.status, 200);
+  assert.match(await page.text(), /name="captureId"/);
+  const unavailable = () => assert.fail("Invalid forms must not reach PayPal");
+  const foreign = recoveryRequest();
+  foreign.headers.set("origin", "https://other.example");
+  assert.equal((await handleRecovery(foreign, checkoutEnv, unavailable)).status, 403);
+  const oversized = recoveryRequest(email, { padding: "x".repeat(2100) });
+  oversized.headers.delete("content-length");
+  assert.equal((await handleRecovery(oversized, checkoutEnv, unavailable)).status, 403);
+  assert.equal((await handleRecovery(recoveryRequest(email, { buyer: email }), checkoutEnv, unavailable)).status, 403);
+});
+
+for (const [name, change, enteredEmail] of [
+  ["wrong email", () => {}, "other@example.test"],
+  ["a lookalike Google domain", details => { details.order.payer.email_address = "benservice24@gmail.com"; }, "benservice24@googlemail.example"],
+  ["another merchant", details => { details.order.purchase_units[0].payee.merchant_id = "OTHER"; }, email],
+  ["another product", details => { details.order.purchase_units[0].custom_id = "OTHER"; }, email],
+  ["a refunded capture", details => { details.capture.status = "REFUNDED"; }, email],
+  ["a different capture", details => { details.capture.id = "OTHER"; }, email],
+  ["a different amount", details => { details.capture.amount = { currency_code: "USD", value: "1.00" }; }, email],
+]) test("recovery rejects " + name + " without exposing payer or download details", async () => {
+  const details = recoveryPayment(); change(details);
+  const ready = { ...checkoutEnv, DELIVERY_QUEUE: { get: () => assert.fail("Rejected recovery must not grant access") } };
+  const response = await handleRecovery(recoveryRequest(enteredEmail), ready, recoveryPayPal(details));
+  assert.equal(response.status, 403);
+  const page = await response.text();
+  assert.match(page, /Payment could not be verified/);
+  assert.doesNotMatch(page, /buyer@example\.test|drive\.google\.com|benservice24/);
+});
+
+test("verified recovery uses the authoritative buyer, rechecks existing access and returns both links", async () => {
+  const details = recoveryPayment();
+  details.order.payer.email_address = "benservice24@googlemail.com";
+  const attempts = [], requests = [];
+  const ready = { ...checkoutEnv, DELIVERY_QUEUE: {
+    idFromName: name => name,
+    get: () => ({ fetch: async (url, options) => {
+      assert.equal(url, "https://internal/recover");
+      attempts.push(JSON.parse(options.body));
+      return Response.json({ outcome: "delivered" });
+    } }),
+  } };
+  const response = await handleRecovery(recoveryRequest("ben.service24@gmail.com"), ready, recoveryPayPal(details, requests));
+  assert.equal(response.status, 200);
+  assert.deepEqual(attempts, [{ captureId: "TESTCAPTURE", buyer: "benservice24@googlemail.com" }]);
+  assert.equal(requests.filter(request => request.method === "POST").length, 1); // OAuth only.
+  const page = await response.text();
+  assert.match(page, /file\/d\/WINDOWSFILE\/view/);
+  assert.match(page, /file\/d\/ANDROIDFILE\/view/);
+  assert.doesNotMatch(page, /benservice24/);
+});
+
+test("failed recovery delivery shows no file links and preserves the existing payment", async () => {
+  const response = await handleRecovery(recoveryRequest(), {
+    ...checkoutEnv, DELIVERY_QUEUE: fakeQueue([], "pending"),
+  }, recoveryPayPal(recoveryPayment()));
+  assert.equal(response.status, 503);
+  const page = await response.text();
+  assert.match(page, /Your payment is verified/);
+  assert.doesNotMatch(page, /drive\.google\.com/);
+  assert.match(page, /Do not pay again/);
+});
+
+test("repair rechecks a historical delivered marker and reuses canonical Google Mail permissions", async t => {
+  const { privateKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+  const ready = { ...checkoutEnv, GOOGLE_SERVICE_ACCOUNT_JSON: JSON.stringify({
+    client_email: "fulfillment@example.test", private_key: privateKey.export({ format: "pem", type: "pkcs8" }),
+  }) };
+  const grants = ["WINDOWSFILE"], writes = [];
+  t.mock.method(globalThis, "fetch", async (url, options = {}) => {
+    const target = new URL(url);
+    if (target.hostname === "oauth2.googleapis.com") return Response.json({ access_token: "drive-token" });
+    assert.equal(target.hostname, "www.googleapis.com");
+    const fileId = target.pathname.split("/")[4];
+    if (options.method === "POST") {
+      assert.equal(JSON.parse(options.body).emailAddress, "benservice24@googlemail.com");
+      grants.push(fileId); writes.push(fileId);
+      return Response.json({ id: "permission" });
+    }
+    return Response.json({ permissions: grants.includes(fileId)
+      ? [{ type: "user", role: "reader", emailAddress: "ben.service24@gmail.com" }] : [] });
+  });
+  const records = new Map([["delivered:TESTCAPTURE", true]]);
+  const queue = new DeliveryQueue({ storage: { get: key => records.get(key), put: (key, value) => records.set(key, value) } }, ready);
+  const request = () => new Request("https://internal/recover", { method: "POST",
+    body: JSON.stringify({ captureId: "TESTCAPTURE", buyer: "benservice24@googlemail.com" }) });
+  assert.deepEqual(await (await queue.fetch(request())).json(), { outcome: "delivered" });
+  assert.deepEqual(writes, ["ANDROIDFILE"]);
+  assert.deepEqual(await (await queue.fetch(request())).json(), { outcome: "delivered" });
+  assert.deepEqual(writes, ["ANDROIDFILE"], "Repeated recovery must not send duplicate Google notifications");
 });

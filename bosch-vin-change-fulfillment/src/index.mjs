@@ -62,6 +62,16 @@ function email(value) {
     && /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(value);
 }
 
+// Google Drive canonicalizes Google Mail aliases when returning permissions.
+// Preserve plus tags and every non-Google local part; only known Gmail aliases
+// are interchangeable for payment matching and existing reader access.
+export function canonicalBuyerEmail(value) {
+  const normalized = typeof value === "string" ? value.trim().toLowerCase() : "";
+  const [local, domain] = normalized.split("@");
+  return domain === "gmail.com" || domain === "googlemail.com"
+    ? local.replace(/\./g, "") + "@gmail.com" : normalized;
+}
+
 function priceMatches(amount) {
   return amount?.currency_code === "USD" && typeof amount.value === "string"
     && /^25(?:\.0{1,2})?$/.test(amount.value);
@@ -173,9 +183,9 @@ export function entitlement(eventCapture, capture, order, env) {
   return email(buyer) ? { captureId: capture.id, buyer } : null;
 }
 
-function queueDelivery(env, purchase) {
+function queueDelivery(env, purchase, recheck = false) {
   const queue = env.DELIVERY_QUEUE.get(env.DELIVERY_QUEUE.idFromName(PRODUCT));
-  return queue.fetch("https://internal/deliver", {
+  return queue.fetch(recheck ? "https://internal/recover" : "https://internal/deliver", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(purchase),
@@ -267,7 +277,7 @@ function checkoutPage(title, content, status = 200) {
   return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>${title} | ${PRODUCT}</title>
 <style>body{font:1rem/1.5 system-ui,sans-serif;background:#f5f7fa;color:#152030;margin:0}main{max-width:38rem;padding:3rem 1.5rem;margin:auto}button{font:inherit;font-weight:600;background:#003087;color:white;border:0;border-radius:.4rem;padding:.65rem 1rem;cursor:pointer}button:focus-visible{outline:3px solid #4789de;outline-offset:3px}</style>
-</head><body><main><h1>${title}</h1>${content}</main></body></html>`, {
+</head><body><main><h1>${title}</h1>${content}<p>Already paid? <a href="/recover">Recover your downloads</a>. Do not pay again.</p></main></body></html>`, {
     status,
     headers: {
       "content-type": "text/html; charset=utf-8",
@@ -343,6 +353,79 @@ function invalidCheckout() {
   return checkoutPage("Checkout link unavailable", "<p>This checkout link is invalid or expired.</p>", 400);
 }
 
+function downloadsPage(env, title = "Downloads ready") {
+  const [windowsFile, androidFile] = deliveryFileIds(env);
+  return checkoutPage(title, `<p>Sign in to Google Drive with the email address you used to pay with PayPal. A Google Mail address may appear as its Gmail equivalent.</p>
+<ul><li><a href="https://drive.google.com/file/d/${windowsFile}/view">Download for Windows (EXE)</a></li>
+<li><a href="https://drive.google.com/file/d/${androidFile}/view">Download for Android (APK)</a></li></ul>`);
+}
+
+async function recoveryFormBody(request) {
+  if (Number(request.headers.get("content-length")) > 2048 || !request.body) throw new Error("Invalid form");
+  const reader = request.body.getReader(), chunks = [];
+  let size = 0;
+  try {
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 2048) throw new Error("Invalid form");
+      chunks.push(value);
+    }
+  } finally { await reader.cancel(); }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+  return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+}
+
+export async function handleRecovery(request, env, fetcher = fetch) {
+  const url = new URL(request.url);
+  if (!checkoutReady(env) || url.origin !== env.CHECKOUT_ORIGIN) {
+    return checkoutPage("Recovery unavailable", "<p>Download recovery is temporarily unavailable. Keep your PayPal receipt.</p>", 503);
+  }
+  if (request.method === "GET") return checkoutPage("Recover your downloads", `<p>Enter the transaction ID and email address from your original $25 Bosch VIN Change PayPal receipt. This checks your existing payment.</p>
+<form method="post" action="/recover"><p><label>PayPal transaction ID <input name="captureId" required maxlength="150" autocomplete="off"></label></p>
+<p><label>Purchase email <input type="email" name="purchaseEmail" required maxlength="254" autocomplete="email"></label></p>
+<button type="submit">Recover downloads</button></form>`);
+  if (request.method !== "POST" || request.headers.get("origin") !== env.CHECKOUT_ORIGIN) {
+    return checkoutPage("Recovery unavailable", "<p>Open the recovery form to check your original payment.</p>", 403);
+  }
+  const rejected = () => checkoutPage("Payment could not be verified", "<p>Check the transaction ID and purchase email on your Bosch VIN Change receipt, then return to the recovery form.</p>", 403);
+  let captureId, purchaseEmail;
+  try {
+    if (!request.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded")
+        || Number(request.headers.get("content-length")) > 2048) return rejected();
+    const raw = await recoveryFormBody(request);
+    const fields = new URLSearchParams(raw);
+    if ([...fields].length !== 2 || fields.getAll("captureId").length !== 1
+        || fields.getAll("purchaseEmail").length !== 1) return rejected();
+    captureId = fields.get("captureId").trim();
+    purchaseEmail = fields.get("purchaseEmail").trim();
+    if (!id(captureId) || !email(purchaseEmail)) return rejected();
+  } catch { return rejected(); }
+  try {
+    const base = paypalBase(env), token = await paypalToken(fetcher, base, env);
+    const headers = { authorization: "Bearer " + token, "content-type": "application/json" };
+    const capture = await jsonResponse(fetcher, base + "/v2/payments/captures/" + captureId, { headers });
+    const orderId = capture.supplementary_data?.related_ids?.order_id;
+    if (!id(orderId)) return rejected();
+    const order = await jsonResponse(fetcher, base + "/v2/checkout/orders/" + orderId, { headers });
+    const paidFor = order.id === orderId && entitlement({ id: captureId }, capture, order, env);
+    if (!paidFor || canonicalBuyerEmail(paidFor.buyer) !== canonicalBuyerEmail(purchaseEmail)) return rejected();
+    // The authoritative PayPal buyer is the only address passed to Drive.
+    const delivery = await queueDelivery(env, paidFor, true);
+    const outcome = delivery.ok && (await delivery.json()).outcome;
+    if (outcome !== "delivered" && outcome !== "already_delivered") {
+      return checkoutPage("Download delivery pending", "<p>Your payment is verified. Download access could not be confirmed right now. Try the recovery form again later.</p>", 503);
+    }
+    return downloadsPage(env);
+  } catch (error) {
+    if (error instanceof UpstreamRequestError && [400, 403, 404, 422].includes(error.response.status)) return rejected();
+    return checkoutPage("Recovery unavailable", "<p>Payment verification or download access is temporarily unavailable. Try the recovery form again later.</p>", 503);
+  }
+}
+
 async function finishCheckout(orderId, reference, env, fetcher, base, headers) {
   const orderUrl = base + "/v2/checkout/orders/" + orderId;
   let order = await jsonResponse(fetcher, orderUrl, { headers });
@@ -376,10 +459,7 @@ async function finishCheckout(orderId, reference, env, fetcher, base, headers) {
   if (outcome !== "delivered" && outcome !== "already_delivered") {
     return checkoutPage("Payment received", "<p>Download delivery is pending. Refresh this page to retry delivery for this payment.</p>", 503);
   }
-  const [windowsFile, androidFile] = deliveryFileIds(env);
-  return checkoutPage("Payment complete", `<p>Both downloads are ready. Sign in to Google Drive with the email address you used to pay with PayPal. Google Drive emails an invitation when access is first granted.</p>
-<ul><li><a href="https://drive.google.com/file/d/${windowsFile}/view">Download for Windows (EXE)</a></li>
-<li><a href="https://drive.google.com/file/d/${androidFile}/view">Download for Android (APK)</a></li></ul>`);
+  return downloadsPage(env, "Payment complete");
 }
 
 export async function handleCheckout(request, env, fetcher = fetch) {
@@ -447,7 +527,7 @@ async function driveToken(fetcher, credentialJson) {
   return data.access_token;
 }
 
-async function ensureDriveReader(fetcher, token, fileId, buyer) {
+async function hasDriveReader(fetcher, token, fileId, buyer) {
   const base = DRIVE_API + "/" + fileId + "/permissions";
   const headers = { authorization: "Bearer " + token, "content-type": "application/json" };
   const query = new URLSearchParams({
@@ -458,10 +538,18 @@ async function ensureDriveReader(fetcher, token, fileId, buyer) {
   for (;;) {
     const current = await jsonResponse(fetcher, base + "?" + query, { headers });
     if ((current.permissions || []).some(permission => permission.type === "user" && !permission.deleted
-        && permission.emailAddress?.toLowerCase() === buyer.toLowerCase())) return;
+        && ["reader", "writer", "owner"].includes(permission.role)
+        && canonicalBuyerEmail(permission.emailAddress) === canonicalBuyerEmail(buyer))) return true;
     if (!current.nextPageToken) break;
     query.set("pageToken", current.nextPageToken);
   }
+  return false;
+}
+
+async function ensureDriveReader(fetcher, token, fileId, buyer) {
+  if (await hasDriveReader(fetcher, token, fileId, buyer)) return;
+  const base = DRIVE_API + "/" + fileId + "/permissions";
+  const headers = { authorization: "Bearer " + token, "content-type": "application/json" };
   const options = new URLSearchParams({
     sendNotificationEmail: "true",
     supportsAllDrives: "true",
@@ -488,7 +576,8 @@ export class DeliveryQueue {
     if (!id(purchase.captureId) || !email(purchase.buyer)) return reply({ error: "Invalid purchase" }, 400);
     // Queue permission mutations across buyers so Drive never receives concurrent
     // permission writes for the same file. Its API does not support those writes.
-    const job = this.tail.then(() => this.deliver(purchase));
+    const recovering = new URL(request.url).pathname === "/recover";
+    const job = this.tail.then(() => this.deliver(purchase, recovering));
     this.tail = job.catch(() => {});
     try {
       return reply({ outcome: await job });
@@ -497,9 +586,9 @@ export class DeliveryQueue {
     }
   }
 
-  async deliver({ captureId, buyer }) {
+  async deliver({ captureId, buyer }, recheck = false) {
     const storedKey = "delivered:" + captureId;
-    if (await this.state.storage.get(storedKey)) return "already_delivered";
+    if (!recheck && await this.state.storage.get(storedKey)) return "already_delivered";
     const fileIds = deliveryFileIds(this.env);
     if (!fileIds) throw new Error("Both delivery files are required");
     const token = await driveToken(fetch, this.env.GOOGLE_SERVICE_ACCOUNT_JSON);
@@ -512,6 +601,7 @@ export class DeliveryQueue {
 export default {
   async fetch(request, env) {
     const path = new URL(request.url).pathname;
+    if (path === "/recover") return handleRecovery(request, env);
     if (request.method === "POST" && path === "/webhooks/paypal") return handleWebhook(request, env);
     if (path === "/checkout" || path === "/checkout/return") return handleCheckout(request, env);
     if (request.method === "GET" && path === "/health") {
