@@ -1,0 +1,31 @@
+name: Deploy Nissan service checkout
+on:
+  push:
+    branches: [nissan-service-checkout-deploy]
+    paths:
+      - nissan-service-checkout/**
+      - .github/workflows/deploy-nissan-service-checkout.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deploy:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/nissan-service-checkout-deploy'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test checkout and return routes
+        working-directory: nissan-service-checkout
+        run: node --test test/checkout.test.mjs
+      - name: Deploy Nissan checkout Worker
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: nissan-service-checkout
+          wranglerVersion: '4'
+          command: deploy --config wrangler.toml

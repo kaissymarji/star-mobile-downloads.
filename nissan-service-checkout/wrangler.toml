@@ -1,0 +1,9 @@
+name = "nissan-service-checkout"
+main = "src/index.mjs"
+compatibility_date = "2025-09-01"
+workers_dev = true
+preview_urls = false
+keep_vars = true
+
+[vars]
+PAYPAL_CHECKOUT_URL = "https://www.paypal.com/ncp/payment/UNS5S4F9Y3DTG"
