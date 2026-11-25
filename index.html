@@ -479,6 +479,10 @@ html[data-theme="light"] a:focus-visible,html[data-theme="light"] button:focus-v
 #software .card-spec .app-desc{line-height:1.3;overflow-wrap:anywhere}
 #software .card-spec b{color:var(--white);font-weight:750}
 html[data-theme="light"] #software .card-spec b{color:#203a54}
+#software .card-spec .interface-spec{font-weight:600;color:#d6eaff}
+#software .card-spec .interface-spec b{color:#8dd4ff}
+html[data-theme="light"] #software .card-spec .interface-spec{color:#264c6f}
+html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 
 .head-actions .main-site{font-weight:750}
 @media(max-width:510px){.head-actions .main-site{white-space:nowrap}}
@@ -519,7 +523,7 @@ html[data-theme="light"] #software .card-spec b{color:#203a54}
 <article class="appcard product-card" id="windowsFeatured" data-platform="windows" data-family="bmw windows" data-paid="false" data-search="winkfp bmw k+d-can kdcan programming ecu flashing exe" aria-labelledby="winkfpTitle">
 <div class="card-label">WINDOWS · FREE</div>
 <h2 class="app-name" id="winkfpTitle">WinKFP 2026</h2>
-<div class="card-spec"><p class="app-desc"><b>Does:</b> BMW ECU flashing &amp; programming</p><p class="app-desc"><b>Cable:</b> K+D-CAN USB</p></div>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> BMW ECU flashing &amp; programming</p><p class="app-desc interface-spec"><b>Interface:</b> BMW K+D-CAN USB cable</p></div>
 <div class="card-meta"><strong id="winkfpVersion">v0.4.1</strong> <span id="winkfpSize">· 327 MiB</span></div>
 <div class="card-meta"><strong id="winkfpDownloads" aria-live="polite">…</strong> GitHub downloads</div>
 <a id="winkfpDownloadLink" class="download-btn" href="https://github.com/kaissymarji/star-mobile-downloads./releases/download/winkfp2026/winkfp2026-0.4.1-Ready.exe">Download EXE</a>
@@ -528,7 +532,7 @@ html[data-theme="light"] #software .card-spec b{color:#203a54}
 <article class="appcard product-card paid-card" id="frm3-jlr-bcm" data-platform="windows" data-family="bmw eeprom" data-paid="true" data-search="frm3 jlr jaguar land rover bcm recovery sdd d-flash eeprom repair windows zip" aria-labelledby="frm3JlrBcmTitle">
 <div class="card-label">WINDOWS · PAID</div>
 <h2 class="app-name" id="frm3JlrBcmTitle">FRM3 &amp; JLR BCM Repair</h2>
-<div class="card-spec"><p class="app-desc"><b>Does:</b> FRM3 &amp; Jaguar BCM EEPROM repair</p><p class="app-desc"><b>Input:</b> 32 KB D-Flash dump · offline</p></div>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> FRM3 &amp; Jaguar BCM EEPROM repair</p><p class="app-desc interface-spec"><b>Interface:</b> None · offline file repair</p><p class="app-desc"><b>Input:</b> 32 KB D-Flash dump</p></div>
 <div class="card-meta"><strong>$100.00</strong> · <span id="frm3JlrBcmDownloadCount" aria-live="polite">—</span> verified downloads</div>
 <details class="product-details"><summary>Details &amp; delivery</summary><p>Windows 64-bit ZIP: reconstructs supported EEPROM images from 32 KB D-Flash; Jaguar BCM Recovery adds SDD preparation for supported Jaguar BCMs.</p><p id="frm3JlrBcmPurchaseNote">After PayPal confirms payment, the ZIP downloads in the same browser. Executables are unsigned; Chrome may flag the ZIP.</p></details>
 <a class="download-btn" href="https://frm3-bcm-fulfillment.kaissymarji.workers.dev/checkout">PayPal · $100</a>
@@ -536,27 +540,27 @@ html[data-theme="light"] #software .card-spec b{color:#203a54}
 <article class="appcard product-card paid-card" id="bosch-vin-change" data-platform="windows android" data-family="eeprom" data-paid="true" data-search="bosch vin change bmw edc17cp09 med17.5 med17.8.31 med17.9.7 me17.5.6 mev17.2.2 mevd17.2.g windows android exe apk checksum" aria-labelledby="boschVinChangeTitle">
 <div class="card-label">WINDOWS + ANDROID · PAID</div>
 <h2 class="app-name" id="boschVinChangeTitle">Bosch VIN Change</h2>
-<div class="card-spec"><p class="app-desc"><b>Does:</b> Edit VIN in supported Bosch ECU files</p><p class="app-desc"><b>Input:</b> ECU dump file · offline</p></div>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> Edit VIN in supported Bosch ECU files</p><p class="app-desc interface-spec"><b>Interface:</b> None · offline file editor</p><p class="app-desc"><b>Input:</b> ECU dump file</p></div>
 <div class="card-meta"><strong>$25.00</strong> · Windows v1.6 / Android v1.0</div>
 <div class="card-meta"><strong id="boschCheckoutClicks" aria-live="polite">—</strong> checkout clicks <span title="Clicks only, not sales or downloads">ⓘ</span></div>
 <details class="product-details"><summary>Compatibility &amp; delivery</summary><p>Windows 64-bit and Android 8+. Hex/ASCII previews and CS1/CS2 updates on supported records: BMW EDC17CP09, MED17.5, MED17.8.31, MED17.9.7, ME17.5.6, MEV17.2.2, MEVD17.2.G.</p><p id="boschVinChangePurchaseNote">One $25 payment includes both platforms. Both download links appear after payment. Google Drive may also send sharing invitations. Sign in to Drive with the Google account for your PayPal email.</p><p>Checkout clicks tracked since November 22, 2026; not completed purchases or file downloads.</p></details>
 <a id="boschCheckoutLink" class="download-btn" href="https://bosch-vin-change-fulfillment.kaissymarji.workers.dev/checkout">PayPal · $25</a>
 <div id="boschDeliveryHelp" class="delivery-help"><a href="https://bosch-vin-change-fulfillment.kaissymarji.workers.dev/recover">Already paid? Get your downloads</a><small>Use your PayPal transaction ID and purchase email. Do not pay again. Need help? <a href="sms:+19252789301">Text 925-278-9301</a>.</small></div>
 </article>
-<article class="appcard product-card paid-card" id="km100SpecialTools" data-platform="windows" data-family="flasher" data-paid="true" data-search="med9.1 ecu flasher windows pc vag paypal" aria-labelledby="km100Title">
+<article class="appcard product-card paid-card" id="km100SpecialTools" data-platform="windows" data-family="flasher" data-paid="true" data-search="med9.1 ecu flasher windows pc vag paypal autel maxivci v200 j2534 passthru" aria-labelledby="km100Title">
 <div class="card-label">WINDOWS · PAID</div>
 <h2 class="app-name" id="km100Title">MED9.1 PC Flasher</h2>
-<div class="card-spec"><p class="app-desc"><b>Does:</b> MED9.1 ECU flashing · preview build</p><p class="app-desc"><b>Interface:</b> J2534 intended · verify compatibility</p></div>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> MED9.1 ECU flashing · preview build</p><p class="app-desc interface-spec"><b>Interface:</b> Autel MaxiVCI V200 / J2534 PassThru (preview)</p></div>
 <div class="card-meta"><strong>$25.00</strong> · PayPal checkout</div>
-<details class="product-details"><summary>Details &amp; delivery</summary><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
+<details class="product-details"><summary>Interface requirements &amp; delivery</summary><p>Designed for the Autel MaxiVCI V200 and selectable Windows J2534 PassThru drivers. V200 driver open/close was tested; full ECU reads and writes and other adapter models are not verified. Confirm compatibility before purchasing.</p><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
 <a class="download-btn" href="https://www.paypal.com/ncp/payment/MPWUNM58GEEV8" target="_blank" rel="noopener noreferrer">PayPal · $25 ↗</a>
 </article>
-<article class="appcard product-card paid-card" data-platform="windows" data-family="flasher" data-paid="true" data-search="me7.1 me7.1.1 me7.5 ecu flasher windows pc vag paypal" aria-labelledby="me7Title">
+<article class="appcard product-card paid-card" data-platform="windows" data-family="flasher" data-paid="true" data-search="me7.1 me7.1.1 me7.5 ecu flasher windows pc vag paypal j2534 passthru k-line autel v200" aria-labelledby="me7Title">
 <div class="card-label">WINDOWS · PAID</div>
 <h2 class="app-name" id="me7Title">ME7.1 / 7.1.1 / 7.5 Flasher</h2>
-<div class="card-spec"><p class="app-desc"><b>Does:</b> Bosch ME7.1 / 7.1.1 / 7.5 flashing</p><p class="app-desc"><b>Interface:</b> J2534 intended · verify compatibility</p></div>
+<div class="card-spec"><p class="app-desc"><b>Does:</b> Bosch ME7.1 / 7.1.1 / 7.5 flashing</p><p class="app-desc interface-spec"><b>Interface:</b> J2534 PassThru · adapter compatibility unverified</p></div>
 <div class="card-meta">Price shown at PayPal checkout</div>
-<details class="product-details"><summary>Details &amp; delivery</summary><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
+<details class="product-details"><summary>Interface requirements &amp; delivery</summary><p>Intended for a Windows J2534 PassThru interface supporting the ECU communication protocol (K-Line where required). Autel V200 is an intended adapter, not a confirmed flashing interface for this build. No specific adapter has verified full flashing support. Confirm compatibility before purchasing.</p><p>Keep your PayPal receipt. After-payment download redirect still needs a completed purchase test.</p><a href="km100-special-tools.html">View flasher details ↗</a></details>
 <a class="download-btn" href="https://www.paypal.com/ncp/payment/GZAVP89LSPZB8" target="_blank" rel="noopener noreferrer">PayPal checkout ↗</a>
 </article>
 <div id="noResults" class="empty" hidden>No software matches this filter or search.</div>
@@ -787,9 +791,9 @@ function render(){
   const dateLabel=valid?pacificTime.format(new Date(date)):"Date unavailable";
   const subtitle=a.family==="windows"?"BMW ECU flashing & programming":a.family==="v200"?"Vehicle diagnostics & active tests":a.family==="eeprom"?"EEPROM read, write & backup":a.family==="bmw"?"BMW coding & diagnostics":"Automotive utility";
   const hardware=a.family==="windows"?"K+D-CAN USB":a.family==="v200"?"Autel MaxiVCI V200 · USB / Bluetooth":a.family==="eeprom"?"CH341A / XP400 Pro":a.family==="bmw"?"K+DCAN / ENET / ICOM (varies)":"Check app compatibility";
-  const hardwareLabel=a.family==="eeprom"?"Programmer":a.family==="v200"||a.family==="bmw"?"Adapter":a.family==="windows"?"Cable":"Hardware";
+  const hardwareLabel="Interface";
   const devices=hardwareInfo(a.family);
-  return '<article class="appcard release-card"><div class="card-label">'+(a.family==="windows"?"WINDOWS":"ANDROID")+' · FREE'+(latest?"":" · ARCHIVE")+'</div><h3 class="app-name">'+safe(a.title)+'</h3><div class="card-spec"><p class="app-desc"><b>Does:</b> '+safe(subtitle)+'</p><p class="app-desc"><b>'+safe(hardwareLabel)+':</b> '+safe(hardware)+'</p></div><div class="card-meta"><strong>'+safe(version(a))+'</strong> · '+format(a.count)+' downloads</div><details class="product-details"><summary>Hardware &amp; upload date</summary><p>'+devices.map(safe).join(" · ")+'</p><p><time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></p></details><a class="download-btn" href="'+safe(a.url)+'">Download '+(a.family==="windows"?"EXE":"APK")+'</a></article>';
+  return '<article class="appcard release-card"><div class="card-label">'+(a.family==="windows"?"WINDOWS":"ANDROID")+' · FREE'+(latest?"":" · ARCHIVE")+'</div><h3 class="app-name">'+safe(a.title)+'</h3><div class="card-spec"><p class="app-desc"><b>Does:</b> '+safe(subtitle)+'</p><p class="app-desc interface-spec"><b>'+safe(hardwareLabel)+':</b> '+safe(hardware)+'</p></div><div class="card-meta"><strong>'+safe(version(a))+'</strong> · '+format(a.count)+' downloads</div><details class="product-details"><summary>Hardware &amp; upload date</summary><p>'+devices.map(safe).join(" · ")+'</p><p><time'+(valid?' datetime="'+safe(date)+'"':'')+'>'+safe(dateLabel)+'</time></p></details><a class="download-btn" href="'+safe(a.url)+'">Download '+(a.family==="windows"?"EXE":"APK")+'</a></article>';
  }).join("");
 }
 async function reload(){
