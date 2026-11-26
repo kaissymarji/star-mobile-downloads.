@@ -19,20 +19,26 @@ function html(title, content, status=200) {
 function validTx(tx) {return typeof tx === "string" && /^[A-Z0-9]{10,32}$/.test(tx);}
 function cleanEmail(email) {return String(email||"").trim().toLowerCase();}
 export function parsePdt(body) {
+  if(typeof body!=="string") return null;
   const lines=body.trim().split(/\r?\n/);
   if(lines.shift()!=="SUCCESS") return null;
   const data={};
   for(const l of lines) {
     const i=l.indexOf("=");
     if(i<1) continue;
-    const [key,val]=[l.slice(0,i),l.slice(i+1)].map(x=>decodeURIComponent(x.replace(/\+/g," ")));
+    let key,val;
+    try {
+      [key,val]=[l.slice(0,i),l.slice(i+1)].map(x=>decodeURIComponent(x.replace(/\+/g," ")));
+    } catch {return null;}
     if(Object.prototype.hasOwnProperty.call(data,key)) return null;
     data[key]=val;
   }
   return data;
 }
 export function verifiedPayment(data, tx, env) {
-  return !!data && validTx(tx) && data.txn_id===tx &&
+  return !!data && typeof env?.PAYPAL_MERCHANT_ID==="string" && !!env.PAYPAL_MERCHANT_ID.trim() &&
+    typeof env.PAYPAL_ITEM_NAME==="string" && !!env.PAYPAL_ITEM_NAME.trim() &&
+    validTx(tx) && data.txn_id===tx &&
     data.payment_status==="Completed" && data.mc_currency==="USD" &&
     /^(100|100\.0|100\.00)$/.test(data.mc_gross||"") &&
     data.receiver_id===env.PAYPAL_MERCHANT_ID &&
@@ -41,12 +47,15 @@ export function verifiedPayment(data, tx, env) {
     (!data.quantity || data.quantity==="1") &&
     !!cleanEmail(data.payer_email);
 }
-async function pdt(tx, env) {
-  const res=await fetch("https://www.paypal.com/cgi-bin/webscr",{
+export async function pdt(tx, env, fetcher=fetch) {
+  if(!validTx(tx) || typeof env?.PAYPAL_PDT_TOKEN!=="string" || !env.PAYPAL_PDT_TOKEN.trim()) throw Error("Invalid PayPal verification configuration");
+  const res=await fetcher("https://www.paypal.com/cgi-bin/webscr",{
     method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:new URLSearchParams({cmd:"_notify-synch",tx,at:env.PAYPAL_PDT_TOKEN}),redirect:"error"
+    body:new URLSearchParams({cmd:"_notify-synch",tx,at:env.PAYPAL_PDT_TOKEN}),redirect:"manual"
   });
-  if(!res.ok) throw Error("PayPal unavailable");
+  // Workers supports manual redirects. Never follow a redirect with the PDT token.
+  if(res.status>=300 && res.status<400) throw Error("Unexpected PayPal redirect");
+  if(res.status!==200) throw Error("PayPal unavailable");
   return parsePdt(await res.text());
 }
 async function hmacKey(env) {return crypto.subtle.importKey("raw",enc.encode(env.DOWNLOAD_SECRET),{name:"HMAC",hash:"SHA-256"},false,["sign","verify"]);}
@@ -139,3 +148,4 @@ export default {async fetch(req,env) {
     return response("Not found",404);
   } catch {return html("Temporarily unavailable","<p>Please try again. If you paid, do not pay again.</p><a href='/recover'>Recover purchase</a>",503);}
 }};
+

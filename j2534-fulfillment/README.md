@@ -1,6 +1,15 @@
-# J2534 July 2024 ISO fulfillment — staging only
+# J2534 July 2024 ISO fulfillment
 
-This branch does not change the storefront, existing repair-product checkout, or any Cloudflare/PayPal settings. The intended price is USD 100.00 per copy; the ISO is J2534_July2024.iso, expected size 2732261376 bytes. The original Drive file URL, checkout URL, and account credentials are intentionally excluded from this repository.
+The current deployment uses the existing Drive file. See [DRIVE-SETUP.md](DRIVE-SETUP.md)
+and `wrangler.drive.toml` for that isolated Worker and its account setup requirements.
+Delivery remains disabled until runtime configuration and PayPal Auto Return/PDT
+are complete. The older R2 implementation and staging instructions below are
+retained as an alternative; the Drive deployment does not use its database,
+bucket, or three-copy fulfillment cap.
+
+## Earlier R2 staging implementation
+
+The earlier R2 implementation does not change the storefront, existing repair-product checkout, or any PayPal settings. The intended price is USD 100.00 per copy; the ISO is J2534_July2024.iso, expected size 2732261376 bytes. The original Drive file URL and account credentials are intentionally excluded from this repository.
 
 ## Configure
 
@@ -18,3 +27,4 @@ This branch does not change the storefront, existing repair-product checkout, or
 - The customer receives a 24-hour signed download link on the confirmation page; /recover lets the buyer regenerate it with their transaction ID and PayPal email. The R2 object is streamed with byte-range support.
 - D1 records at most three unique verified transactions that claim a download. This does not prevent a fourth charge on the hosted PayPal link: configure inventory at PayPal before reopening. Handle any unexpected paid-but-unfulfilled purchase manually.
 - No automatic email or webhook delivery, refunds/reversal synchronization, or production payment test is implemented in this staging version. If customers close PayPal before returning, recovery is required. A signed download URL can be shared until expiry; it is not a one-use token. Restrict/rate-limit recovery and return endpoints using Cloudflare before launch. Keep the checkout closed until the end-to-end flow is confirmed.
+

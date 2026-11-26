@@ -1,0 +1,14 @@
+name = "j2534-iso-fulfillment"
+main = "src/drive-worker.mjs"
+compatibility_date = "2025-09-01"
+workers_dev = true
+keep_vars = true
+
+[vars]
+PAYPAL_CHECKOUT_URL = "https://www.paypal.com/ncp/payment/RC7EQ6XB36MWA"
+PAYPAL_ITEM_NAME = "Subaru flasher"
+
+# Set ENABLED=true only after the runtime secrets and this PayPal link's
+# Auto Return/PDT settings have been configured and verified.
+# DOWNLOAD_SECRET, PAYPAL_PDT_TOKEN, PAYPAL_MERCHANT_ID and DRIVE_DOWNLOAD_URL
+# belong only in Cloudflare's runtime secrets, never in this repository.

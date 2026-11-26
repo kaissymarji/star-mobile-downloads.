@@ -1,0 +1,57 @@
+name: Deploy J2534 ISO delivery
+on:
+  push:
+    branches: [j2534-iso-fulfillment]
+    paths:
+      - j2534-fulfillment/**
+      - .github/workflows/deploy-j2534-iso.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: j2534-iso-delivery
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.' && github.ref == 'refs/heads/j2534-iso-fulfillment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check source and verify payment and delivery behavior
+        working-directory: j2534-fulfillment
+        run: |
+          node --check src/worker.mjs
+          node --check src/drive-worker.mjs
+          node --test test/*.test.mjs
+      - name: Deploy isolated ISO delivery worker
+        id: deploy
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: j2534-fulfillment
+          wranglerVersion: '4'
+          command: deploy --config wrangler.drive.toml
+      - name: Check deployed health
+        env:
+          DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
+        run: |
+          python3 - <<'PY'
+          import os, urllib.request, urllib.parse, json
+          raw = os.environ.get('DEPLOYMENT_URL', '')
+          url = urllib.parse.urlsplit(raw)
+          if url.scheme != 'https' or not (url.hostname or '').endswith('.workers.dev') or url.username or url.password:
+              raise SystemExit('No valid workers.dev URL returned by deployment')
+          origin = urllib.parse.urlunsplit((url.scheme, url.netloc, '', '', ''))
+          with urllib.request.urlopen(origin + '/health', timeout=30) as response:
+              health = json.load(response)
+          if health.get('ok') is not True:
+              raise SystemExit('Worker health failed')
+          print('Worker URL: ' + origin)
+          print('Payment delivery configured: ' + str(health.get('configured', False)))
+          print('A healthy deployment does not prove a completed PayPal checkout.')
+          PY
