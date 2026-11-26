@@ -26,7 +26,15 @@ jobs:
         run: |
           node --check src/worker.mjs
           node --check src/drive-worker.mjs
+          node --check src/sealed-config.mjs
+          node --check scripts/bootstrap-runtime.mjs
           node --test test/*.test.mjs
+      - name: Initialize isolated Worker runtime keys without exposing values
+        working-directory: j2534-fulfillment
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/bootstrap-runtime.mjs
       - name: Deploy isolated ISO delivery worker
         id: deploy
         uses: cloudflare/wrangler-action@v4

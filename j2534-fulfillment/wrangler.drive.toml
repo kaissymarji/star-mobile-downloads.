@@ -12,3 +12,7 @@ PAYPAL_ITEM_NAME = "Subaru flasher"
 # Auto Return/PDT settings have been configured and verified.
 # DOWNLOAD_SECRET, PAYPAL_PDT_TOKEN, PAYPAL_MERCHANT_ID and DRIVE_DOWNLOAD_URL
 # belong only in Cloudflare's runtime secrets, never in this repository.
+# The workflow initializes ISO_CONFIG_PRIVATE_KEY, ISO_CONFIG_PUBLIC_KEY and
+# DOWNLOAD_SECRET directly in this isolated Worker, preserving existing keys.
+# sealed-config.json may contain an encrypted configuration envelope, never
+# plaintext account tokens or Drive links.

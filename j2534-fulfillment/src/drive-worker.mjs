@@ -1,5 +1,7 @@
 // Keep account credentials and the Drive URL in Worker secrets, outside source.
 import { pdt, verifiedPayment } from "./worker.mjs";
+import sealedConfig from "../sealed-config.json" with {type: "json"};
+import {createConfigResolver, setupKey} from "./sealed-config.mjs";
 
 const TTL = 24 * 60 * 60;
 const encoder = new TextEncoder();
@@ -86,7 +88,8 @@ async function boundedForm(req) {
   return new URLSearchParams(new TextDecoder().decode(bytes));
 }
 
-export function createDriveWorker({fetcher = fetch, now = Date.now} = {}) {
+export function createDriveWorker({fetcher = fetch, now = Date.now, envelope = sealedConfig} = {}) {
+  const resolveConfig = createConfigResolver(envelope);
   async function claim(tx, payerEmail, env) {
     if (!TX.test(tx || "")) return paymentDenied();
     const data = await pdt(tx, env, fetcher);
@@ -96,6 +99,10 @@ export function createDriveWorker({fetcher = fetch, now = Date.now} = {}) {
   return {async fetch(req, env) {
     try {
       const url = new URL(req.url);
+      if (req.method === "GET" && url.pathname === "/setup-key") {
+        return response(JSON.stringify(await setupKey(env)), 200, {"Content-Type": "application/json"});
+      }
+      env = await resolveConfig(env);
       const isConfigured = configured(env);
       if (req.method === "GET" && url.pathname === "/health") {
         return response(JSON.stringify({ok: true, configured: isConfigured, enabled: env.ENABLED === "true" && isConfigured}), 200, {"Content-Type": "application/json"});
@@ -119,7 +126,7 @@ export function createDriveWorker({fetcher = fetch, now = Date.now} = {}) {
       if (req.method === "GET" && url.pathname.startsWith("/ready/")) {
         const token = url.pathname.slice(7);
         if (!await verify(token, env, now)) return html("Download link expired", "<p><a href='/recover'>Recover your purchase</a></p>", 403);
-        return html("Payment verified", "<p>Your ISO download is ready. This link expires in 24 hours.</p><p><a href='/download/" + token + "' rel='noreferrer'>Download J2534 July 2024 ISO (2.73 GB)</a></p><p><a href='/recover'>Recover your purchase later</a></p>");
+        return html("Payment verified", "<p>Your payment is complete. PayPal emails your receipt with transaction details.</p><p>Your ISO download is ready. This link expires in 24 hours.</p><p><a href='/download/" + token + "' rel='noreferrer'>Download J2534 July 2024 ISO (2.73 GB)</a></p><p><a href='/recover'>Recover your purchase later</a></p>");
       }
       if (req.method === "GET" && url.pathname.startsWith("/download/")) {
         const tx = await verify(url.pathname.slice(10), env, now);

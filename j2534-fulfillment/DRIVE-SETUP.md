@@ -10,6 +10,44 @@ The deployment workflow tests both implementations and deploys
 Cloudflare deployment credentials; PayPal credentials are not copied from other
 products. Missing runtime configuration leaves delivery disabled.
 
+## Configure through the existing deployment connection
+
+The deployment job can initialize this isolated Worker's encryption keys without
+a separate Cloudflare dashboard login. `scripts/bootstrap-runtime.mjs` uses the
+existing Cloudflare deployment token and the official Worker secrets API. It
+creates the private/public RSA key pair and download signing secret in one
+atomic operation, only when absent. It preserves existing keys and refuses a
+partially configured key pair. It never prints credentials or provider bodies.
+
+The bootstrap expects the isolated Worker to have already been created; it does
+not modify any other Worker. The following Wrangler deployment preserves its
+runtime secrets with `keep_vars = true`.
+
+`GET /setup-key` returns only a public RSA key descriptor. Configuration may be
+encrypted locally with that key and committed as `sealed-config.json`. The
+private key remains in Cloudflare; no public configuration-write endpoint
+exists. Keep `sealed-config.json` equal to `null` for ordinary runtime-secret
+configuration, or replace it with a valid encrypted envelope. An invalid
+non-null envelope disables delivery rather than falling back to older values.
+
+The envelope is version 1 with algorithm `RSA-OAEP-256+A256GCM`, a SHA-256
+`keyId`, and unpadded base64url `wrappedKey`, `iv`, and `ciphertext` fields. Use
+RSA-OAEP SHA-256 with a fresh AES-256 key, a fresh 12-byte GCM IV, and a 128-bit
+GCM tag. Both the OAEP label and GCM additional data are the UTF-8 encoding of:
+
+```text
+j2534-iso-fulfillment
+sealed-config-v1
+RSA-OAEP-256+A256GCM
+<keyId>
+```
+
+There is no trailing newline. Plaintext is a JSON object of allowed runtime
+configuration fields, limited to 4096 bytes. Encryption and download-signing
+keys are forbidden payload fields. The deployment source contains ciphertext
+only. Verify `/setup-key` after deployment, and consider an encrypted
+`{"ENABLED":"false"}` canary before supplying the real PDT token.
+
 ## Runtime configuration
 
 In the isolated `j2534-iso-fulfillment` Worker, configure:
