@@ -534,8 +534,8 @@ html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 <div class="card-label">ANDROID</div>
 <h2 class="app-name" id="oemDirectoryTitle">OEM Directory</h2>
 <p class="app-desc">69 OEM service entries and 33 manufacturer key-code routes. No cable required.</p>
-<div class="card-meta"><strong>v1.4</strong> · Android 6.0+ · 505 KiB</div>
-<a class="download-btn" href="apk/OEM-Directory-1.4.apk" download>Download APK</a>
+<div class="card-meta"><strong>v1.4</strong> · Android 6.0+ · 505 KiB · APK download clicks: <span id="oemDirectoryCount" aria-live="polite">—</span></div>
+<a id="oemDirectoryDownload" class="download-btn" href="apk/OEM-Directory-1.4.apk" download>Download APK</a>
 </article>
 <div class="catalog" id="catalog" aria-live="polite"><div class="empty">Loading GitHub releases…</div></div>
 <article class="appcard product-card paid-card" id="j2534-july-2024" data-platform="windows" data-family="flasher" data-paid="true" data-search="j2534 july 2024 windows iso passthru subaru calibration" aria-labelledby="j2534July2024Title">
@@ -705,6 +705,34 @@ if(boschCheckoutLink)boschCheckoutLink.addEventListener("click",()=>{
   {method:"GET",mode:"no-cors",cache:"no-store",keepalive:true}).catch(()=>{});}catch(_){}
 });
 loadBoschCheckoutCounter();
+
+const oemCounterUrl = BOSCH_CHECKOUT_COUNTER_BASE;
+const oemCounterKey = "kaissymarji_oem_directory_apk_clicks";
+let oemCountLoaded = false;
+async function updateOemCount(action) {
+ const output = $("oemDirectoryCount");
+ try {
+  const response = await fetch(oemCounterUrl + action + "/" + oemCounterKey, {
+   cache: "no-store", keepalive: action === "hit"
+  });
+  let count = 0;
+  if (action !== "get" || response.status !== 404) {
+   if (!response.ok) throw new Error("Counter HTTP " + response.status);
+   const {value} = await response.json();
+   if (!/^\d+$/.test(String(value))) throw new Error("Invalid counter value");
+   count = Number(value);
+   if (!Number.isSafeInteger(count)) throw new Error("Invalid counter value");
+  }
+  const previous = oemCountLoaded ? Number(output.dataset.count) : 0;
+  output.dataset.count = String(Math.max(previous, count));
+  output.textContent = Number(output.dataset.count).toLocaleString("en-US");
+  oemCountLoaded = true;
+ } catch {
+  if (!oemCountLoaded) output.textContent = "Unavailable";
+ }
+}
+$("oemDirectoryDownload").addEventListener("click", () => updateOemCount("hit"));
+updateOemCount("get");
 
  // Visitor counts come from a public service; never display made-up values.
  // This counts approximate daily browser visits, not verified unique people.
