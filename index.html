@@ -496,10 +496,11 @@ html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 <body>
 <header class="topline" id="home"><div class="wrap header">
 <a class="identity" href="#home" aria-label="Star Mobile Service home"><span class="brandicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3L29 19L44 21L32 30L35 46L24 37L10 43L15 28L4 19L20 18Z" fill="none" stroke="#4efff1" stroke-width="2.7"/><path d="M13 31L34 13" stroke="#b9faff" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><span class="brandname">STAR MOBILE SERVICE</span><span class="brandsub">SOFTWARE <em>LAB</em> / COMMAND CENTER</span></span></a>
-<nav class="head-actions"><a class="navbtn main-site" href="https://carkeyecu.com/">Main Website ↗</a><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><button type="button" id="homepageButton" class="navbtn" aria-haspopup="dialog">Make this my homepage</button><span class="theme-control"><label for="themeSelector">Theme</label><select id="themeSelector" aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option></select></span></nav>
+<nav class="head-actions"><a class="navbtn main-site" href="https://carkeyecu.com/">Main Website ↗</a><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><span class="theme-control"><label for="themeSelector">Theme</label><select id="themeSelector" aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option></select></span></nav>
 </div></header>
 <main class="wrap">
-<div class="dashboard-title"><div><h1>ECU Command Center</h1><p>Official automotive software downloads</p></div><a class="utility-link" href="#vinLookup">VIN decoder ↗</a></div>
+<div class="dashboard-title"><div><h1>ECU Command Center</h1><p>Official automotive software downloads</p><button id="homepageButton" type="button" class="utility-link" style="margin-top:.35rem;cursor:pointer" aria-expanded="false" aria-controls="homepagePanel">⌂ Set as homepage</button></div><a class="utility-link" href="#vinLookup">VIN decoder ↗</a></div>
+<div id="homepagePanel" hidden style="padding:.6rem .8rem;border:1px solid currentColor;border-radius:.5rem;font-size:.85rem"><strong id="homepageStatus" role="status"></strong> <span id="homepageSteps"></span><input id="homepageAddress" aria-label="Download page address" readonly hidden style="width:100%;box-sizing:border-box"></div>
 <section class="kpis" aria-label="Live GitHub statistics">
 <div class="kpi"><div class="k-label">Total Downloads</div><strong id="totalDownloads">—</strong><small>Published software assets</small></div>
 <div class="kpi"><div class="k-label">APK Versions</div><strong id="buildCount">—</strong><small>GitHub release assets</small></div>
@@ -602,17 +603,10 @@ html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 <input type="file" accept="image/*" id="vinUploadPhoto" hidden>
 <div id="vinScanFileReader" hidden></div>
 </dialog>
-<dialog id="homepageDialog" aria-labelledby="homepageTitle">
-<h2 id="homepageTitle">Homepage setup</h2>
-<p id="homepageSteps"></p>
-<label for="homepageAddress">Download page address</label>
-<input id="homepageAddress" readonly style="display:block;width:100%;box-sizing:border-box;font:inherit;padding:.5em" />
-<p role="status" id="homepageStatus"></p>
-<form method="dialog"><button type="button" id="homepageCopy">Copy address</button> <button>Close</button></form>
-</dialog>
 <script>
 (() => {
-  const dialog = document.getElementById('homepageDialog');
+  const panel = document.getElementById('homepagePanel');
+  const button = document.getElementById('homepageButton');
   const address = document.getElementById('homepageAddress');
   const status = document.getElementById('homepageStatus');
   const ua = navigator.userAgent;
@@ -634,19 +628,22 @@ html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
       await navigator.clipboard.writeText(address.value);
       status.textContent = 'Download page address copied.';
     } catch {
+      address.hidden = false;
       address.focus();
       address.select();
       status.textContent = 'Select Copy to copy the highlighted address.';
     }
   }
-  document.getElementById('homepageButton').addEventListener('click', () => {
+  button.addEventListener('click', () => {
+    panel.hidden = !panel.hidden;
+    button.setAttribute('aria-expanded', String(!panel.hidden));
+    if (panel.hidden) return;
+    address.hidden = true;
     address.value = new URL('./', location.href).href;
     document.getElementById('homepageSteps').textContent = instructions();
     status.textContent = '';
-    dialog.showModal();
     if (!document.getElementById('homepageSteps').textContent.includes('Home Screen')) copyAddress();
   });
-  document.getElementById('homepageCopy').addEventListener('click', copyAddress);
 })();
 </script>
 <dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
