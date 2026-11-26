@@ -1,0 +1,16 @@
+name = "j2534-iso-fulfillment"
+main = "src/worker.mjs"
+compatibility_date = "2026-11-25"
+workers_dev = true
+
+[vars]
+ENABLED = "false"
+
+[[d1_databases]]
+binding = "SALES"
+database_name = "j2534-iso-sales"
+database_id = "REPLACE_WITH_CREATED_D1_ID"
+
+[[r2_buckets]]
+binding = "ISO"
+bucket_name = "j2534-private-downloads"
