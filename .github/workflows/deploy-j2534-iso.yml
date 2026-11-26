@@ -41,14 +41,27 @@ jobs:
           DEPLOYMENT_URL: ${{ steps.deploy.outputs.deployment-url }}
         run: |
           python3 - <<'PY'
-          import os, urllib.request, urllib.parse, json
+          import os, urllib.request, urllib.error, urllib.parse, json, time
           raw = os.environ.get('DEPLOYMENT_URL', '')
           url = urllib.parse.urlsplit(raw)
           if url.scheme != 'https' or not (url.hostname or '').endswith('.workers.dev') or url.username or url.password:
               raise SystemExit('No valid workers.dev URL returned by deployment')
           origin = urllib.parse.urlunsplit((url.scheme, url.netloc, '', '', ''))
-          with urllib.request.urlopen(origin + '/health', timeout=30) as response:
-              health = json.load(response)
+          request = urllib.request.Request(origin + '/health', headers={'User-Agent': 'J2534-ISO-Deployment/1.0', 'Accept': 'application/json'})
+          # A newly published workers.dev route can briefly be unavailable.
+          # Every accepted response must still be HTTP 200 with valid health JSON.
+          for attempt in range(5):
+              try:
+                  with urllib.request.urlopen(request, timeout=15) as response:
+                      health = json.load(response)
+                  break
+              except urllib.error.HTTPError as error:
+                  if attempt == 4 or error.code not in (403, 404, 429, 500, 502, 503, 504):
+                      raise
+              except urllib.error.URLError:
+                  if attempt == 4:
+                      raise
+              time.sleep(2 ** attempt)
           if health.get('ok') is not True:
               raise SystemExit('Worker health failed')
           print('Worker URL: ' + origin)
