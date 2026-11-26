@@ -1,0 +1,43 @@
+'use strict';
+const list = document.querySelector('#brands');
+const search = document.querySelector('#search');
+const keys = document.querySelector('#keys');
+const service = document.querySelector('#service');
+const normalize = value => value.normalize('NFD').toLowerCase().replace(/[^a-z0-9]/g, '');
+let keyMode = false;
+function render() {
+  const fragment = document.createDocumentFragment();
+  const query = normalize(search.value);
+  let total = 0;
+  manufacturers.forEach((brand, index) => {
+    if (keyMode && !brand.key) return;
+    if (!normalize(brand.name + ' ' + (brand.aliases || '')).includes(query)) return;
+    const card = document.createElement('a');
+    card.className = 'card';
+    card.href = keyMode ? brand.key[0] : brand.service;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    const logo = document.createElement('span');
+    logo.className = 'logo';
+    logo.setAttribute('aria-hidden','true');
+    logo.style.backgroundPosition = (-80*(index%8))+'px '+(-40*Math.floor(index/8))+'px';
+    const name = document.createElement('strong');
+    name.textContent = brand.name;
+    const label = document.createElement('small');
+    label.textContent = keyMode ? brand.key[1] : brand.serviceLabel || 'Service information';
+    card.append(logo, name, label);
+    fragment.append(card);
+    total++;
+  });
+  list.replaceChildren(fragment);
+  document.querySelector('#count').textContent = total ? (keyMode ? 'Buy key codes' : 'Service portals') + ' · ' + total : 'No matching manufacturers';
+  keys.setAttribute('aria-pressed',String(keyMode));
+  service.setAttribute('aria-pressed',String(!keyMode));
+}
+keys.onclick = () => { keyMode = true; render(); };
+service.onclick = () => { keyMode = false; render(); };
+search.oninput = render;
+const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+document.querySelector('#install').hidden = !isAppleMobile || location.protocol === 'file:' || navigator.standalone || matchMedia('(display-mode: standalone)').matches;
+render();
+if (location.protocol === 'https:' && 'serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
