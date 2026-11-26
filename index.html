@@ -496,7 +496,7 @@ html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 <body>
 <header class="topline" id="home"><div class="wrap header">
 <a class="identity" href="#home" aria-label="Star Mobile Service home"><span class="brandicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3L29 19L44 21L32 30L35 46L24 37L10 43L15 28L4 19L20 18Z" fill="none" stroke="#4efff1" stroke-width="2.7"/><path d="M13 31L34 13" stroke="#b9faff" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><span class="brandname">STAR MOBILE SERVICE</span><span class="brandsub">SOFTWARE <em>LAB</em> / COMMAND CENTER</span></span></a>
-<nav class="head-actions"><a class="navbtn main-site" href="https://carkeyecu.com/">Main Website ↗</a><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><span class="theme-control"><label for="themeSelector">Theme</label><select id="themeSelector" aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option></select></span></nav>
+<nav class="head-actions"><a class="navbtn main-site" href="https://carkeyecu.com/">Main Website ↗</a><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><button type="button" id="homepageButton" class="navbtn" aria-haspopup="dialog">Make this my homepage</button><span class="theme-control"><label for="themeSelector">Theme</label><select id="themeSelector" aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option></select></span></nav>
 </div></header>
 <main class="wrap">
 <div class="dashboard-title"><div><h1>ECU Command Center</h1><p>Official automotive software downloads</p></div><a class="utility-link" href="#vinLookup">VIN decoder ↗</a></div>
@@ -602,6 +602,53 @@ html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 <input type="file" accept="image/*" id="vinUploadPhoto" hidden>
 <div id="vinScanFileReader" hidden></div>
 </dialog>
+<dialog id="homepageDialog" aria-labelledby="homepageTitle">
+<h2 id="homepageTitle">Homepage setup</h2>
+<p id="homepageSteps"></p>
+<label for="homepageAddress">Download page address</label>
+<input id="homepageAddress" readonly style="display:block;width:100%;box-sizing:border-box;font:inherit;padding:.5em" />
+<p role="status" id="homepageStatus"></p>
+<form method="dialog"><button type="button" id="homepageCopy">Copy address</button> <button>Close</button></form>
+</dialog>
+<script>
+(() => {
+  const dialog = document.getElementById('homepageDialog');
+  const address = document.getElementById('homepageAddress');
+  const status = document.getElementById('homepageStatus');
+  const ua = navigator.userAgent;
+  function instructions() {
+    if (/iPhone|iPod|iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1))
+      return 'For one-tap access on your Home Screen, open this page in Safari, tap Share, then Add to Home Screen and Add.';
+    if (/SamsungBrowser/.test(ua)) return 'In Samsung Internet, open Menu → Settings → Homepage → Custom page and paste the address below.';
+    if (/Android/.test(ua) && /Chrome/.test(ua) && !/EdgA|Opera|OPR/.test(ua))
+      return 'In Chrome, open ⋮ → Settings → Homepage. Turn Homepage on, choose a custom address and paste the download page address.';
+    if (/Android/.test(ua)) return 'Look for Homepage in your browser settings. If your browser offers a custom address, paste the address below. For quick access you can also bookmark this page.';
+    if (/Edg\//.test(ua)) return 'In Edge, open Settings → Start, home, and new tabs. Under Home button, enable the button, enter the download page address and save.';
+    if (/Firefox\//.test(ua)) return 'In Firefox, open Settings → Home. Under Homepage and new windows, choose Custom URLs and paste the download page address.';
+    if (/Chrome\//.test(ua) && !/OPR/.test(ua)) return 'Open Settings → Appearance. Turn on Show Home button, choose the custom address option and paste the download page address.';
+    if (/Safari\//.test(ua) && !/Chrome/.test(ua)) return 'In Safari, open Settings → General. Click Set to Current Page while this tab is active.';
+    return 'Open your browser settings, look for Homepage or Home button, and enter the download page address if your browser supports a custom homepage.';
+  }
+  async function copyAddress() {
+    try {
+      await navigator.clipboard.writeText(address.value);
+      status.textContent = 'Download page address copied.';
+    } catch {
+      address.focus();
+      address.select();
+      status.textContent = 'Select Copy to copy the highlighted address.';
+    }
+  }
+  document.getElementById('homepageButton').addEventListener('click', () => {
+    address.value = new URL('./', location.href).href;
+    document.getElementById('homepageSteps').textContent = instructions();
+    status.textContent = '';
+    dialog.showModal();
+    if (!document.getElementById('homepageSteps').textContent.includes('Home Screen')) copyAddress();
+  });
+  document.getElementById('homepageCopy').addEventListener('click', copyAddress);
+})();
+</script>
 <dialog id="guide"><h2>About Star Mobile Downloads</h2><p>Download published APKs, view real GitHub release counts and timestamps, and search by app or version. Older builds remain available using Show previous versions.</p><p>VIN decoding uses the official NHTSA vPIC service and requires internet access. Results vary by vehicle. EEPROM Studio hardware support: CH341A and XP400 Pro only.</p><button class="close-guide" id="closeGuide" type="button">Close</button></dialog>
 <script>
 (function(){
