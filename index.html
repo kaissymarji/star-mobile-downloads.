@@ -485,6 +485,11 @@ html[data-theme="light"] #software .card-spec .interface-spec{color:#264c6f}
 html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 
 .head-actions .main-site{font-weight:750}
+.head-actions{max-width:100%}
+.market-links{display:inline-flex;align-items:stretch}
+.market-links .navbtn:first-child{border-radius:7px 0 0 7px}
+.market-links .navbtn:last-child{border-radius:0 7px 7px 0;margin-inline-start:-1px}
+.market-links .navbtn:focus-visible{position:relative;z-index:1}
 @media(max-width:510px){.head-actions .main-site{white-space:nowrap}}
 
 #software .delivery-help{font-size:11px;line-height:1.35;padding-top:4px}
@@ -496,7 +501,7 @@ html[data-theme="light"] #software .card-spec .interface-spec b{color:#125b92}
 <body>
 <header class="topline" id="home"><div class="wrap header">
 <a class="identity" href="#home" aria-label="Star Mobile Service home"><span class="brandicon"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3L29 19L44 21L32 30L35 46L24 37L10 43L15 28L4 19L20 18Z" fill="none" stroke="#4efff1" stroke-width="2.7"/><path d="M13 31L34 13" stroke="#b9faff" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><span class="brandname">STAR MOBILE SERVICE</span><span class="brandsub">SOFTWARE <em>LAB</em> / COMMAND CENTER</span></span></a>
-<nav class="head-actions"><a class="navbtn main-site" href="https://carkeyecu.com/">Main Website ↗</a><a class="navbtn" href="https://kaissymarji.github.io/star-mobile-downloads./oem-directory/index.html">OEM Directory</a><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><span class="theme-control"><label for="themeSelector">Theme</label><select id="themeSelector" aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option></select></span></nav>
+<nav class="head-actions"><a class="navbtn main-site" href="https://carkeyecu.com/">Main Website ↗</a><span class="market-links" role="group" aria-label="Bay Motor Market"><a class="navbtn" href="https://cars.carkeyecu.com/">Bay Motor Market</a><a class="navbtn" href="https://cars.carkeyecu.com/download/BayMotorMarket.apk" aria-label="Download Bay Motor Market for Android" title="Download Bay Motor Market for Android">Android APK ↓</a></span><a class="navbtn" href="https://kaissymarji.github.io/star-mobile-downloads./oem-directory/index.html">OEM Directory</a><a class="navbtn" href="km100-special-tools.html#freeDownloads">Special Tools</a><a class="navbtn" href="community.html#account">🔑 Activation</a><a class="navbtn donate" href="donate.html">♥ Donate</a><span class="theme-control"><label for="themeSelector">Theme</label><select id="themeSelector" aria-label="Color theme"><option value="light">Light</option><option value="dark">Dark</option></select></span></nav>
 </div></header>
 <main class="wrap">
 <div class="dashboard-title"><div><h1>ECU Command Center</h1><p>Official automotive software downloads</p><button id="homepageButton" type="button" class="utility-link" style="margin-top:.35rem;cursor:pointer" aria-expanded="false" aria-controls="homepagePanel">⌂ Set as homepage</button></div><a class="utility-link" href="#vinLookup">VIN decoder ↗</a></div>
