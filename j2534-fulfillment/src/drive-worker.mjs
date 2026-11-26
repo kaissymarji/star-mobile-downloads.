@@ -88,7 +88,7 @@ async function boundedForm(req) {
   return new URLSearchParams(new TextDecoder().decode(bytes));
 }
 
-export function createDriveWorker({fetcher = fetch, now = Date.now, envelope = sealedConfig} = {}) {
+export function createDriveWorker({fetcher = fetch, now = Date.now, envelope = null} = {}) {
   const resolveConfig = createConfigResolver(envelope);
   async function claim(tx, payerEmail, env) {
     if (!TX.test(tx || "")) return paymentDenied();
@@ -142,4 +142,4 @@ export function createDriveWorker({fetcher = fetch, now = Date.now, envelope = s
   }};
 }
 
-export default createDriveWorker();
+export default createDriveWorker({envelope: sealedConfig});
