@@ -1,0 +1,49 @@
+name: Publish OEM Directory Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-oem-directory.yml'
+      - 'apk/OEM-Directory-1.4.apk'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-oem-directory-1-4
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.repository == 'kaissymarji/star-mobile-downloads.'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Publish the existing APK and preserve its download history
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tag="oem-directory-v1.4"
+          apk="apk/OEM-Directory-1.4.apk"
+          if ! gh release view "$tag" --json tagName > /dev/null; then
+            gh release create "$tag" --draft --target "$GITHUB_SHA" \
+              --title "OEM Directory 1.4 for Android" \
+              --notes "Android directory of automotive manufacturers' service and key-code portals." --latest=false
+          fi
+          asset=$(gh release view "$tag" --json assets --jq '.assets[] | select(.name == "OEM-Directory-1.4.apk")')
+          if [[ -z "$asset" ]]; then
+            gh release upload "$tag" "$apk"
+          else
+            digest="sha256:$(sha256sum "$apk" | cut -d ' ' -f 1)"
+            jq -e --arg digest "$digest" '.state == "uploaded" and .digest == $digest' <<< "$asset" > /dev/null
+          fi
+          if [[ $(gh release view "$tag" --json isDraft --jq '.isDraft') == true ]]; then
+            gh release edit "$tag" --draft=false --latest=false
+          fi
