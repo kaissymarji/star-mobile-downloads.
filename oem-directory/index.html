@@ -5,9 +5,27 @@
 <meta name="theme-color" content="#083c46"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="OEM Directory">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="app.webmanifest">
-<link rel="stylesheet" href="style.css"><script defer src="catalog.js"></script><script defer src="directory.js"></script>
+<link rel="stylesheet" href="style.css"><script defer src="catalog.js"></script><script defer src="directory.js"></script><script defer src="vin.js"></script>
 </head><body><main>
-<header><img src="icon-192.png" alt="" width="54" height="54"><div><p>Star Mobile Service</p><h1>OEM Directory</h1></div></header>
+<header><img src="icon-192.png" alt="" width="54" height="54"><div><p>Star Mobile Service</p><h1>OEM Directory</h1></div>
+<button type="button" id="vin-toggle" aria-expanded="false" aria-controls="vin-panel">
+<svg aria-hidden="true" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8V4h4m10 0h4v4M3 16v4h4m10 0h4v-4M7 8v8m3-8v8m3-8v8m4-8v8"/></svg>Scan VIN</button></header>
+<section id="vin-panel" aria-labelledby="vin-heading" hidden>
+<h2 id="vin-heading">VIN scanner &amp; decoder</h2>
+<p class="vin-help">Scan the barcode on the door label, choose a photo, or enter the VIN. Decoding sends the VIN to NHTSA.</p>
+<div class="vin-actions">
+<button type="button" id="vin-camera">Start camera</button>
+<button type="button" id="vin-photo">Choose photo</button>
+<input type="file" accept="image/*" id="vin-file" hidden>
+</div>
+<video id="vin-video" aria-label="Live VIN barcode scanner" autoplay muted playsinline hidden></video>
+<form id="vin-form" novalidate>
+<label for="vin-input">Vehicle identification number</label>
+<div class="vin-entry"><input id="vin-input" placeholder="17-character VIN" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="vin-status"><button type="submit">Decode</button></div>
+</form>
+<p id="vin-status" role="status"></p>
+<div id="vin-result" aria-live="polite" hidden><h3 id="vin-vehicle"></h3><p id="vin-details"></p><div id="vin-links" class="vin-actions"></div></div>
+</section>
 <nav aria-label="Directory menu"><button type="button" id="service" aria-pressed="true">OEM Service</button><button type="button" id="keys" aria-pressed="false">Key Codes</button></nav>
 <input id="search" type="search" aria-label="Search manufacturer" placeholder="Search manufacturer" autocomplete="off">
 <div class="summary"><h2 id="count" aria-live="polite"></h2><details id="install" hidden><summary>Install on iPhone</summary><p>In Safari, tap Share, then Add to Home Screen. Enable Open as Web App if shown, then tap Add.</p></details></div>
